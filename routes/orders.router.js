@@ -1,32 +1,50 @@
-const express = require('express')
-const orderRouter = express.Router();
+const express = require('express');
+const router = express.Router();
 
-orderRouter.get('/authorization', (req, res) => {
-    res.send("Hello World From Orders")
-})
+const orderRouter = (orderControllers) => {
+    router.get('/authorization', (req, res) => {
+        const respone = orderControllers.getAllOrders();
 
-orderRouter.get('/admin', (req, res) => {
-    res.send("Hello World From Orders")
-})
+        res.send(respone)
+    })
 
-orderRouter.get('/admin/:orderId', (req, res) => {
-    res.send("Hello World From Orders")
-})
+    router.get('/admin', (req, res) => {
+        const respone = orderControllers.getAllRestaurantOrders();
 
-orderRouter.get('/user', (req, res) => {
-    res.send("Hello World From Orders")
-})
+        res.send(respone)
+    })
 
-orderRouter.get('/user/:orderId', (req, res) => {
-    res.send("Hello World From Orders")
-})
+    router.get('/admin/:orderId', (req, res) => {
+        const respone = orderControllers.getRestaurantOrderById();
 
-orderRouter.post('/:restaurantId/user', (req, res) => {
-    res.send("Hello World From Orders")
-})
+        res.send(respone)
+    })
 
-orderRouter.patch('/cashier/:orderId', (req, res) => {
-    res.send("Hello World From Orders")
-})
+    router.get('/user', (req, res) => {
+        const respone = orderControllers.getAllUserOrders();
+
+        res.send(respone)
+    })
+
+    router.get('/user/:orderId', (req, res) => {
+        const respone = orderControllers.getUserOrderById();
+
+        res.send(respone)
+    })
+
+    router.post('/:restaurantId/user', (req, res) => {
+        const respone = orderControllers.createNewOrder();
+
+        res.send(respone)
+    })
+
+    router.patch('/cashier/:orderId', (req, res) => {
+        const respone = orderControllers.updateOrderStatus();
+
+        res.send(respone)
+    })
+
+    return router;
+}
 
 module.exports = orderRouter;
