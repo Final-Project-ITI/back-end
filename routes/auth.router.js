@@ -11,6 +11,13 @@ const authRouter = (authController) => {
     }
   ));
 
+  router.post("/register", asyncHandler(
+    async (req, res) => {
+      const respones = await authController.register(req.body);
+      res.status(respones.statusCode).send(respones.data);
+    }
+  ));
+
 
   return router;
 };

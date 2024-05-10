@@ -1,3 +1,6 @@
+const UserModel = require("../models/user.model");
+const UserTypesModel=require("../models/userTypes.model")
+
 class AuthService {
   constructor() { }
 
@@ -28,6 +31,20 @@ class AuthService {
     if (user) return user;
 
     return null;
+  }
+  async addUser(userInfo) {
+    try {
+      return await UserModel.create(userInfo);
+    } catch (error) {
+      return error;
+    }
+  }
+  async getType(_id) {
+    try {
+      return await UserTypesModel.find({_id});
+    } catch (error) {
+      return error;
+    }
   }
 }
 module.exports = AuthService;

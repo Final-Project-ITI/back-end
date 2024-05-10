@@ -31,7 +31,7 @@ const cartService = new CartService();
 const orderService = new OrderService();
 const productService = new ProductService();
 
-const AuthController = require("./controllers/auth.coteoller");
+const AuthController = require("./controllers/auth.controller.js");
 const RestaurantController = require("./controllers/restaurant.controller.js");
 const CartController = require("./controllers/cart.controller.js");
 const OrderController = require('./controllers/orders.controller');
