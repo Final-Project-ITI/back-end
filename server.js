@@ -67,4 +67,3 @@ app.use('/api/v1', mainRouter);
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
-console.log("");

@@ -32,6 +32,26 @@ class RestaurantController {
 
     return this.response;
   }
+
+  async getAllRestaurants() {
+    const restaurants = await this.restaurantService.getAllRestaurants();
+    if (!restaurants) {
+      this.response = {
+        statusCode: 404,
+        data: {
+          message: "restaurants not found",
+        },
+      };
+      return this.response;
+    }
+
+    this.response = {
+      statusCode: 200,
+      data: restaurants,
+    };
+
+    return this.response;
+  }
   async addRestaurant(restaurantInfo) {
     const { name, decription, icon } = restaurantInfo;
     //Add new restaurant information to the database.
