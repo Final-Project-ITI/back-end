@@ -28,17 +28,17 @@ const userSchema = mongoose.Schema({
         default: null,
         maxLength: 255,
     },
-    TypeID:{
+    typeID:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "UserTypesModel",
         default:"663dfebba2ede177e6885e42"
     },
-    ResturantID:{
+    resturantID:{
         type: String,
         default: null,
         maxLength: 255,
     },
-    SupplyChainID:{
+    supplyChainID:{
         type: String,
         default: null,
         maxLength: 255,       

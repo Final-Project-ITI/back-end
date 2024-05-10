@@ -2,10 +2,14 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 
 class AuthMiddleware {
+    authService;
 
-    constructor() { }
 
-    user(authService) {
+    constructor(authService) {
+        this.authService=authService
+     }
+
+    user() {
         return async (req, res, next) => {
             const token = req.headers["jwt"];
 
@@ -15,7 +19,7 @@ class AuthMiddleware {
 
             const { _id } = payload;
 
-            const user = await authService.getUser({ _id });
+            const user = await this.authService.getUser({ _id });
 
             if (!user) return res.status(401).send({ message: "unauthorized user" });
 
@@ -24,7 +28,7 @@ class AuthMiddleware {
             next();
         }
     }
-    admin(authService){
+    admin(){
         return async (req, res, next) => {
             const token = req.headers["jwt"];
 
@@ -34,7 +38,7 @@ class AuthMiddleware {
 
             const { _id } = payload;
 
-            const user = await authService.getUser({ _id });
+            const user = await this.authService.getUser({ _id });
 
             if (!user) return res.status(401).send({ message: "unauthorized user" });
 

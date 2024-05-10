@@ -39,7 +39,7 @@ const ProductController = require("./controllers/product.controller");
 
 
 const authController = new AuthController(authService);
-const restaurantController = new RestaurantController(restaurantService);
+const restaurantController = new RestaurantController(restaurantService,authService);
 const cartController = new CartController(cartService);
 const orderController = new OrderController(orderService);
 const productController = new ProductController(productService);
@@ -47,11 +47,11 @@ const productController = new ProductController(productService);
 
 const AuthMiddleware = require("./middlewares/auth.middleware");
 
-const authMiddleware = new AuthMiddleware();
+const authMiddleware = new AuthMiddleware(authService);
 
 
 mainRouter.use("/cart", cartRouter(cartController));
-mainRouter.use("/restaurant", restaurantRouter(restaurantController));
+mainRouter.use("/restaurant", restaurantRouter(restaurantController,authMiddleware));
 mainRouter.use('/orders', orderRouter(orderController));
 mainRouter.use('/authentication', authRouter(authController));
 mainRouter.use("/products", productRouter(productController));
