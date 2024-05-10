@@ -1,7 +1,10 @@
 class ProductController {
   productServices;
-  constructor(_productServices) {
+  restaurantService;
+
+  constructor(_productServices,_restaurantService  ) {
     this.productServices = _productServices;
+    this.restaurantService=_restaurantService;
   }
 
   getAllProducts(restaurantId) {
@@ -10,8 +13,9 @@ class ProductController {
   getProductsById(restaurantId, productId) {
     return this.productServices.getProductsById(restaurantId, productId);
   }
-  createProduct() {
-    return this.productServices.createProduct();
+  async createProduct(productInfo) {
+    const product= this.productServices.createProduct(productInfo);
+    return { statusCode: 200, data: product };
   }
   updateProduct() {
     return this.productServices.updateProduct();

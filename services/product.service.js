@@ -1,3 +1,5 @@
+const ProductModel = require("../models/product.model");
+
 class ProductService {
   constructor() {
     this.dummyData = {
@@ -91,8 +93,8 @@ class ProductService {
     };
     return this.response;
   }
-  createProduct() {
-    return "created";
+  async createProduct(productInfo) {
+    return await ProductModel.create(productInfo);
   }
   updateProduct() {
     return "updated";

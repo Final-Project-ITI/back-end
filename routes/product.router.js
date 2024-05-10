@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const productRouter = (productControllers) => {
+const productRouter = (productControllers,authMiddleware) => {
   function authenticateUser(token) {
     // Replace this with your actual authentication mechanism
     // Here, we are just checking if the token exists
@@ -35,8 +35,8 @@ const productRouter = (productControllers) => {
     res.status(response.statusCode).send(response.data);
   });
 
-  router.post("/admin", (req, res) => {
-    const respone = productControllers.createProduct();
+  router.post("/admin",authMiddleware.restaurantAdmin(),(req, res) => {
+    const respone = productControllers.createProduct(req.body);
 
     res.send(respone);
   });
