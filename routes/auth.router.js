@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require('express-async-handler')
 
-const authRouter = (authController, authMiddleware, authService) => {
+const authRouter = (authController) => {
   router.post("/login", asyncHandler(
     async (req, res) => {
       const respones = await authController.login(req.body);
@@ -11,12 +11,6 @@ const authRouter = (authController, authMiddleware, authService) => {
     }
   ));
 
-
-  router.get("/test", authMiddleware.user(authService), (req, res) => {
-    console.log(req.auth);
-
-    res.send("Test Middleware");
-  });
 
   return router;
 };
