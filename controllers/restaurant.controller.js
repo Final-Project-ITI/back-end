@@ -28,6 +28,10 @@ class RestaurantController {
 
         return this.response;
     }
+    async addRestaurant(restaurantInfo) {
+        
+
+    }
 }
 
 module.exports = RestaurantController

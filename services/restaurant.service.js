@@ -1,3 +1,5 @@
+const RestaurantModel = require("../models/resturant.model");
+
 class RestaurantService {
     restaurants = [
         {
@@ -77,6 +79,14 @@ class RestaurantService {
 
         return restaurants;
     }
+
+    async addRestaurant(restaurantInfo) {
+        try {
+          return await RestaurantModel.create(restaurantInfo );
+        } catch (error) {
+          return error;
+        }
+      }
 }
 
 module.exports = RestaurantService

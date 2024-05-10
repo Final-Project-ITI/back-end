@@ -8,6 +8,10 @@ const restaurantRouter = (restaurantController) => {
     const response = await restaurantController.getRestaurantsByName(req.params.name);
     res.status(response.statusCode).send(response.data);
   }));
+  router.post("/authorization/register", asyncHandler(async (req, res) => {
+    const response = await restaurantController.addRestaurant(req.body);
+    res.status(response.statusCode).send(response.data);
+  }));
 
   return router;
 };
