@@ -1,4 +1,4 @@
-const RestaurantModel = require("../models/resturant.model");
+const RestaurantModel = require("../models/restaurant.model");
 
 class RestaurantService {
   restaurants = [

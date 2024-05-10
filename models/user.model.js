@@ -35,9 +35,8 @@ const userSchema = mongoose.Schema({
         default: "663dfebba2ede177e6885e42"
     },
     resturantID:{
-        type: String,
-        default: null,
-        maxLength: 255,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "RestaurantModel",
     },
     supplyChainID:{
         type: String,
