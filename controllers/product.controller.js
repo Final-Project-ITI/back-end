@@ -4,11 +4,11 @@ class ProductController {
     this.productServices = _productServices;
   }
 
-  getAllProducts() {
-    return this.productServices.getAllProducts();
+  getAllProducts(restaurantId) {
+    return this.productServices.getAllProducts(restaurantId);
   }
-  getUserProductsById() {
-    return this.productServices.getUserProductsById();
+  getProductsById(restaurantId, productId) {
+    return this.productServices.getProductsById(restaurantId, productId);
   }
   createProduct() {
     return this.productServices.createProduct();
