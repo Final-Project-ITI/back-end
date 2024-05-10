@@ -1,10 +1,33 @@
-class RestaurantController{
-    constructor(restaurantService){
-this.restaurantService=restaurantService
+class RestaurantController {
+    restaurantService;
+    response = {
+        statusCode: 0,
+        data: {}
     }
-    getRestaurants(){
-        return this.restaurantService.getCartItems()
+    constructor(restaurantService) {
+        this.restaurantService = restaurantService
+    }
+
+    async getRestaurantsByName(name) {
+        const restaurants = await this.restaurantService.getRestaurantsByName(name.toLowerCase());
+
+        if (!restaurants.length) {
+            this.response = {
+                statusCode: 404,
+                data: {
+                    message: "restaurants not found"
+                }
+            }
+            return this.response;
+        }
+
+        this.response = {
+            statusCode: 200,
+            data: restaurants
+        }
+
+        return this.response;
     }
 }
 
-module.exports=RestaurantController
+module.exports = RestaurantController

@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const asyncHandler = require('express-async-handler');
 
 const restaurantRouter = (restaurantController) => {
-  router.get("/", (req, res) => {
-    const response= restaurantController.getRestaurants()
-    res.send(response);
-  });
+
+  router.get("/search/:name", asyncHandler(async (req, res) => {
+    const response = await restaurantController.getRestaurantsByName(req.params.name);
+    res.status(response.statusCode).send(response.data);
+  }));
 
   return router;
 };
