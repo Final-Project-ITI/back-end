@@ -1,11 +1,11 @@
-class CartController{
-    constructor(cartService){
-        this.cartService=cartService
+class CartController {
+    constructor(cartService) {
+        this.cartService = cartService
 
     }
-    getCartItems(){
+    getCartItems() {
         return this.cartService.getCartItems()
     }
 }
 
-module.exports=CartController
+module.exports = CartController
