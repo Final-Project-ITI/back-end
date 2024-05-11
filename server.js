@@ -1,14 +1,12 @@
 const express = require("express");
 
-const bodyParser = require('body-parser')
-
+const bodyParser = require("body-parser");
 
 const mainRouter = express.Router();
 const app = express();
 const port = 3000;
 
 const database = require("./database/database");
-
 
 database();
 app.use(express.json());
@@ -34,35 +32,35 @@ const productService = new ProductService();
 const AuthController = require("./controllers/auth.controller.js");
 const RestaurantController = require("./controllers/restaurant.controller.js");
 const CartController = require("./controllers/cart.controller.js");
-const OrderController = require('./controllers/orders.controller');
+const OrderController = require("./controllers/orders.controller");
 const ProductController = require("./controllers/product.controller");
 
-
 const authController = new AuthController(authService);
-const restaurantController = new RestaurantController(restaurantService);
+const restaurantController = new RestaurantController(
+  restaurantService,
+  authService
+);
 const cartController = new CartController(cartService);
 const orderController = new OrderController(orderService);
-const productController = new ProductController(productService);
-
+const productController = new ProductController(
+  productService,
+  restaurantService
+);
 
 const AuthMiddleware = require("./middlewares/auth.middleware");
 
-const authMiddleware = new AuthMiddleware();
-
+const authMiddleware = new AuthMiddleware(authService);
 
 mainRouter.use("/cart", cartRouter(cartController));
-mainRouter.use("/restaurant", restaurantRouter(restaurantController));
-mainRouter.use('/orders', orderRouter(orderController));
-mainRouter.use('/authentication', authRouter(authController));
-mainRouter.use("/products", productRouter(productController));
+mainRouter.use(
+  "/restaurant",
+  restaurantRouter(restaurantController, authMiddleware)
+);
+mainRouter.use("/orders", orderRouter(orderController));
+mainRouter.use("/authentication", authRouter(authController));
+mainRouter.use("/products", productRouter(productController, authMiddleware));
 
-
-
-
-
-
-app.use('/api/v1', mainRouter);
-
+app.use("/api/v1", mainRouter);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

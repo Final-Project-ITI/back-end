@@ -1,23 +1,62 @@
 class ProductController {
+  restaurantService;
   productServices;
-  constructor(_productServices) {
+  response = {
+    statusCode: 0,
+    data: {},
+  };
+
+  constructor(_productServices, _restaurantService) {
     this.productServices = _productServices;
+    this.restaurantService = _restaurantService;
   }
 
-  getAllProducts() {
-    return this.productServices.getAllProducts();
+  getAllProducts(restaurantId) {
+    return this.productServices.getAllProducts(restaurantId);
   }
-  getUserProductsById() {
-    return this.productServices.getUserProductsById();
+  getProductsById(restaurantId, productId) {
+    return this.productServices.getProductsById(restaurantId, productId);
   }
-  createProduct() {
-    return this.productServices.createProduct();
+  async createProduct(productInfo) {
+    const product = this.productServices.createProduct(productInfo);
+    return { statusCode: 200, data: product };
   }
-  updateProduct() {
-    return this.productServices.updateProduct();
+  async updateProduct(productId, updatedProductData) {
+    try {
+      const updatedProduct = await this.productServices.updateProduct(
+        productId,
+        updatedProductData
+      );
+      return {
+        statusCode: 200,
+        data: { message: "Successfully Updated the product" },
+      };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: { message: error.message },
+      };
+    }
   }
-  deleteProduct() {
-    return this.productServices.deleteProduct();
+  async deleteProduct(productId) {
+    try {
+      const isDeleted = await this.productServices.deleteProduct(productId);
+      if (isDeleted) {
+        return {
+          statusCode: 200,
+          data: { message: "Successfully Updated the product" },
+        };
+      }
+      return {
+        statusCode: 200,
+        data: { message: "Successfully deleted the product" },
+      };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: { message: error.message },
+      };
+    }
   }
 }
 

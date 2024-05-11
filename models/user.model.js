@@ -1,4 +1,5 @@
 const { mongoose } = require("mongoose");
+
 const userSchema = mongoose.Schema({
     fullName: {
         type: String,
@@ -20,30 +21,29 @@ const userSchema = mongoose.Schema({
         maxLength: 1024,
     },
     createdOn: {
-      type: Date,
-      default: Date.now,
+        type: Date,
+        default: Date.now,
     },
     image: {
         type: String,
         default: null,
         maxLength: 255,
     },
-    TypeID:{
+    typeID:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "UserTypesModel",
-        default:"663dfebba2ede177e6885e42"
+        default: "663dfebba2ede177e6885e42"
     },
-    ResturantID:{
+    resturantID:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "RestaurantModel",
+    },
+    supplyChainID:{
         type: String,
         default: null,
         maxLength: 255,
-    },
-    SupplyChainID:{
-        type: String,
-        default: null,
-        maxLength: 255,       
-
     }
 });
+
 const UserModel = mongoose.model("User", userSchema);
 module.exports = UserModel;
