@@ -2,6 +2,7 @@ const express = require("express");
 
 const app = express();
 const mainRouter = express.Router();
+app.use(express.json());
 
 const port = 3000;
 

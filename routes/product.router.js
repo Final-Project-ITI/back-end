@@ -20,16 +20,28 @@ const productRouter = (productControllers) => {
     res.send(respone);
   });
 
-  router.patch("/admin/:productId", (req, res) => {
-    const respone = productControllers.updateProduct();
-
-    res.send(respone);
+  router.patch("/admin/:productId", async (req, res, next) => {
+    try {
+      const updatedProductData = req.body;
+      const response = await productControllers.updateProduct(
+        req.params.productId,
+        updatedProductData
+      );
+      res.status(response.statusCode).send(response.data);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  router.delete("/admin/:productId", (req, res) => {
-    const respone = productControllers.deleteProduct();
-
-    res.send(respone);
+  router.delete("/admin/:productId", async (req, res, next) => {
+    try {
+      const respone = await productControllers.deleteProduct(
+        req.params.productId
+      );
+      res.status(respone.statusCode).send(respone.data);
+    } catch (error) {
+      next(error);
+    }
   });
 
   return router;
