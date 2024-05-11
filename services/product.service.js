@@ -1,6 +1,7 @@
 const ApiError = require("../utils/error");
 
 class ProductService {
+  constructor() {}
   products = [
     {
       id: "1",
@@ -84,16 +85,54 @@ class ProductService {
     },
   ];
 
-  constructor() {}
+  response = {
+    statusCode: 0,
+    data: {},
+  };
+  getAllProducts(restaurantId) {
+    const restaurant = this.dummyData.restaurants[restaurantId];
+    if (!restaurant) {
+      this.response = {
+        statusCode: 404,
+        data: {
+          message: "restaurants not found",
+        },
+      };
+      return this.response;
+    }
+    const products = restaurant.products.map(
+      (productId) => this.dummyData.products[productId]
+    );
+    this.response = {
+      statusCode: 200,
+      data: products,
+    };
 
-  getAllProducts() {
-    return "All Products For The Website Owner";
+    return this.response;
   }
-  getUserProductsById() {
-    return "Products For The User";
+  getProductsById(restaurantId, productId) {
+    const restaurant = this.dummyData.restaurants[restaurantId];
+    const product = this.dummyData.products[productId];
+    if (!restaurant || !product) {
+      this.response = { ...this.response, statusCode: 404 };
+      delete this.response.data;
+      this.response.data = { message: "Not Found" };
+      return this.response;
+    }
+
+    if (!restaurant.products.includes(productId)) {
+      this.response.statusCode = 404;
+      this.response.data = { message: "Product not found in the restaurant" };
+      return this.response;
+    }
+    this.response = {
+      statusCode: 200,
+      data: product,
+    };
+    return this.response;
   }
-  createProduct() {
-    return "created";
+  async createProduct(productInfo) {
+    return await ProductModel.create(productInfo);
   }
 
   async updateProduct(productId, updatedProductData) {
