@@ -1,7 +1,5 @@
 const express = require("express");
 
-const bodyParser = require("body-parser");
-
 const mainRouter = express.Router();
 const app = express();
 const port = 3000;
@@ -36,16 +34,10 @@ const OrderController = require("./controllers/orders.controller");
 const ProductController = require("./controllers/product.controller");
 
 const authController = new AuthController(authService);
-const restaurantController = new RestaurantController(
-  restaurantService,
-  authService
-);
+const restaurantController = new RestaurantController(restaurantService, authService);
 const cartController = new CartController(cartService);
 const orderController = new OrderController(orderService);
-const productController = new ProductController(
-  productService,
-  restaurantService
-);
+const productController = new ProductController(productService, restaurantService, authService);
 
 const AuthMiddleware = require("./middlewares/auth.middleware");
 
@@ -58,7 +50,7 @@ mainRouter.use(
 );
 mainRouter.use("/orders", orderRouter(orderController));
 mainRouter.use("/authentication", authRouter(authController));
-mainRouter.use("/products", productRouter(productController, authMiddleware));
+mainRouter.use("/products", productRouter(productController, authMiddleware, authService));
 
 app.use("/api/v1", mainRouter);
 

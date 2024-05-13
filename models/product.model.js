@@ -20,7 +20,7 @@ const productSchema = mongoose.Schema({
     default: null,
     maxLength: 255,
   },
-  resturantID: {
+  restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "RestaurantModel",
   },

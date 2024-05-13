@@ -1,50 +1,43 @@
 const express = require("express");
 const router = express.Router();
+const asyncHandler = require('express-async-handler');
 
-const productRouter = (productControllers,authMiddleware) => {
-  function authenticateUser(token) {
-    // Replace this with your actual authentication mechanism
-    // Here, we are just checking if the token exists
-    return !!token;
-  }
+const productRouter = (productController, authMiddleware) => {
+  router.get("/:restaurantId/products",
+    authMiddleware.restaurantAdmin(productController.authService),
+    asyncHandler((req, res) => {
+      const restaurantId = req.params.restaurantId;
 
-  router.get("/:restaurantId/products", (req, res) => {
-    const authHeader = req.headers["authorization"];
+      const response = productController.getAllProducts(restaurantId);
+      res.status(response.statusCode).send(response.data);
+    }));
 
-    if (!authHeader || !authenticateUser(authHeader)) {
-      return res.status(401).send({ error: "Unauthorized access" });
-    }
+  router.get(
+    "/:restaurantId/:productId",
+    authMiddleware.restaurantAdmin(productController.authService),
+    (req, res) => {
+      const { restaurantId, productId } = req.params;
 
-    const restaurantId = req.params.restaurantId;
-    const response = productControllers.getAllProducts(restaurantId);
-    res.status(response.statusCode).send(response.data);
-  });
+      const response = productController.getProductsById(
+        restaurantId,
+        productId
+      );
 
-  router.get("/:restaurantId/:productId", (req, res) => {
-    const authHeader = req.headers["authorization"];
+      res.status(response.statusCode).send(response.data);
+    });
 
-    if (!authHeader || !authenticateUser(authHeader)) {
-      return res.status(401).send({ error: "Unauthorized access" });
-    }
-    const { restaurantId, productId } = req.params;
-    const response = productControllers.getProductsById(
-      restaurantId,
-      productId
-    );
+  router.post("/admin",
+    authMiddleware.restaurantAdmin(productController.authService),
+    (req, res) => {
+      const response = productController.createProduct(req.body);
 
-    res.status(response.statusCode).send(response.data);
-  });
-
-  router.post("/admin",authMiddleware.restaurantAdmin(),(req, res) => {
-    const respone = productControllers.createProduct(req.body);
-
-    res.send(respone);
-  });
+      res.send(response);
+    });
 
   router.patch("/admin/:productId", async (req, res, next) => {
     try {
       const updatedProductData = req.body;
-      const response = await productControllers.updateProduct(
+      const response = await productController.updateProduct(
         req.params.productId,
         updatedProductData
       );
@@ -56,10 +49,10 @@ const productRouter = (productControllers,authMiddleware) => {
 
   router.delete("/admin/:productId", async (req, res, next) => {
     try {
-      const respone = await productControllers.deleteProduct(
+      const response = await productController.deleteProduct(
         req.params.productId
       );
-      res.status(respone.statusCode).send(respone.data);
+      res.status(response.statusCode).send(response.data);
     } catch (error) {
       next(error);
     }

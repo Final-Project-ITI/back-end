@@ -1,7 +1,8 @@
 const ApiError = require("../utils/error");
+const ProductModel = require("../models/product.model");
 
 class ProductService {
-  constructor() {}
+  constructor() { }
   products = [
     {
       id: "1",
@@ -89,7 +90,8 @@ class ProductService {
     statusCode: 0,
     data: {},
   };
-  getAllProducts(restaurantId) {
+
+  async getAllProducts(restaurantId) {
     const restaurant = this.dummyData.restaurants[restaurantId];
     if (!restaurant) {
       this.response = {
@@ -110,7 +112,8 @@ class ProductService {
 
     return this.response;
   }
-  getProductsById(restaurantId, productId) {
+
+  async getProductsById(restaurantId, productId) {
     const restaurant = this.dummyData.restaurants[restaurantId];
     const product = this.dummyData.products[productId];
     if (!restaurant || !product) {
@@ -131,6 +134,7 @@ class ProductService {
     };
     return this.response;
   }
+
   async createProduct(productInfo) {
     return await ProductModel.create(productInfo);
   }

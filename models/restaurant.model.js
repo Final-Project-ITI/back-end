@@ -6,15 +6,15 @@ const restaurantSchema = mongoose.Schema({
         minLength: 3,
         maxLength: 50,
     },
-    decription: {
+    description: {
         type: String,
         required: true,
         minLength: 3,
         maxLength: 50,
     },
     createdOn: {
-      type: Date,
-      default: Date.now,
+        type: Date,
+        default: Date.now,
     },
     icon: {
         type: String,

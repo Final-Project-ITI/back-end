@@ -83,16 +83,16 @@ class RestaurantService {
       res.name.toLowerCase().includes(name)
     );
 
-        return restaurants;
-    }
+    return restaurants;
+  }
 
-    async addRestaurant(restaurantInfo) {
-        try {
-          return await RestaurantModel.create(restaurantInfo );
-        } catch (error) {
-          return error;
-        }
-      }
+  async addRestaurant(restaurantInfo) {
+    try {
+      return await RestaurantModel.create(restaurantInfo);
+    } catch (error) {
+      return error;
+    }
+  }
 
   getAllRestaurants() {
     return this.restaurants;

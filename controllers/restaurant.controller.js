@@ -5,9 +5,9 @@ class RestaurantController {
     statusCode: 0,
     data: {},
   };
-  constructor(restaurantService, authService) {
-    this.restaurantService = restaurantService;
-    this.authService = authService;
+  constructor(_restaurantService, _authService) {
+    this.restaurantService = _restaurantService;
+    this.authService = _authService;
   }
 
   async getRestaurantsByName(name) {
@@ -52,28 +52,28 @@ class RestaurantController {
 
     return this.response;
   }
+
   async addRestaurant(restaurantInfo) {
-    const { name, decription, icon } = restaurantInfo;
+    const { name, description, icon } = restaurantInfo;
     //Add new restaurant information to the database.
-    const restaurant = await this.restaurantService.addRestaurant({ name,decription,icon });
+
+    const restaurant = await this.restaurantService.addRestaurant({ name, description, icon });
 
     //assign restaurant to user
-    let user = await this.authService.getUser({ _id:restaurantInfo.userId });
-    
-    if (!user ) {
-      this.respones = {
+    let user = await this.authService.getUser({ _id: restaurantInfo.userId });
+
+    if (!user) {
+      this.response = {
         statusCode: 401,
         data: { message: "user not found " },
       };
 
-      return this.respones;
+      return this.response;
     }
-    user = await this.authService.updateUser({ _id:restaurantInfo.userId },{typeID:"663e9b24a2ede177e6885e45",resturantID:restaurant._id});
 
+    user = await this.authService.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", resturantId: restaurant._id });
 
-
-
-    return { statusCode: 200, data: {...restaurant,...user }}
+    return { statusCode: 200, data: { ...restaurant, ...user } }
   }
 }
 

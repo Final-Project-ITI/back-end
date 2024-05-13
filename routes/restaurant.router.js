@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
-const restaurantRouter = (restaurantController,authMiddleware) => {
+const restaurantRouter = (restaurantController, authMiddleware) => {
 
   router.get(
     "/search/:name",
@@ -13,6 +13,7 @@ const restaurantRouter = (restaurantController,authMiddleware) => {
       res.status(response.statusCode).send(response.data);
     })
   );
+
   router.get(
     "/",
     asyncHandler(async (req, res) => {
@@ -20,10 +21,14 @@ const restaurantRouter = (restaurantController,authMiddleware) => {
       res.status(response.statusCode).send(response.data);
     })
   );
-  router.post("/authorization/register",authMiddleware.admin(),asyncHandler(async (req, res) => {
-    const response = await restaurantController.addRestaurant(req.body);
-    res.status(response.statusCode).send(response.data);
-  }));
+
+  router.post("/authorization/register",
+    authMiddleware.admin(restaurantController.authService),
+    asyncHandler(async (req, res) => {
+      const response = await restaurantController.addRestaurant(req.body);
+
+      res.status(response.statusCode).send(response.data);
+    }));
 
   return router;
 };
