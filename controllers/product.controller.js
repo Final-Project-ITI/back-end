@@ -11,11 +11,33 @@ class ProductController {
     this.restaurantService = _restaurantService;
   }
 
-  getAllProducts(restaurantId) {
-    return this.productServices.getAllProducts(restaurantId);
+  async getAllProducts(restaurantId) {
+    try {
+      const products = await this.productServices.getAllProducts(restaurantId);
+      if (!products || products.length === 0) {
+        return { statusCode: 404, data: { message: "Products not found" } };
+      }
+      return { statusCode: 200, data: products };
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
   }
-  getProductsById(restaurantId, productId) {
-    return this.productServices.getProductsById(restaurantId, productId);
+
+  async getProductsById(restaurantId, productId) {
+    try {
+      const product = await this.productServices.getProductsById(
+        restaurantId,
+        productId
+      );
+      if (!product) {
+        return { statusCode: 404, data: { message: "Product not found" } };
+      }
+      return { statusCode: 200, data: product };
+    } catch (error) {
+      console.error("Error fetching product by ID:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
   }
   async createProduct(productInfo) {
     const product = this.productServices.createProduct(productInfo);

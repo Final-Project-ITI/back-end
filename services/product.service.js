@@ -1,4 +1,5 @@
 const ApiError = require("../utils/error");
+const ProductModel = require("../models/product.model");
 
 class ProductService {
   constructor() {}
@@ -85,51 +86,19 @@ class ProductService {
     },
   ];
 
-  response = {
-    statusCode: 0,
-    data: {},
-  };
-  getAllProducts(restaurantId) {
-    const restaurant = this.dummyData.restaurants[restaurantId];
-    if (!restaurant) {
-      this.response = {
-        statusCode: 404,
-        data: {
-          message: "restaurants not found",
-        },
-      };
-      return this.response;
-    }
-    const products = restaurant.products.map(
-      (productId) => this.dummyData.products[productId]
+  async getAllProducts(restaurantId) {
+    const products = this.products.filter(
+      (product) => product.restaurantID === restaurantId
     );
-    this.response = {
-      statusCode: 200,
-      data: products,
-    };
-
-    return this.response;
+    return products;
   }
-  getProductsById(restaurantId, productId) {
-    const restaurant = this.dummyData.restaurants[restaurantId];
-    const product = this.dummyData.products[productId];
-    if (!restaurant || !product) {
-      this.response = { ...this.response, statusCode: 404 };
-      delete this.response.data;
-      this.response.data = { message: "Not Found" };
-      return this.response;
-    }
 
-    if (!restaurant.products.includes(productId)) {
-      this.response.statusCode = 404;
-      this.response.data = { message: "Product not found in the restaurant" };
-      return this.response;
-    }
-    this.response = {
-      statusCode: 200,
-      data: product,
-    };
-    return this.response;
+  async getProductsById(restaurantId, productId) {
+    const product = this.products.find(
+      (product) =>
+        product.id === productId && product.restaurantID === restaurantId
+    );
+    return product;
   }
   async createProduct(productInfo) {
     return await ProductModel.create(productInfo);
