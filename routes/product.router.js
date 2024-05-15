@@ -3,28 +3,27 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
 const productRouter = (productController, authMiddleware) => {
-  router.get("/:restaurantId/products",
-    authMiddleware.restaurantAdmin(productController.authService),
-    asyncHandler((req, res) => {
+  router.get("/:restaurantId",
+    asyncHandler(async (req, res) => {
       const restaurantId = req.params.restaurantId;
 
-      const response = productController.getAllProducts(restaurantId);
+      const response = await productController.getAllProducts(restaurantId);
       res.status(response.statusCode).send(response.data);
     }));
 
   router.get(
     "/:restaurantId/:productId",
-    authMiddleware.restaurantAdmin(productController.authService),
-    (req, res) => {
+    asyncHandler(async (req, res) => {
       const { restaurantId, productId } = req.params;
 
-      const response = productController.getProductsById(
+      const response = await productController.getRestaurantsProductsById(
         restaurantId,
         productId
       );
 
       res.status(response.statusCode).send(response.data);
-    });
+    })
+  );
 
   router.post("/admin",
     authMiddleware.restaurantAdmin(productController.authService),

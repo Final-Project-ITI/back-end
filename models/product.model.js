@@ -22,7 +22,7 @@ const productSchema = mongoose.Schema({
   },
   restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "RestaurantModel",
+    ref: "Restaurant",
   },
 });
 const ProductModel = mongoose.model("Product", productSchema);

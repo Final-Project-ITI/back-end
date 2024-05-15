@@ -9,12 +9,22 @@ class ProductController {
     this.authService = _authService;
   }
 
-  getAllProducts(restaurantId) {
-    return this.productServices.getAllProducts(restaurantId);
+  async getAllProducts(restaurantId) {
+    const products = await this.productServices.getAllProducts(restaurantId);
+
+    return {
+      statusCode: 200,
+      data: products,
+    };
   }
 
-  getProductsById(restaurantId, productId) {
-    return this.productServices.getProductsById(restaurantId, productId);
+  async getRestaurantsProductsById(restaurantId, productId) {
+    const product = await this.productServices.getRestaurantsProductsById(restaurantId, productId);
+
+    return {
+      statusCode: 200,
+      data: product,
+    };
   }
 
   async createProduct(productInfo) {

@@ -1,10 +1,101 @@
 class CartController {
-    constructor(cartService) {
-        this.cartService = cartService
+    cartService;
+    itemService;
+    authService;
+    productService;
+
+    constructor(_cartService, _itemService, _productService, _authService) {
+        this.cartService = _cartService;
+        this.itemService = _itemService;
+        this.productService = _productService;
+        this.authService = _authService;
+    }
+
+    getUserItems() {
+        const items = [];
 
     }
-    getCartItems() {
-        return this.cartService.getCartItems()
+
+    async addItemToCart(itemInfo, userId) {
+        const { productId, quantity } = itemInfo;
+
+        /* Checks if the product exists */
+
+        const product = await this.productService.getProductsById(productId);
+
+        if (!product) {
+            return {
+                statusCode: 400,
+                data: { message: 'product not found' }
+            }
+        }
+
+        /* Checks if the number of quantities exceeded the food item limit & Creating the item*/
+
+        // if (quantity && quantity > product.limit) {
+        //     return {
+        //         statusCode: 400,
+        //         data: { message: 'quantity exceeded the product limit' }
+        //     }
+        // }
+
+        /* Checks if there is a cart */
+
+        const cart = await this.cartService.getUserCart(userId);
+
+        if (!cart) {
+            const item = await this.itemService.createItem(itemInfo)
+
+            await this.createCart(item, userId);
+
+            return {
+                statusCode: 200,
+                data: 'Cart Created'
+            }
+        } else {
+            const item = cart.itemsIds.find((item) => {
+                return item.productId == productId;
+            })
+
+            if (item) {
+                await this.itemService.updateUserItemById({ _id: item._id }, { quantity: ++item.quantity });
+            } else {
+                const item = await this.itemService.createItem(itemInfo)
+
+                cart.itemsIds.push(item);
+
+                await this.cartService.updateUserCart(userId, cart);
+            }
+
+            return {
+                statusCode: 200,
+                data: cart
+            }
+        }
+
+    }
+
+    removeItemFromCart() {
+
+    }
+
+    updateItem() {
+
+    }
+
+    getUserCart(cartId) {
+        return this.cartService.getUserCart(cartId);
+    }
+
+    async createItem(itemInfo) {
+
+    }
+
+    async createCart(itemId, userId) {
+        await this.cartService.createCart({
+            itemsIds: [itemId],
+            userId: userId
+        });
     }
 }
 

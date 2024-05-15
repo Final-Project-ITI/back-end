@@ -31,12 +31,12 @@ const userSchema = mongoose.Schema({
     },
     typeId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "UserTypesModel",
+        ref: "UserTypes",
         default: "663dfebba2ede177e6885e42"
     },
     resturantId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "RestaurantModel",
+        ref: "Restaurant",
         default: null
     },
     supplyChainId: {
