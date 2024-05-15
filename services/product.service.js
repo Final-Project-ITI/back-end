@@ -87,19 +87,28 @@ class ProductService {
   ];
 
   async getAllProducts(restaurantId) {
-    const products = this.products.filter(
-      (product) => product.restaurantID === restaurantId
-    );
-    return products;
+    try {
+      const products = await ProductModel.find({ restaurantID: restaurantId });
+      return products;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      throw new ApiError("Error fetching products", 500);
+    }
   }
 
   async getProductsById(restaurantId, productId) {
-    const product = this.products.find(
-      (product) =>
-        product.id === productId && product.restaurantID === restaurantId
-    );
-    return product;
+    try {
+      const product = await ProductModel.findOne({
+        _id: productId,
+        restaurantID: restaurantId,
+      });
+      return product;
+    } catch (error) {
+      console.error("Error fetching product by ID:", error);
+      throw new ApiError("Error fetching product by ID", 500);
+    }
   }
+
   async createProduct(productInfo) {
     return await ProductModel.create(productInfo);
   }
