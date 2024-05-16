@@ -1,40 +1,46 @@
 const express = require("express");
 const router = express.Router();
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require("express-async-handler");
 
 const cartRouter = (cartController, authMiddleware) => {
   router.get(
     "/",
     authMiddleware.user(cartController.authService),
-    asyncHandler(
-      (req, res) => {
-        const response = cartController.getCartItems()
-        res.status(response.statusCode).send(response.data);
-      }
-    ));
+    asyncHandler((req, res) => {
+      const response = cartController.getCartItems();
+      res.status(response.statusCode).send(response.data);
+    })
+  );
 
-  router.post("/",
+  router.post(
+    "/",
     authMiddleware.user(cartController.authService),
-    asyncHandler(
-      async (req, res) => {
-        const response = await cartController.addItemToCart(req.body, req.auth._id);
+    asyncHandler(async (req, res) => {
+      const response = await cartController.addItemToCart(
+        req.body,
+        req.auth._id
+      );
 
-        res.status(response.statusCode).send(response.data);
-      }
-    ));
+      res.status(response.statusCode).send(response.data);
+    })
+  );
 
-  router.patch("/", (req, res) => {
-    const response = cartController.getCartItems()
-    res.status(response.statusCode).send(response.data);
-  });
+  router.patch(
+    "/",
+    authMiddleware.user(cartController.authService),
+    (req, res) => {
+      const response = cartController.addItemToCart(req.body,req.auth._id);
+      res.status(response.statusCode).send(response.data);
+    }
+  );
 
   router.delete("/", (req, res) => {
-    const response = cartController.getCartItems()
+    const response = cartController.getCartItems();
     res.status(response.statusCode).send(response.data);
   });
 
   router.delete("/clear", (req, res) => {
-    const response = cartController.getCartItems()
+    const response = cartController.getCartItems();
     res.status(response.statusCode).send(response.data);
   });
   return router;
