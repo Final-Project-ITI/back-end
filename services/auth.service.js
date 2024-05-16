@@ -1,5 +1,5 @@
 const UserModel = require("../models/user.model");
-const UserTypesModel = require("../models/userTypes.model")
+const UserTypesModel = require("../models/userTypes.model");
 
 class AuthService {
   constructor() { }

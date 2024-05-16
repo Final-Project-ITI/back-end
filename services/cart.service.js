@@ -6,11 +6,7 @@ class CartService {
     async getUserCart(userId) {
         try {
             return await CartModel.findOne({ userId }).populate('itemsIds');
-            // const cart = await CartModel.findOne({ userId });
-            console.log(cart)
-            return cart;
         } catch (error) {
-            console.log(error.message)
             return error;
         }
     }
@@ -23,9 +19,9 @@ class CartService {
         }
     }
 
-    async deleteUserCart(id) {
+    async deleteUserCart(userId) {
         try {
-            return await CartModel.deleteOne(id);
+            return await CartModel.deleteOne({ userId });
         } catch (error) {
             return error;
         }

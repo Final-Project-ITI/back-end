@@ -79,6 +79,28 @@ class CartController {
 
     }
 
+    async clearUserCart(userId) {
+        const cart = await this.cartService.getUserCart(userId);
+
+        if (!cart) {
+            return {
+                statusCode: 404,
+                data: { message: "there is no cart to clear" }
+            }
+        }
+
+        cart.itemsIds.forEach(item => {
+            this.itemService.deleteUserItemById(item);
+        });
+
+        this.cartService.deleteUserCart(userId);
+
+        return {
+            statusCode: 200,
+            data: { message: "cart has been cleared" }
+        }
+    }
+
     updateItem() {
 
     }

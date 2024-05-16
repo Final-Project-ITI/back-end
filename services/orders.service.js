@@ -1,3 +1,6 @@
+const OrderModel = require("../models/order.model");
+const OrderStatusModel = require("../models/orderStatus.model");
+
 class OrderService {
     constructor() { }
 
@@ -21,8 +24,12 @@ class OrderService {
         return "Order For The User";
     }
 
-    createNewOrder() {
-
+    async createNewOrder(orderInfo) {
+        try {
+            return await OrderModel.create(orderInfo);
+        } catch (error) {
+            return error;
+        }
     }
 
     updateOrderStatus() {

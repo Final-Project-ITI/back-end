@@ -1,47 +1,51 @@
 const express = require('express');
 const router = express.Router();
+const asyncHandler = require('express-async-handler');
 
-const orderRouter = (orderControllers) => {
+const orderRouter = (orderControllers, authMiddleware) => {
     router.get('/authorization', (req, res) => {
-        const respone = orderControllers.getAllOrders();
+        const response = orderControllers.getAllOrders();
 
-        res.send(respone)
+        res.send(response)
     })
 
     router.get('/admin', (req, res) => {
-        const respone = orderControllers.getAllRestaurantOrders();
+        const response = orderControllers.getAllRestaurantOrders();
 
-        res.send(respone)
+        res.send(response)
     })
 
     router.get('/admin/:orderId', (req, res) => {
-        const respone = orderControllers.getRestaurantOrderById();
+        const response = orderControllers.getRestaurantOrderById();
 
-        res.send(respone)
+        res.send(response)
     })
 
     router.get('/user', (req, res) => {
-        const respone = orderControllers.getAllUserOrders();
+        const response = orderControllers.getAllUserOrders();
 
-        res.send(respone)
+        res.send(response)
     })
 
     router.get('/user/:orderId', (req, res) => {
-        const respone = orderControllers.getUserOrderById();
+        const response = orderControllers.getUserOrderById();
 
-        res.send(respone)
+        res.send(response)
     })
 
-    router.post('/:restaurantId/user', (req, res) => {
-        const respone = orderControllers.createNewOrder();
+    router.post(
+        '/:restaurantId/user',
+        authMiddleware.user(orderControllers.authService),
+        asyncHandler(async (req, res) => {
+            const response = await orderControllers.createNewOrder(req.body, req.auth._id, req.params.restaurantId);
 
-        res.send(respone)
-    })
+            res.status(response.statusCode).send(response.data)
+        }))
 
     router.patch('/cashier/:orderId', (req, res) => {
-        const respone = orderControllers.updateOrderStatus();
+        const response = orderControllers.updateOrderStatus();
 
-        res.send(respone)
+        res.send(response)
     })
 
     return router;
