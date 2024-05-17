@@ -4,8 +4,8 @@ const OrderStatusModel = require("../models/orderStatus.model");
 class OrderService {
     constructor() { }
 
-    getAllOrders() {
-        return "All Orders For The Website Owner";
+    async getAllOrders() {
+        return await OrderModel.find();
     }
 
     getAllRestaurantOrders() {
