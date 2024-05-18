@@ -15,13 +15,22 @@ class OrderController {
         this.restaurantService=_restaurantService;
     }
 
-    getAllOrders() {
-        return this.orderServices.getAllOrders()
+    async getAllOrders() {
+        const orders= await this.orderServices.getAllOrders()
+        this.respones = {
+            statusCode: 200,
+            data:  orders 
+          }
+        return this.respones;
     }
 
     async getAllRestaurantOrders(restaurantAdmin) {
-        const restaurant=  await this.restaurantService.getRestaurantByAdminId(restaurantAdmin.restaurantId)
-        return this.orderServices.getAllRestaurantOrders(restaurant._id)
+        const orders= await this.orderServices.getAllRestaurantOrders(restaurantAdmin.restaurantId)
+        this.respones = {
+            statusCode: 200,
+            data:  orders 
+          }
+        return this.respones;
     }
 
     getRestaurantOrderById() {

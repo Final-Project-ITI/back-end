@@ -10,10 +10,10 @@ class OrderService {
     }
 
     async getAllRestaurantOrders(resId) {
-        const items= ItemModel.find().populate("productId");
+        const items= await ItemModel.find().populate("productId");
         const filteredItems= items.filter((item)=>item.productId.restaurantId===resId)
         let orders=filteredItems.map((items)=>items.orderId)
-        orders =set(...orders)
+        orders =new Set(...orders)
 
         return orders;
     }

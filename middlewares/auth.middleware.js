@@ -58,7 +58,6 @@ class AuthMiddleware {
 
             const user = await authService.getUser({ _id });
 
-            console.log(user)
             if (!user) return res.status(401).send({ message: "unauthorized user" });
 
             if (!(user.typeId.equals("663e9b24a2ede177e6885e45"))) return res.status(401).send({ message: "unauthorized user" });

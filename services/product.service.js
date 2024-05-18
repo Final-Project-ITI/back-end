@@ -31,8 +31,7 @@ class ProductService {
 
   async createProduct(productInfo,resId) {
     const product={...productInfo,restaurantId:resId}
-    console.log(product)
-    
+   
     return await ProductModel.create(product);
   }
 

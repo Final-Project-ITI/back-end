@@ -3,16 +3,15 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
 const orderRouter = (orderControllers, authMiddleware) => {
-    router.get('/authorization',authMiddleware.admin(orderControllers.authService), (req, res) => {
-        const response = orderControllers.getAllOrders();
-
-        res.send(response)
+    router.get('/authorization',authMiddleware.admin(orderControllers.authService), async(req, res) => {
+        const response = await orderControllers.getAllOrders();
+        res.status(response.statusCode).send(response.data);
     })
 
-    router.get('/admin',authMiddleware.restaurantAdmin(orderControllers.authService), (req, res) => {
-        const response = orderControllers.getAllRestaurantOrders(req.auth);
+    router.get('/admin',authMiddleware.restaurantAdmin(orderControllers.authService), async(req, res) => {
+        const response = await orderControllers.getAllRestaurantOrders(req.auth);
 
-        res.send(response)
+        res.status(response.statusCode).send(response.data);
     })
 
     router.get('/admin/:orderId', (req, res) => {
