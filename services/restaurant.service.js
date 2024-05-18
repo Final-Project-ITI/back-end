@@ -85,6 +85,11 @@ class RestaurantService {
 
     return restaurants;
   }
+  async getRestaurantById(_id) {
+    const restaurant = await RestaurantModel.findOne({_id});
+
+    return restaurant;
+  }
 
   async addRestaurant(restaurantInfo) {
     try {

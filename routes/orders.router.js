@@ -9,8 +9,8 @@ const orderRouter = (orderControllers, authMiddleware) => {
         res.send(response)
     })
 
-    router.get('/admin', (req, res) => {
-        const response = orderControllers.getAllRestaurantOrders();
+    router.get('/admin',authMiddleware.restaurantAdmin(orderControllers.authService), (req, res) => {
+        const response = orderControllers.getAllRestaurantOrders(req.auth);
 
         res.send(response)
     })

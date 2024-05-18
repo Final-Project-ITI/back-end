@@ -42,7 +42,7 @@ const PhoneController = require("./controllers/phone.controller");
 const authController = new AuthController(authService);
 const restaurantController = new RestaurantController(restaurantService, authService);
 const cartController = new CartController(cartService, itemService, productService, authService);
-const orderController = new OrderController(orderService, cartService, itemService, phoneService, authService);
+const orderController = new OrderController(orderService, cartService, itemService, phoneService, authService,restaurantService);
 const productController = new ProductController(productService, restaurantService, authService);
 const phoneController = new PhoneController(phoneService, authService);
 

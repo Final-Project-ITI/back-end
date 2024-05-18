@@ -8,7 +8,7 @@ class OrderService {
         return await OrderModel.find();
     }
 
-    getAllRestaurantOrders() {
+    getAllRestaurantOrders(resId) {
         return "All Orders For The Restaurant Admin";
     }
 

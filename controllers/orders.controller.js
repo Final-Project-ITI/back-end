@@ -4,21 +4,24 @@ class OrderController {
     itemService;
     phoneService;
     authService;
+    restaurantService;
 
-    constructor(_orderServices, _cartService, _itemService, _phoneService, _authService) {
+    constructor(_orderServices, _cartService, _itemService, _phoneService, _authService,_restaurantService) {
         this.orderServices = _orderServices;
         this.cartService = _cartService;
         this.itemService = _itemService;
         this.phoneService = _phoneService;
         this.authService = _authService;
+        this.restaurantService=_restaurantService;
     }
 
     getAllOrders() {
         return this.orderServices.getAllOrders()
     }
 
-    getAllRestaurantOrders() {
-        return this.orderServices.getAllRestaurantOrders()
+    async getAllRestaurantOrders(restaurantAdmin) {
+        const restaurant=  await this.restaurantService.getRestaurantByAdminId(restaurantAdmin.resturantId)
+        return this.orderServices.getAllRestaurantOrders(restaurant._id)
     }
 
     getRestaurantOrderById() {
