@@ -29,7 +29,7 @@ const cartRouter = (cartController, authMiddleware) => {
     authMiddleware.user(cartController.authService),
     asyncHandler(
       async (req, res) => {
-        const response = await cartController.addItemToCart(req.body, req.auth._id);
+        const response = await cartController.updateItem(req.body, req.auth._id);
 
         res.status(response.statusCode).send(response.data);
       }
