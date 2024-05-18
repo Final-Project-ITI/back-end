@@ -28,7 +28,7 @@ const productRouter = (productController, authMiddleware) => {
   router.post("/admin",
     authMiddleware.restaurantAdmin(productController.authService),
     (req, res) => {
-      const response = productController.createProduct(req.body);
+      const response = productController.createProduct(req.body,req.auth);
 
       res.send(response);
     });

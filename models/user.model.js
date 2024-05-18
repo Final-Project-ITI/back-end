@@ -34,7 +34,7 @@ const userSchema = mongoose.Schema({
         ref: "UserTypes",
         default: "663dfebba2ede177e6885e42"
     },
-    resturantId: {
+    restaurantId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Restaurant",
         default: null

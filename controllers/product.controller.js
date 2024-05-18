@@ -27,8 +27,8 @@ class ProductController {
     };
   }
 
-  async createProduct(productInfo) {
-    const product = await this.productServices.createProduct(productInfo);
+  async createProduct(productInfo,user) {
+    const product = await this.productServices.createProduct(productInfo,user.restaurantId);
     return { statusCode: 200, data: product };
   }
 

@@ -20,7 +20,7 @@ class OrderController {
     }
 
     async getAllRestaurantOrders(restaurantAdmin) {
-        const restaurant=  await this.restaurantService.getRestaurantByAdminId(restaurantAdmin.resturantId)
+        const restaurant=  await this.restaurantService.getRestaurantByAdminId(restaurantAdmin.restaurantId)
         return this.orderServices.getAllRestaurantOrders(restaurant._id)
     }
 

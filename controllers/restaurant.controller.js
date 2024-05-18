@@ -71,7 +71,7 @@ class RestaurantController {
       return this.response;
     }
 
-    user = await this.authService.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", resturantId: restaurant._id });
+    user = await this.authService.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
 
     return { statusCode: 200, data: { ...restaurant, ...user } }
   }

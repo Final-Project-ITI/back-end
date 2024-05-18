@@ -1,3 +1,4 @@
+const ItemModel = require("../models/item.model");
 const OrderModel = require("../models/order.model");
 const OrderStatusModel = require("../models/orderStatus.model");
 
@@ -8,8 +9,13 @@ class OrderService {
         return await OrderModel.find();
     }
 
-    getAllRestaurantOrders(resId) {
-        return "All Orders For The Restaurant Admin";
+    async getAllRestaurantOrders(resId) {
+        const items= ItemModel.find().populate("productId");
+        const filteredItems= items.filter((item)=>item.productId.restaurantId===resId)
+        let orders=filteredItems.map((items)=>items.orderId)
+        orders =set(...orders)
+
+        return orders;
     }
 
     getRestaurantOrderById() {
