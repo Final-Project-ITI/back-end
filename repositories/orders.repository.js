@@ -1,7 +1,7 @@
 const OrderModel = require("../models/order.model");
 const OrderStatusModel = require("../models/orderStatus.model");
 class OrderService {
-  constructor() {}
+  constructor() { }
 
   async getAllUserOrders(userId) {
     try {
@@ -12,6 +12,7 @@ class OrderService {
       throw error;
     }
   }
+
   async getUserOrderById(userId, orderId) {
     try {
       const order = await OrderModel.findOne({ _id: orderId, userId: userId });
@@ -30,7 +31,7 @@ class OrderService {
     }
   }
 
-  updateOrderStatus() {}
+  updateOrderStatus() { }
 }
 
 module.exports = OrderService;
