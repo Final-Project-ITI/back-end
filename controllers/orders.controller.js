@@ -1,52 +1,52 @@
 class OrderController {
-    orderServices;
-    cartService;
-    itemService;
-    phoneService;
-    authService;
-    restaurantService;
+    orderRepository;
+    cartRepository;
+    itemRepository;
+    phoneRepository;
+    authRepository;
+    restaurantRepository;
 
-    constructor(_orderServices, _cartService, _itemService, _phoneService, _authService,_restaurantService) {
-        this.orderServices = _orderServices;
-        this.cartService = _cartService;
-        this.itemService = _itemService;
-        this.phoneService = _phoneService;
-        this.authService = _authService;
-        this.restaurantService=_restaurantService;
+    constructor(_orderRepository, _cartRepository, _itemRepository, _phoneRepository, _authRepository, _restaurantRepository) {
+        this.orderRepository = _orderRepository;
+        this.cartRepository = _cartRepository;
+        this.itemRepository = _itemRepository;
+        this.phoneRepository = _phoneRepository;
+        this.authRepository = _authRepository;
+        this.restaurantRepository = _restaurantRepository;
     }
 
     async getAllOrders() {
-        const orders= await this.orderServices.getAllOrders()
+        const orders = await this.orderRepository.getAllOrders()
         this.respones = {
             statusCode: 200,
-            data:  orders 
-          }
+            data: orders
+        }
         return this.respones;
     }
 
     async getAllRestaurantOrders(restaurantAdmin) {
-        const orders= await this.orderServices.getAllRestaurantOrders(restaurantAdmin.restaurantId)
+        const orders = await this.orderRepository.getAllRestaurantOrders(restaurantAdmin.restaurantId)
         this.respones = {
             statusCode: 200,
-            data:  orders 
-          }
+            data: orders
+        }
         return this.respones;
     }
 
     getRestaurantOrderById() {
-        return this.orderServices.getRestaurantOrderById()
+        return this.orderRepository.getRestaurantOrderById()
     }
 
     getAllUserOrders() {
-        return this.orderServices.getAllUserOrders()
+        return this.orderRepository.getAllUserOrders()
     }
 
     getUserOrderById() {
-        return this.orderServices.getUserOrderById()
+        return this.orderRepository.getUserOrderById()
     }
 
     async createNewOrder({ phoneId }, userId, restaurantId) {
-        const phone = await this.phoneService.getUserPhoneNumberById(phoneId);
+        const phone = await this.phoneRepository.getUserPhoneNumberById(phoneId);
 
         if (!phone) {
             return {
@@ -60,7 +60,7 @@ class OrderController {
             statusId: "6646747dd96fa5f4ee9cacd8",
         }
 
-        const cart = await this.cartService.getUserCart(userId);
+        const cart = await this.cartRepository.getUserCart(userId);
 
         if (!cart) {
             return {
@@ -69,13 +69,13 @@ class OrderController {
             }
         }
 
-        const order = await this.orderServices.createNewOrder(orderInfo);
+        const order = await this.orderRepository.createNewOrder(orderInfo);
 
         cart.itemsIds.forEach(async (item) => {
-            await this.itemService.updateUserItemById({ _id: item._id }, { orderId: order._id });
+            await this.itemRepository.updateUserItemById({ _id: item._id }, { orderId: order._id });
         })
 
-        await this.cartService.deleteUserCart(userId);
+        await this.cartRepository.deleteUserCart(userId);
 
         return {
             statusCode: 201,
@@ -84,7 +84,7 @@ class OrderController {
     }
 
     updateOrderStatus() {
-        return this.orderServices.updateOrderStatus()
+        return this.orderRepository.updateOrderStatus()
     }
 }
 

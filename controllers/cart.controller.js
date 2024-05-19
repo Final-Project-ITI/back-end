@@ -1,14 +1,14 @@
 class CartController {
-  cartService;
-  itemService;
-  authService;
-  productService;
+  cartRepository;
+  itemRepository;
+  authRepository;
+  productRepository;
 
-  constructor(_cartService, _itemService, _productService, _authService) {
-    this.cartService = _cartService;
-    this.itemService = _itemService;
-    this.productService = _productService;
-    this.authService = _authService;
+  constructor(_cartRepository, _itemRepository, _productRepository, _authRepository) {
+    this.cartRepository = _cartRepository;
+    this.itemRepository = _itemRepository;
+    this.productRepository = _productRepository;
+    this.authRepository = _authRepository;
   }
 
   getUserItems() {
@@ -20,7 +20,7 @@ class CartController {
 
     /* Checks if the product exists */
 
-    const product = await this.productService.getProductsById(productId);
+    const product = await this.productRepository.getProductsById(productId);
 
     if (!product) {
       return {
@@ -40,10 +40,10 @@ class CartController {
 
     /* Checks if there is a cart */
 
-    const cart = await this.cartService.getUserCart(userId);
+    const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
-      const item = await this.itemService.createItem(itemInfo);
+      const item = await this.itemRepository.createItem(itemInfo);
 
       await this.createCart(item, userId);
 
@@ -57,16 +57,16 @@ class CartController {
       });
 
       if (item) {
-        await this.itemService.updateUserItemById(
+        await this.itemRepository.updateUserItemById(
           { _id: item._id },
           { quantity: ++item.quantity }
         );
       } else {
-        const item = await this.itemService.createItem(itemInfo);
+        const item = await this.itemRepository.createItem(itemInfo);
 
         cart.itemsIds.push(item);
 
-        await this.cartService.updateUserCart(userId, cart);
+        await this.cartRepository.updateUserCart(userId, cart);
       }
 
       return {
@@ -83,7 +83,7 @@ class CartController {
 
     /* Checks if the product exists */
 
-    const product = await this.productService.getProductsById(productId);
+    const product = await this.productRepository.getProductsById(productId);
 
     if (!product) {
       return {
@@ -94,7 +94,7 @@ class CartController {
 
     /* Checks if there is a cart */
 
-    const cart = await this.cartService.getUserCart(userId);
+    const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
       return {
@@ -116,7 +116,7 @@ class CartController {
       }
 
       if (item) {
-        await this.itemService.updateUserItemById(
+        await this.itemRepository.updateUserItemById(
           { _id: item._id },
           { quantity: item.quantity + quantity }
         );
@@ -135,13 +135,13 @@ class CartController {
   }
 
   getUserCart(cartId) {
-    return this.cartService.getUserCart(cartId);
+    return this.cartRepository.getUserCart(cartId);
   }
 
   async createItem(itemInfo) { }
 
   async clearUserCart(userId) {
-    const cart = await this.cartService.getUserCart(userId);
+    const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
       return {
@@ -151,10 +151,10 @@ class CartController {
     }
 
     cart.itemsIds.forEach(item => {
-      this.itemService.deleteUserItemById(item);
+      this.itemRepository.deleteUserItemById(item);
     });
 
-    this.cartService.deleteUserCart(userId);
+    this.cartRepository.deleteUserCart(userId);
 
     return {
       statusCode: 200,
@@ -167,7 +167,7 @@ class CartController {
   }
 
   getUserCart(cartId) {
-    return this.cartService.getUserCart(cartId);
+    return this.cartRepository.getUserCart(cartId);
   }
 
   async createItem(itemInfo) {
@@ -175,7 +175,7 @@ class CartController {
   }
 
   async createCart(itemId, userId) {
-    await this.cartService.createCart({
+    await this.cartRepository.createCart({
       itemsIds: [itemId],
       userId: userId
     });

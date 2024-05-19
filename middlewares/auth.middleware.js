@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 class AuthMiddleware {
     constructor() { }
 
-    user(authService) {
+    user(authRepository) {
         return async (req, res, next) => {
             const token = req.headers["jwt"];
 
@@ -13,7 +13,7 @@ class AuthMiddleware {
 
             const { _id } = payload;
 
-            const user = await authService.getUser({ _id });
+            const user = await authRepository.getUser({ _id });
 
             if (!user) return res.status(401).send({ message: "unauthorized user" });
 
@@ -23,7 +23,7 @@ class AuthMiddleware {
         }
     }
 
-    admin(authService) {
+    admin(authRepository) {
         return async (req, res, next) => {
             const token = req.headers["jwt"];
 
@@ -33,7 +33,7 @@ class AuthMiddleware {
 
             const { _id } = payload;
 
-            const user = await authService.getUser({ _id });
+            const user = await authRepository.getUser({ _id });
 
             if (!user) return res.status(401).send({ message: "unauthorized user" });
 
@@ -46,7 +46,7 @@ class AuthMiddleware {
 
     }
 
-    restaurantAdmin(authService) {
+    restaurantAdmin(authRepository) {
         return async (req, res, next) => {
             const token = req.headers["jwt"];
 
@@ -56,7 +56,7 @@ class AuthMiddleware {
 
             const { _id } = payload;
 
-            const user = await authService.getUser({ _id });
+            const user = await authRepository.getUser({ _id });
 
             if (!user) return res.status(401).send({ message: "unauthorized user" });
 
