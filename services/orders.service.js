@@ -14,7 +14,7 @@ class OrderService {
         const filteredItems= items.filter((item)=>item.productId.restaurantId===resId)
         let orders=filteredItems.map((items)=>items.orderId)
         orders =new Set(...orders)
-        return await OrderModel.find({_id:{$in:orders}})
+        return await OrderModel.find({_id:{$all:orders}})
 
     }
 
