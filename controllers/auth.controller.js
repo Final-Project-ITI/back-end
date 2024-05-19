@@ -53,7 +53,8 @@ class AuthController {
       }
 
       //* checks if the type exits 
-      let type = await this.authService.getType(registerInfo.typeID);
+      let type = await this.authService.getType(registerInfo.typeId);
+
       if (!type) {
         this.respones = {
           statusCode: 401,

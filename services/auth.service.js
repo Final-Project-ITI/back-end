@@ -1,5 +1,5 @@
 const UserModel = require("../models/user.model");
-const UserTypesModel = require("../models/userTypes.model")
+const UserTypesModel = require("../models/userTypes.model");
 
 class AuthService {
   constructor() { }
@@ -15,6 +15,13 @@ class AuthService {
   async getUser(val) {
     try {
       return await UserModel.findOne(val);
+    } catch (error) {
+      return error;
+    }
+  }
+  async updateUser(id, val) {
+    try {
+      return await UserModel.updateOne(id, val);
     } catch (error) {
       return error;
     }

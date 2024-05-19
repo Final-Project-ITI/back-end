@@ -29,20 +29,21 @@ const userSchema = mongoose.Schema({
         default: null,
         maxLength: 255,
     },
-    TypeID: {
+    typeId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "UserTypesModel",
+        ref: "UserTypes",
         default: "663dfebba2ede177e6885e42"
     },
-    ResturantID: {
-        type: String,
-        default: null,
-        maxLength: 255,
+    restaurantId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Restaurant",
+        default: null
     },
-    SupplyChainID: {
+    supplyChainId: {
         type: String,
         default: null,
         maxLength: 255,
+        default: null
     }
 });
 

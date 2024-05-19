@@ -1,16 +1,36 @@
 class OrderController {
     orderServices;
+    cartService;
+    itemService;
+    phoneService;
+    authService;
+    restaurantService;
 
-    constructor(_orderServices) {
+    constructor(_orderServices, _cartService, _itemService, _phoneService, _authService,_restaurantService) {
         this.orderServices = _orderServices;
+        this.cartService = _cartService;
+        this.itemService = _itemService;
+        this.phoneService = _phoneService;
+        this.authService = _authService;
+        this.restaurantService=_restaurantService;
     }
 
-    getAllOrders() {
-        return this.orderServices.getAllOrders()
+    async getAllOrders() {
+        const orders= await this.orderServices.getAllOrders()
+        this.respones = {
+            statusCode: 200,
+            data:  orders 
+          }
+        return this.respones;
     }
 
-    getAllRestaurantOrders() {
-        return this.orderServices.getAllRestaurantOrders()
+    async getAllRestaurantOrders(restaurantAdmin) {
+        const orders= await this.orderServices.getAllRestaurantOrders(restaurantAdmin.restaurantId)
+        this.respones = {
+            statusCode: 200,
+            data:  orders 
+          }
+        return this.respones;
     }
 
     getRestaurantOrderById() {
@@ -25,9 +45,42 @@ class OrderController {
         return this.orderServices.getUserOrderById()
     }
 
-    createNewOrder() {
-        return this.orderServices.createNewOrder()
+    async createNewOrder({ phoneId }, userId, restaurantId) {
+        const phone = await this.phoneService.getUserPhoneNumberById(phoneId);
 
+        if (!phone) {
+            return {
+                statusCode: 404,
+                data: { message: "can't find phone number" }
+            }
+        }
+
+        const orderInfo = {
+            phoneId,
+            statusId: "6646747dd96fa5f4ee9cacd8",
+        }
+
+        const cart = await this.cartService.getUserCart(userId);
+
+        if (!cart) {
+            return {
+                statusCode: 404,
+                data: { message: "cart is empty" }
+            }
+        }
+
+        const order = await this.orderServices.createNewOrder(orderInfo);
+
+        cart.itemsIds.forEach(async (item) => {
+            await this.itemService.updateUserItemById({ _id: item._id }, { orderId: order._id });
+        })
+
+        await this.cartService.deleteUserCart(userId);
+
+        return {
+            statusCode: 201,
+            data: { message: "order placed successfuly" }
+        }
     }
 
     updateOrderStatus() {
