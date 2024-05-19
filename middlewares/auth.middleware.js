@@ -1,77 +1,78 @@
-const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler');
+const jwt = require("jsonwebtoken");
+const asyncHandler = require("express-async-handler");
 
 class AuthMiddleware {
-    authService;
+  authService;
 
+  constructor(authService) {
+    this.authService = authService;
+  }
 
-    constructor(authService) {
-        this.authService=authService
-     }
+  user() {
+    return async (req, res, next) => {
+      const token = req.headers["jwt"];
 
-    user() {
-        return async (req, res, next) => {
-            const token = req.headers["jwt"];
+      if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!token) return res.status(401).send({ message: "unauthorized user" });
+      const payload = jwt.verify(token, "WaRsM");
 
-            const payload = jwt.verify(token, "WaRsM");
+      const { _id } = payload;
 
-            const { _id } = payload;
+      const user = await this.authService.getUser({ _id });
 
-            const user = await this.authService.getUser({ _id });
+      if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!user) return res.status(401).send({ message: "unauthorized user" });
+      req.auth = user;
 
-            req.auth = user;
+      next();
+    };
+  }
+  admin() {
+    return async (req, res, next) => {
+      const token = req.headers["jwt"];
 
-            next();
-        }
-    }
-    admin(){
-        return async (req, res, next) => {
-            const token = req.headers["jwt"];
+      if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!token) return res.status(401).send({ message: "unauthorized user" });
+      const payload = jwt.verify(token, "WaRsM");
 
-            const payload = jwt.verify(token, "WaRsM");
+      const { _id } = payload;
 
-            const { _id } = payload;
+      const user = await this.authService.getUser({ _id });
 
-            const user = await this.authService.getUser({ _id });
+      console.log(user);
 
-            if (!user) return res.status(401).send({ message: "unauthorized user" });
+      if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-            if(user.typeID!=="663dfe9ba2ede177e6885e41") return res.status(401).send({ message: "unauthorized user" });
+      if (user.typeID !== "663dfe9ba2ede177e6885e41")
+        return res.status(401).send({ message: "unauthorized user" });
 
-            req.auth = user;
+      req.auth = user;
 
-            next();
-        }
+      next();
+    };
+  }
+  restaurantAdmin() {
+    return async (req, res, next) => {
+      const token = req.headers["jwt"];
 
-    }
-    restaurantAdmin(){
-        return async (req, res, next) => {
-            const token = req.headers["jwt"];
+      if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!token) return res.status(401).send({ message: "unauthorized user" });
+      const payload = jwt.verify(token, "WaRsM");
 
-            const payload = jwt.verify(token, "WaRsM");
+      const { _id } = payload;
 
-            const { _id } = payload;
+      const user = await this.authService.getUser({ _id });
 
-            const user = await this.authService.getUser({ _id });
+      if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!user) return res.status(401).send({ message: "unauthorized user" });
+      if (user.typeID !== "663e9b24a2ede177e6885e45")
+        return res.status(401).send({ message: "unauthorized user" });
 
-            if(user.typeID!=="663e9b24a2ede177e6885e45") return res.status(401).send({ message: "unauthorized user" });
+      req.auth = user;
 
-            req.auth = user;
-
-            next();
-        }
-
-    }
+      next();
+    };
+  }
 }
 
 module.exports = AuthMiddleware;
