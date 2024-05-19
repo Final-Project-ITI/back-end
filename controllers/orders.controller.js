@@ -33,16 +33,35 @@ class OrderController {
         return this.respones;
     }
 
+    async getAllUserOrders(userId) {
+        try {
+            const userOrders = await this.orderRepository.getAllUserOrders(userId);
+            if (!userOrders || userOrders.length === 0) {
+                return { statusCode: 404, data: { message: "user Orders not found" } };
+            }
+            return { statusCode: 200, data: userOrders };
+        } catch (error) {
+            console.error("Error fetching Orders:", error);
+            return { statusCode: 500, data: { message: "Internal server error" } };
+        }
+    }
+
+    async getUserOrderById(userId, orderId) {
+        try {
+            const order = await this.orderRepository.getUserOrderById(userId, orderId);
+            if (!order) {
+                return { statusCode: 404, data: { message: "Order not found" } };
+            }
+            return { statusCode: 200, data: order };
+        } catch (error) {
+            console.error("Error fetching user Order:", error);
+            return { statusCode: 500, data: { message: "Internal server error" } };
+        }
+    }
+
+
     getRestaurantOrderById() {
         return this.orderRepository.getRestaurantOrderById()
-    }
-
-    getAllUserOrders() {
-        return this.orderRepository.getAllUserOrders()
-    }
-
-    getUserOrderById() {
-        return this.orderRepository.getUserOrderById()
     }
 
     async createNewOrder({ phoneId }, userId, restaurantId) {

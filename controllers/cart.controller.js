@@ -11,8 +11,17 @@ class CartController {
     this.authRepository = _authRepository;
   }
 
-  getUserItems() {
-    const items = [];
+  async getUserCart(userId) {
+    try {
+      const cartItems = await this.cartRepository.getUserCart(userId);
+      if (!cartItems || cartItems.length === 0) {
+        return { statusCode: 404, data: { message: "Cart items not found" } };
+      }
+      return { statusCode: 200, data: cartItems };
+    } catch (error) {
+      console.error("Error fetching user cart:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
   }
 
   async addItemToCart(itemInfo, userId) {
@@ -76,8 +85,6 @@ class CartController {
     }
   }
 
-  removeItemFromCart() { }
-
   async updateItem(itemInfo, userId) {
     const { productId, quantity } = itemInfo;
 
@@ -91,7 +98,15 @@ class CartController {
         data: { message: "product not found" },
       };
     }
+  }
 
+  removeItemFromCart() { }
+
+  async createCart(itemId, userId) {
+    await this.cartRepository.createCart({
+      itemsIds: [itemId],
+      userId: userId,
+    });
     /* Checks if there is a cart */
 
     const cart = await this.cartRepository.getUserCart(userId);
@@ -134,20 +149,14 @@ class CartController {
     }
   }
 
-  getUserCart(cartId) {
-    return this.cartRepository.getUserCart(cartId);
-  }
-
-  async createItem(itemInfo) { }
-
   async clearUserCart(userId) {
     const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
       return {
         statusCode: 404,
-        data: { message: "there is no cart to clear" }
-      }
+        data: { message: "there is no cart to clear" },
+      };
     }
 
     cart.itemsIds.forEach(item => {
@@ -158,26 +167,14 @@ class CartController {
 
     return {
       statusCode: 200,
-      data: { message: "cart has been cleared" }
-    }
-  }
-
-  updateItem() {
-
-  }
-
-  getUserCart(cartId) {
-    return this.cartRepository.getUserCart(cartId);
-  }
-
-  async createItem(itemInfo) {
-
+      data: { message: "cart has been cleared" },
+    };
   }
 
   async createCart(itemId, userId) {
     await this.cartRepository.createCart({
       itemsIds: [itemId],
-      userId: userId
+      userId: userId,
     });
   }
 }

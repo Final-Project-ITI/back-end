@@ -73,7 +73,6 @@ class AuthController {
       /* generate token that will be send to the client */
       const token = jwt.sign({ _id: user.id, role: type.name }, "WaRsM", { expiresIn: "6h" });
 
-
       return { statusCode: 200, data: { token } };
     } catch (error) {
       console.log(error)
