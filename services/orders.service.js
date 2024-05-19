@@ -1,46 +1,36 @@
-const ItemModel = require("../models/item.model");
 const OrderModel = require("../models/order.model");
 const OrderStatusModel = require("../models/orderStatus.model");
-
 class OrderService {
-    constructor() { }
+  constructor() {}
 
-    async getAllOrders() {
-        return await OrderModel.find();
+  async getAllUserOrders(userId) {
+    try {
+      const userOrders = await OrderModel.find({ userId: userId });
+      return userOrders;
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+      throw error;
     }
-
-    async getAllRestaurantOrders(resId) {
-        const items= await ItemModel.find().populate("productId");
-        const filteredItems= items.filter((item)=>item.productId.restaurantId===resId)
-        let orders=filteredItems.map((items)=>items.orderId)
-        orders =new Set(...orders)
-        return await OrderModel.find({_id:{$all:orders}})
-
+  }
+  async getUserOrderById(userId, orderId) {
+    try {
+      const order = await OrderModel.findOne({ _id: orderId, userId: userId });
+      return order;
+    } catch (error) {
+      console.error("Error fetching order by ID:", error);
+      throw error;
     }
+  }
 
-    getRestaurantOrderById() {
-        return "Order For The Restaurant Admin";
+  async createNewOrder(orderInfo) {
+    try {
+      return await OrderModel.create(orderInfo);
+    } catch (error) {
+      return error;
     }
+  }
 
-    getAllUserOrders() {
-        return "All Orders For The User";
-    }
-
-    getUserOrderById() {
-        return "Order For The User";
-    }
-
-    async createNewOrder(orderInfo) {
-        try {
-            return await OrderModel.create(orderInfo);
-        } catch (error) {
-            return error;
-        }
-    }
-
-    updateOrderStatus() {
-
-    }
+  updateOrderStatus() {}
 }
 
 module.exports = OrderService;

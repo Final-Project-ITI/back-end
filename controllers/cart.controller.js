@@ -3,16 +3,41 @@ class CartController {
   itemService;
   authService;
   productService;
-
+  response = {
+    statusCode: 0,
+    data: {},
+  };
   constructor(_cartService, _itemService, _productService, _authService) {
     this.cartService = _cartService;
     this.itemService = _itemService;
     this.productService = _productService;
     this.authService = _authService;
   }
-
+  async getUserCart(userId) {
+    try {
+      const cartItems = await this.cartService.getUserCart(userId);
+      if (!cartItems || cartItems.length === 0) {
+        return { statusCode: 404, data: { message: "Cart items not found" } };
+      }
+      return { statusCode: 200, data: cartItems };
+    } catch (error) {
+      console.error("Error fetching user cart:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
+  }
   getUserItems() {
-    const items = [];
+    try {
+      const items = [];
+
+      if (!cartItems || cartItems.length === 0) {
+        return res.status(404).json({ message: "Cart items not found" });
+      }
+
+      return res.status(200).json({ cart_items: cartItems });
+    } catch (error) {
+      console.error("Error fetching user cart:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 
   async addItemToCart(itemInfo, userId) {
@@ -76,8 +101,6 @@ class CartController {
     }
   }
 
-  removeItemFromCart() { }
-
   async updateItem(itemInfo, userId) {
     const { productId, quantity } = itemInfo;
 
@@ -91,7 +114,17 @@ class CartController {
         data: { message: "product not found" },
       };
     }
+  }
 
+  removeItemFromCart() {}
+
+  async createItem(itemInfo) {}
+
+  async createCart(itemId, userId) {
+    await this.cartService.createCart({
+      itemsIds: [itemId],
+      userId: userId,
+    });
     /* Checks if there is a cart */
 
     const cart = await this.cartService.getUserCart(userId);
@@ -134,11 +167,7 @@ class CartController {
     }
   }
 
-  getUserCart(cartId) {
-    return this.cartService.getUserCart(cartId);
-  }
-
-  async createItem(itemInfo) { }
+  async createItem(itemInfo) {}
 
   async clearUserCart(userId) {
     const cart = await this.cartService.getUserCart(userId);
@@ -146,11 +175,11 @@ class CartController {
     if (!cart) {
       return {
         statusCode: 404,
-        data: { message: "there is no cart to clear" }
-      }
+        data: { message: "there is no cart to clear" },
+      };
     }
 
-    cart.itemsIds.forEach(item => {
+    cart.itemsIds.forEach((item) => {
       this.itemService.deleteUserItemById(item);
     });
 
@@ -158,26 +187,22 @@ class CartController {
 
     return {
       statusCode: 200,
-      data: { message: "cart has been cleared" }
-    }
+      data: { message: "cart has been cleared" },
+    };
   }
 
-  updateItem() {
-
-  }
+  updateItem() {}
 
   getUserCart(cartId) {
     return this.cartService.getUserCart(cartId);
   }
 
-  async createItem(itemInfo) {
-
-  }
+  async createItem(itemInfo) {}
 
   async createCart(itemId, userId) {
     await this.cartService.createCart({
       itemsIds: [itemId],
-      userId: userId
+      userId: userId,
     });
   }
 }
