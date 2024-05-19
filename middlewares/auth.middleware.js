@@ -1,14 +1,9 @@
 const jwt = require("jsonwebtoken");
-const asyncHandler = require("express-async-handler");
 
 class AuthMiddleware {
-  authService;
+  constructor() {}
 
-  constructor(authService) {
-    this.authService = authService;
-  }
-
-  user() {
+  user(authRepository) {
     return async (req, res, next) => {
       const token = req.headers["jwt"];
 
@@ -18,7 +13,7 @@ class AuthMiddleware {
 
       const { _id } = payload;
 
-      const user = await this.authService.getUser({ _id });
+      const user = await authRepository.getUser({ _id });
 
       if (!user) return res.status(401).send({ message: "unauthorized user" });
 
@@ -27,7 +22,8 @@ class AuthMiddleware {
       next();
     };
   }
-  admin() {
+
+  admin(authRepository) {
     return async (req, res, next) => {
       const token = req.headers["jwt"];
 
@@ -37,13 +33,11 @@ class AuthMiddleware {
 
       const { _id } = payload;
 
-      const user = await this.authService.getUser({ _id });
-
-      console.log(user);
+      const user = await authRepository.getUser({ _id });
 
       if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-      if (user.typeID !== "663dfe9ba2ede177e6885e41")
+      if (!user.typeId.equals("663dfe9ba2ede177e6885e41"))
         return res.status(401).send({ message: "unauthorized user" });
 
       req.auth = user;
@@ -51,7 +45,8 @@ class AuthMiddleware {
       next();
     };
   }
-  restaurantAdmin() {
+
+  restaurantAdmin(authRepository) {
     return async (req, res, next) => {
       const token = req.headers["jwt"];
 
@@ -61,11 +56,11 @@ class AuthMiddleware {
 
       const { _id } = payload;
 
-      const user = await this.authService.getUser({ _id });
+      const user = await authRepository.getUser({ _id });
 
       if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-      if (user.typeID !== "663e9b24a2ede177e6885e45")
+      if (!user.typeId.equals("663e9b24a2ede177e6885e45"))
         return res.status(401).send({ message: "unauthorized user" });
 
       req.auth = user;

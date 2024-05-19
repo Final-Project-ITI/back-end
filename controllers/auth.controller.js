@@ -53,7 +53,8 @@ class AuthController {
       }
 
       //* checks if the type exits 
-      let type = await this.authService.getType(registerInfo.typeID);
+      let type = await this.authService.getType(registerInfo.typeId);
+
       if (!type) {
         this.respones = {
           statusCode: 401,
@@ -68,7 +69,6 @@ class AuthController {
 
       //Add new user information to the database.
       user = await this.authService.addUser(registerInfo)
-      console.log(user)
 
       /* generate token that will be send to the client */
       const token = jwt.sign({ _id: user.id, role: type.name }, "WaRsM", { expiresIn: "6h" });
