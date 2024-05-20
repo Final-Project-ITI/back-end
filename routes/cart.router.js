@@ -4,17 +4,18 @@ const asyncHandler = require("express-async-handler");
 
 const cartRouter = (cartController, authMiddleware) => {
   router.get(
-    "/",
-    authMiddleware.user(cartController.authService),
-    asyncHandler((req, res) => {
-      const response = cartController.getCartItems();
+    "/:userId",
+    // authMiddleware.user(cartController.authRepository),
+    asyncHandler(async (req, res) => {
+      const userId = req.params.userId;
+      console.log(userId);
+      const response = await cartController.getUserCart(userId);
       res.status(response.statusCode).send(response.data);
     })
   );
-
   router.post(
     "/",
-    authMiddleware.user(cartController.authService),
+    authMiddleware.user(cartController.authRepository),
     asyncHandler(async (req, res) => {
       const response = await cartController.addItemToCart(
         req.body,
@@ -27,7 +28,7 @@ const cartRouter = (cartController, authMiddleware) => {
 
   router.patch(
     "/",
-    authMiddleware.user(cartController.authService),
+    authMiddleware.user(cartController.authRepository),
     asyncHandler(async (req, res) => {
       const response = await cartController.updateItem(req.body, req.auth._id);
 
@@ -37,7 +38,7 @@ const cartRouter = (cartController, authMiddleware) => {
 
   router.delete(
     "/",
-    authMiddleware.user(cartController.authService),
+    authMiddleware.user(cartController.authRepository),
     asyncHandler(async (req, res) => {
       const response = await cartController.addItemToCart(
         req.body,
@@ -50,7 +51,7 @@ const cartRouter = (cartController, authMiddleware) => {
 
   router.delete(
     "/clear",
-    authMiddleware.user(cartController.authService),
+    authMiddleware.user(cartController.authRepository),
     asyncHandler(async (req, res) => {
       const response = await cartController.clearUserCart(req.auth._id);
 

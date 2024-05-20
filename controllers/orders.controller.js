@@ -1,37 +1,45 @@
 class OrderController {
-  orderServices;
-  cartService;
-  itemService;
-  phoneService;
-  authService;
-  restaurantService;
+  orderRepository;
+  cartRepository;
+  itemRepository;
+  phoneRepository;
+  authRepository;
+  restaurantRepository;
+
   constructor(
-    _orderServices,
-    _cartService,
-    _itemService,
-    _phoneService,
-    _authService,
-    _restaurantService
+    _orderRepository,
+    _cartRepository,
+    _itemRepository,
+    _phoneRepository,
+    _authRepository,
+    _restaurantRepository
   ) {
-    this.orderServices = _orderServices;
-    this.cartService = _cartService;
-    this.itemService = _itemService;
-    this.phoneService = _phoneService;
-    this.authService = _authService;
-    this.restaurantService = _restaurantService;
+    this.orderRepository = _orderRepository;
+    this.cartRepository = _cartRepository;
+    this.itemRepository = _itemRepository;
+    this.phoneRepository = _phoneRepository;
+    this.authRepository = _authRepository;
+    this.restaurantRepository = _restaurantRepository;
   }
 
-  getAllOrders() {
-    return this.orderServices.getAllOrders();
-  }
-
-  getAllRestaurantOrders() {
-    return this.orderServices.getAllRestaurantOrders();
+  async updateOrderStatus(orderId, status) {
+    try {
+      const updatedOrder = await orderRepository.updateOrderStatus(
+        orderId,
+        status
+      );
+      return { statusCode: 200, data: updatedOrder };
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: { message: error.message },
+      };
+    }
   }
 
   async getRestaurantOrderById(orderId) {
     try {
-      const order = await orderService.getOrderById(orderId);
+      const order = await orderRepository.getOrderById(orderId);
       if (!order) {
         return { statusCode: 404, data: { message: "Order not found" } };
       }
@@ -44,31 +52,94 @@ class OrderController {
     }
   }
 
-  getAllUserOrders() {
-    return this.orderServices.getAllUserOrders();
+  async getAllOrders() {
+    const orders = await this.orderRepository.getAllOrders();
+    this.respones = {
+      statusCode: 200,
+      data: orders,
+    };
+    return this.respones;
   }
 
-  getUserOrderById() {
-    return this.orderServices.getUserOrderById();
+  async getAllRestaurantOrders(restaurantAdmin) {
+    const orders = await this.orderRepository.getAllRestaurantOrders(
+      restaurantAdmin.restaurantId
+    );
+    this.respones = {
+      statusCode: 200,
+      data: orders,
+    };
+    return this.respones;
   }
 
-  createNewOrder() {
-    return this.orderServices.createNewOrder();
-  }
-
-  async updateOrderStatus(orderId, status) {
+  async getAllUserOrders(userId) {
     try {
-      const updatedOrder = await orderService.updateOrderStatus(
-        orderId,
-        status
-      );
-      return { statusCode: 200, data: updatedOrder };
+      const userOrders = await this.orderRepository.getAllUserOrders(userId);
+      if (!userOrders || userOrders.length === 0) {
+        return { statusCode: 404, data: { message: "user Orders not found" } };
+      }
+      return { statusCode: 200, data: userOrders };
     } catch (error) {
+      console.error("Error fetching Orders:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
+  }
+
+  async getUserOrderById(userId, orderId) {
+    try {
+      const order = await this.orderRepository.getUserOrderById(
+        userId,
+        orderId
+      );
+      if (!order) {
+        return { statusCode: 404, data: { message: "Order not found" } };
+      }
+      return { statusCode: 200, data: order };
+    } catch (error) {
+      console.error("Error fetching user Order:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
+  }
+
+  async createNewOrder({ phoneId }, userId, restaurantId) {
+    const phone = await this.phoneRepository.getUserPhoneNumberById(phoneId);
+
+    if (!phone) {
       return {
-        statusCode: 400,
-        data: { message: error.message },
+        statusCode: 404,
+        data: { message: "can't find phone number" },
       };
     }
+
+    const orderInfo = {
+      phoneId,
+      statusId: "6646747dd96fa5f4ee9cacd8",
+    };
+
+    const cart = await this.cartRepository.getUserCart(userId);
+
+    if (!cart) {
+      return {
+        statusCode: 404,
+        data: { message: "cart is empty" },
+      };
+    }
+
+    const order = await this.orderRepository.createNewOrder(orderInfo);
+
+    cart.itemsIds.forEach(async (item) => {
+      await this.itemRepository.updateUserItemById(
+        { _id: item._id },
+        { orderId: order._id }
+      );
+    });
+
+    await this.cartRepository.deleteUserCart(userId);
+
+    return {
+      statusCode: 201,
+      data: { message: "order placed successfuly" },
+    };
   }
 }
 

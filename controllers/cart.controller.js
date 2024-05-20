@@ -1,20 +1,26 @@
 class CartController {
-  cartService;
-  itemService;
-  authService;
-  productService;
-  constructor(_cartService, _itemService, _productService, _authService) {
-    this.cartService = _cartService;
-    this.itemService = _itemService;
-    this.productService = _productService;
-    this.authService = _authService;
+  cartRepository;
+  itemRepository;
+  authRepository;
+  productRepository;
+
+  constructor(
+    _cartRepository,
+    _itemRepository,
+    _productRepository,
+    _authRepository
+  ) {
+    this.cartRepository = _cartRepository;
+    this.itemRepository = _itemRepository;
+    this.productRepository = _productRepository;
+    this.authRepository = _authRepository;
   }
   getCartItems() {
-    return this.cartService.getCartItems();
+    return this.cartRepository.getCartItems();
   }
   async deleteItemFromCart(itemId) {
     try {
-      const isDeleted = await cartService.deleteItemFromCart(itemId);
+      const isDeleted = await cartRepository.deleteItemFromCart(itemId);
       if (isDeleted) {
         return {
           statusCode: 200,
@@ -29,8 +35,17 @@ class CartController {
     }
   }
 
-  getUserItems() {
-    const items = [];
+  async getUserCart(userId) {
+    try {
+      const cartItems = await this.cartRepository.getUserCart(userId);
+      if (!cartItems || cartItems.length === 0) {
+        return { statusCode: 404, data: { message: "Cart items not found" } };
+      }
+      return { statusCode: 200, data: cartItems };
+    } catch (error) {
+      console.error("Error fetching user cart:", error);
+      return { statusCode: 500, data: { message: "Internal server error" } };
+    }
   }
 
   async addItemToCart(itemInfo, userId) {
@@ -38,7 +53,7 @@ class CartController {
 
     /* Checks if the product exists */
 
-    const product = await this.productService.getProductsById(productId);
+    const product = await this.productRepository.getProductsById(productId);
 
     if (!product) {
       return {
@@ -58,10 +73,10 @@ class CartController {
 
     /* Checks if there is a cart */
 
-    const cart = await this.cartService.getUserCart(userId);
+    const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
-      const item = await this.itemService.createItem(itemInfo);
+      const item = await this.itemRepository.createItem(itemInfo);
 
       await this.createCart(item, userId);
 
@@ -75,16 +90,16 @@ class CartController {
       });
 
       if (item) {
-        await this.itemService.updateUserItemById(
+        await this.itemRepository.updateUserItemById(
           { _id: item._id },
           { quantity: ++item.quantity }
         );
       } else {
-        const item = await this.itemService.createItem(itemInfo);
+        const item = await this.itemRepository.createItem(itemInfo);
 
         cart.itemsIds.push(item);
 
-        await this.cartService.updateUserCart(userId, cart);
+        await this.cartRepository.updateUserCart(userId, cart);
       }
 
       return {
@@ -94,14 +109,12 @@ class CartController {
     }
   }
 
-  removeItemFromCart() {}
-
   async updateItem(itemInfo, userId) {
     const { productId, quantity } = itemInfo;
 
     /* Checks if the product exists */
 
-    const product = await this.productService.getProductsById(productId);
+    const product = await this.productRepository.getProductsById(productId);
 
     if (!product) {
       return {
@@ -109,10 +122,18 @@ class CartController {
         data: { message: "product not found" },
       };
     }
+  }
 
+  removeItemFromCart() {}
+
+  async createCart(itemId, userId) {
+    await this.cartRepository.createCart({
+      itemsIds: [itemId],
+      userId: userId,
+    });
     /* Checks if there is a cart */
 
-    const cart = await this.cartService.getUserCart(userId);
+    const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
       return {
@@ -134,7 +155,7 @@ class CartController {
       }
 
       if (item) {
-        await this.itemService.updateUserItemById(
+        await this.itemRepository.updateUserItemById(
           { _id: item._id },
           { quantity: item.quantity + quantity }
         );
@@ -152,14 +173,8 @@ class CartController {
     }
   }
 
-  getUserCart(cartId) {
-    return this.cartService.getUserCart(cartId);
-  }
-
-  async createItem(itemInfo) {}
-
   async clearUserCart(userId) {
-    const cart = await this.cartService.getUserCart(userId);
+    const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
       return {
@@ -169,10 +184,10 @@ class CartController {
     }
 
     cart.itemsIds.forEach((item) => {
-      this.itemService.deleteUserItemById(item);
+      this.itemRepository.deleteUserItemById(item);
     });
 
-    this.cartService.deleteUserCart(userId);
+    this.cartRepository.deleteUserCart(userId);
 
     return {
       statusCode: 200,
@@ -180,16 +195,8 @@ class CartController {
     };
   }
 
-  updateItem() {}
-
-  getUserCart(cartId) {
-    return this.cartService.getUserCart(cartId);
-  }
-
-  async createItem(itemInfo) {}
-
   async createCart(itemId, userId) {
-    await this.cartService.createCart({
+    await this.cartRepository.createCart({
       itemsIds: [itemId],
       userId: userId,
     });

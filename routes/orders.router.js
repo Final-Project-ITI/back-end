@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler");
 const orderRouter = (orderControllers, authMiddleware) => {
   router.get(
     "/authorization",
-    authMiddleware.admin(orderControllers.authService),
+    authMiddleware.admin(orderControllers.authRepository),
     async (req, res) => {
       const response = await orderControllers.getAllOrders();
       res.status(response.statusCode).send(response.data);
@@ -14,7 +14,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
 
   router.get(
     "/admin",
-    authMiddleware.restaurantAdmin(orderControllers.authService),
+    authMiddleware.restaurantAdmin(orderControllers.authRepository),
     async (req, res) => {
       const response = await orderControllers.getAllRestaurantOrders(req.auth);
 
@@ -28,21 +28,29 @@ const orderRouter = (orderControllers, authMiddleware) => {
     res.send(response);
   });
 
-  router.get("/user", (req, res) => {
-    const response = orderControllers.getAllUserOrders();
+  router.get(
+    "/:userId",
+    authMiddleware.user(orderControllers.authRepository),
+    async (req, res) => {
+      const userId = req.params.userId;
+      const response = await orderControllers.getAllUserOrders(userId);
+      res.status(response.statusCode).send(response.data);
+    }
+  );
 
-    res.send(response);
-  });
-
-  router.get("/user/:orderId", (req, res) => {
-    const response = orderControllers.getUserOrderById();
-
-    res.send(response);
-  });
+  router.get(
+    "/:userId/:orderId",
+    authMiddleware.user(orderControllers.authRepository),
+    async (req, res) => {
+      const { userId, orderId } = req.params;
+      const response = await orderControllers.getUserOrderById(userId, orderId);
+      res.status(response.statusCode).send(response.data);
+    }
+  );
 
   router.post(
     "/:restaurantId/user",
-    authMiddleware.user(orderControllers.authService),
+    authMiddleware.user(orderControllers.authRepository),
     asyncHandler(async (req, res) => {
       const response = await orderControllers.createNewOrder(
         req.body,

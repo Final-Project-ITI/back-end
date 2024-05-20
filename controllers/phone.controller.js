@@ -1,14 +1,14 @@
 class ProductController {
-    phoneService;
-    authService;
+    phoneRepository;
+    authRepository;
 
-    constructor(_phoneService, _authService) {
-        this.phoneService = _phoneService;
-        this.authService = _authService;
+    constructor(_phoneRepository, _authRepository) {
+        this.phoneRepository = _phoneRepository;
+        this.authRepository = _authRepository;
     }
 
     async getUserPhoneNumbers(userId) {
-        const phoneNumbers = await this.phoneService.getUserPhoneNumbers(userId);
+        const phoneNumbers = await this.phoneRepository.getUserPhoneNumbers(userId);
 
         if (!phoneNumbers) {
             return {
@@ -28,7 +28,7 @@ class ProductController {
     async updateUserPhoneNumberById(phoneId, newNumber) { }
 
     async createUserPhoneNumber({ phoneNumber }, userId) {
-        const phoneNumbers = await this.phoneService.getUserPhoneNumbers(userId);
+        const phoneNumbers = await this.phoneRepository.getUserPhoneNumbers(userId);
 
         const isPhoneNumberExists = phoneNumbers.find((phone) => phoneNumber === phone.phoneNumber);
 
@@ -39,7 +39,7 @@ class ProductController {
             }
         }
 
-        await this.phoneService.createUserPhoneNumber({ userId, phoneNumber });
+        await this.phoneRepository.createUserPhoneNumber({ userId, phoneNumber });
 
         return {
             statusCode: 200,

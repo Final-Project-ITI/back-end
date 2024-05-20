@@ -3,13 +3,13 @@ const bcrypt = require("bcrypt");
 
 class AuthController {
 
-  authService;
+  authRepository;
   respones = {
     statusCode: 0,
   };
 
-  constructor(authService) {
-    this.authService = authService;
+  constructor(authRepository) {
+    this.authRepository = authRepository;
   }
 
   async login(loginInfo) {
@@ -17,7 +17,7 @@ class AuthController {
 
     /* find the user by the email */
 
-    const user = await this.authService.getUser({ email });
+    const user = await this.authRepository.getUser({ email });
 
     /* checks if the user exits || the email & password matching */
 
@@ -43,7 +43,7 @@ class AuthController {
       registerInfo.email = registerInfo.email.toLowerCase()
 
       //* checks if the user exits 
-      let user = await this.authService.getUser({ email: registerInfo.email });
+      let user = await this.authRepository.getUser({ email: registerInfo.email });
       if (user) {
         this.respones = {
           statusCode: 401,
@@ -53,7 +53,7 @@ class AuthController {
       }
 
       //* checks if the type exits 
-      let type = await this.authService.getType(registerInfo.typeId);
+      let type = await this.authRepository.getType(registerInfo.typeId);
 
       if (!type) {
         this.respones = {
@@ -68,11 +68,10 @@ class AuthController {
       registerInfo.password = passwordHash;
 
       //Add new user information to the database.
-      user = await this.authService.addUser(registerInfo)
+      user = await this.authRepository.addUser(registerInfo)
 
       /* generate token that will be send to the client */
       const token = jwt.sign({ _id: user.id, role: type.name }, "WaRsM", { expiresIn: "6h" });
-
 
       return { statusCode: 200, data: { token } };
     } catch (error) {
