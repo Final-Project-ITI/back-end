@@ -124,8 +124,6 @@ class CartController {
     }
   }
 
-  removeItemFromCart() {}
-
   async createCart(itemId, userId) {
     await this.cartRepository.createCart({
       itemsIds: [itemId],
