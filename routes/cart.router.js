@@ -27,19 +27,48 @@ const cartRouter = (cartController, authMiddleware) => {
     })
   );
 
-  router.patch("/", (req, res) => {
-    const response = cartController.getCartItems();
-    res.status(response.statusCode).send(response.data);
-  });
+  router.patch(
+    "/",
+    authMiddleware.user(cartController.authRepository),
+    asyncHandler(async (req, res) => {
+      const response = await cartController.updateItem(req.body, req.auth._id);
 
-  router.delete("/", (req, res) => {
-    const response = cartController.getCartItems();
-    res.status(response.statusCode).send(response.data);
-  });
+      res.status(response.statusCode).send(response.data);
+    })
+  );
 
-  router.delete("/clear", (req, res) => {
-    const response = cartController.getCartItems();
-    res.status(response.statusCode).send(response.data);
+  router.delete(
+    "/",
+    authMiddleware.user(cartController.authRepository),
+    asyncHandler(async (req, res) => {
+      const response = await cartController.addItemToCart(
+        req.body,
+        req.auth._id
+      );
+
+      res.status(response.statusCode).send(response.data);
+    })
+  );
+
+  router.delete(
+    "/clear",
+    authMiddleware.user(cartController.authRepository),
+    asyncHandler(async (req, res) => {
+      const response = await cartController.clearUserCart(req.auth._id);
+
+      res.status(response.statusCode).send(response.data);
+    })
+  );
+
+  router.delete("/:itemId", async (req, res, next) => {
+    try {
+      const response = await cartController.deleteItemFromCart(
+        req.params.itemId
+      );
+      res.status(response.statusCode).send(response.data);
+    } catch (error) {
+      next(error);
+    }
   });
   return router;
 };

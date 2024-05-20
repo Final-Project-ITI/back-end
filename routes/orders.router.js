@@ -6,18 +6,21 @@ const orderRouter = (orderControllers, authMiddleware) => {
   router.get(
     "/authorization",
     authMiddleware.admin(orderControllers.authRepository),
-    (req, res) => {
-      const response = orderControllers.getAllOrders();
-
-      res.send(response);
+    async (req, res) => {
+      const response = await orderControllers.getAllOrders();
+      res.status(response.statusCode).send(response.data);
     }
   );
 
-  router.get("/admin", (req, res) => {
-    const response = orderControllers.getAllRestaurantOrders();
+  router.get(
+    "/admin",
+    authMiddleware.restaurantAdmin(orderControllers.authRepository),
+    async (req, res) => {
+      const response = await orderControllers.getAllRestaurantOrders(req.auth);
 
-    res.send(response);
-  });
+      res.status(response.statusCode).send(response.data);
+    }
+  );
 
   router.get("/admin/:orderId", (req, res) => {
     const response = orderControllers.getRestaurantOrderById();
@@ -27,7 +30,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
 
   router.get(
     "/:userId",
-    // authMiddleware.user(orderControllers.authRepository),
+    authMiddleware.user(orderControllers.authRepository),
     async (req, res) => {
       const userId = req.params.userId;
       const response = await orderControllers.getAllUserOrders(userId);
@@ -37,7 +40,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
 
   router.get(
     "/:userId/:orderId",
-    // authMiddleware.user(orderControllers.authRepository),
+    authMiddleware.user(orderControllers.authRepository),
     async (req, res) => {
       const { userId, orderId } = req.params;
       const response = await orderControllers.getUserOrderById(userId, orderId);
@@ -59,12 +62,23 @@ const orderRouter = (orderControllers, authMiddleware) => {
     })
   );
 
-  router.patch("/cashier/:orderId", (req, res) => {
-    const response = orderControllers.updateOrderStatus();
+  router.patch("/cashier/:orderId", async (req, res, next) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    try {
+      if (!status) {
+        return res.status(400).send({ error: "Order status is required" });
+      }
 
-    res.send(response);
+      const response = await orderControllers.updateOrderStatus(
+        orderId,
+        status
+      );
+      res.status(response.statusCode).send(response.data);
+    } catch (error) {
+      next(error);
+    }
   });
-
   return router;
 };
 

@@ -4,11 +4,35 @@ class CartController {
   authRepository;
   productRepository;
 
-  constructor(_cartRepository, _itemRepository, _productRepository, _authRepository) {
+  constructor(
+    _cartRepository,
+    _itemRepository,
+    _productRepository,
+    _authRepository
+  ) {
     this.cartRepository = _cartRepository;
     this.itemRepository = _itemRepository;
     this.productRepository = _productRepository;
     this.authRepository = _authRepository;
+  }
+  getCartItems() {
+    return this.cartRepository.getCartItems();
+  }
+  async deleteItemFromCart(itemId) {
+    try {
+      const isDeleted = await cartRepository.deleteItemFromCart(itemId);
+      if (isDeleted) {
+        return {
+          statusCode: 200,
+          data: { message: "Item removed from cart successfully" },
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        data: { message: error.message },
+      };
+    }
   }
 
   async getUserCart(userId) {
@@ -100,8 +124,6 @@ class CartController {
     }
   }
 
-  removeItemFromCart() { }
-
   async createCart(itemId, userId) {
     await this.cartRepository.createCart({
       itemsIds: [itemId],
@@ -159,7 +181,7 @@ class CartController {
       };
     }
 
-    cart.itemsIds.forEach(item => {
+    cart.itemsIds.forEach((item) => {
       this.itemRepository.deleteUserItemById(item);
     });
 
