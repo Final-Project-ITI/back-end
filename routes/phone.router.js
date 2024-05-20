@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 const cartRouter = (phoneController, authMiddleware) => {
     router.get(
         "/",
-        authMiddleware.user(phoneController.authService),
+        authMiddleware.user(phoneController.authRepository),
         asyncHandler(
             async (req, res) => {
                 const response = await phoneController.getUserPhoneNumbers(req.auth._id)
@@ -14,7 +14,7 @@ const cartRouter = (phoneController, authMiddleware) => {
         ));
 
     router.post("/",
-        authMiddleware.user(phoneController.authService),
+        authMiddleware.user(phoneController.authRepository),
         asyncHandler(
             async (req, res) => {
                 const response = await phoneController.createUserPhoneNumber(req.body, req.auth._id);
@@ -24,7 +24,7 @@ const cartRouter = (phoneController, authMiddleware) => {
         ));
 
     router.patch("/",
-        authMiddleware.user(phoneController.authService),
+        authMiddleware.user(phoneController.authRepository),
         asyncHandler(
             async (req, res) => {
                 const response = await phoneController.updateUserPhoneNumberById(req.body, req.auth._id);
@@ -34,7 +34,7 @@ const cartRouter = (phoneController, authMiddleware) => {
         ));
 
     router.delete("/",
-        authMiddleware.user(phoneController.authService),
+        authMiddleware.user(phoneController.authRepository),
         asyncHandler(
             async (req, res) => {
                 const response = await phoneController.deleteUserPhoneNumber(req.body, req.auth._id);

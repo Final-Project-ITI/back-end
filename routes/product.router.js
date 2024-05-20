@@ -26,9 +26,9 @@ const productRouter = (productController, authMiddleware) => {
   );
 
   router.post("/admin",
-    authMiddleware.restaurantAdmin(productController.authService),
+    authMiddleware.restaurantAdmin(productController.authRepository),
     async (req, res) => {
-      const response = await productController.createProduct(req.body,req.auth);
+      const response = await productController.createProduct(req.body, req.auth);
 
       res.send(response);
     });

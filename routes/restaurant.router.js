@@ -23,7 +23,7 @@ const restaurantRouter = (restaurantController, authMiddleware) => {
   );
 
   router.post("/authorization/register",
-    authMiddleware.admin(restaurantController.authService),
+    authMiddleware.admin(restaurantController.authRepository),
     asyncHandler(async (req, res) => {
       const response = await restaurantController.addRestaurant(req.body);
 

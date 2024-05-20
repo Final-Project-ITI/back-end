@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler");
 const cartRouter = (cartController, authMiddleware) => {
   router.get(
     "/:userId",
-    // authMiddleware.user(cartController.authService),
+    // authMiddleware.user(cartController.authRepository),
     asyncHandler(async (req, res) => {
       const userId = req.params.userId;
       console.log(userId);
@@ -13,9 +13,10 @@ const cartRouter = (cartController, authMiddleware) => {
       res.status(response.statusCode).send(response.data);
     })
   );
+
   router.post(
     "/",
-    authMiddleware.user(cartController.authService),
+    authMiddleware.user(cartController.authRepository),
     asyncHandler(async (req, res) => {
       const response = await cartController.addItemToCart(
         req.body,

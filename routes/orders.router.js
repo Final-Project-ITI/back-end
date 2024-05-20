@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler");
 const orderRouter = (orderControllers, authMiddleware) => {
   router.get(
     "/authorization",
-    authMiddleware.admin(orderControllers.authService),
+    authMiddleware.admin(orderControllers.authRepository),
     (req, res) => {
       const response = orderControllers.getAllOrders();
 
@@ -27,7 +27,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
 
   router.get(
     "/:userId",
-    // authMiddleware.user(orderControllers.authService),
+    // authMiddleware.user(orderControllers.authRepository),
     async (req, res) => {
       const userId = req.params.userId;
       const response = await orderControllers.getAllUserOrders(userId);
@@ -37,7 +37,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
 
   router.get(
     "/:userId/:orderId",
-    // authMiddleware.user(orderControllers.authService),
+    // authMiddleware.user(orderControllers.authRepository),
     async (req, res) => {
       const { userId, orderId } = req.params;
       const response = await orderControllers.getUserOrderById(userId, orderId);
@@ -47,7 +47,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
 
   router.post(
     "/:restaurantId/user",
-    authMiddleware.user(orderControllers.authService),
+    authMiddleware.user(orderControllers.authRepository),
     asyncHandler(async (req, res) => {
       const response = await orderControllers.createNewOrder(
         req.body,
