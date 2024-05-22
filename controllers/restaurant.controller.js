@@ -1,4 +1,5 @@
 const Errors = require("../error/error");
+const validateRestaurant = require("../validators/restaurant.validator");
 
 class RestaurantController {
   restaurantRepository;
@@ -38,7 +39,7 @@ class RestaurantController {
   }
 
   async addRestaurant(body) {
-    const { error, restaurantInfo } = await validateUser(body);
+    const { error, restaurantInfo } = await validateRestaurant(body);
       if (error) {
         res.status(404).send("Invalid request");
         return;
