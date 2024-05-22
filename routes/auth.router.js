@@ -3,22 +3,6 @@ const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
 const authRouter = (authController) => {
-  router.get("/:userId", asyncHandler(
-    async (req, res) => {
-      const respones = await authController.getAllUsers(req.body);
-
-      res.status(respones.statusCode).send(respones.data);
-    }
-  ));
-
-  router.get("/:userId", asyncHandler(
-    async (req, res) => {
-      const respones = await authController.getUserById(req.body);
-
-      res.status(respones.statusCode).send(respones.data);
-    }
-  ));
-
   router.post("/login", asyncHandler(
     async (req, res) => {
       const respones = await authController.login(req.body);
@@ -33,7 +17,6 @@ const authRouter = (authController) => {
       res.status(respones.statusCode).send(respones.data);
     }
   ));
-
 
   return router;
 };

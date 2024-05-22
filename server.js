@@ -3,6 +3,7 @@ const express = require("express");
 const mainRouter = express.Router();
 const app = express();
 const port = 3000;
+const errorMiddleware = require('./middlewares/error.middleware.js')
 
 const database = require("./database/database");
 
@@ -61,6 +62,8 @@ mainRouter.use("/products", productRouter(productController, authMiddleware));
 mainRouter.use("/phones", phoneRouter(phoneController, authMiddleware));
 
 app.use("/api/v1", mainRouter);
+
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

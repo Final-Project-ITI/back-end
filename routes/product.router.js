@@ -5,47 +5,60 @@ const asyncHandler = require("express-async-handler");
 const productRouter = (productController, authMiddleware) => {
   router.get(
     "/:restaurantId",
-    asyncHandler(async (req, res) => {
-      const restaurantId = req.params.restaurantId;
+    async (req, res, next) => {
+      try {
+        const products = await productController.getAllProducts(req.params.restaurantId);
 
-      const response = await productController.getAllProducts(restaurantId);
-      res.status(response.statusCode).send(response.data);
-    })
+        res.status(200).send(products);
+      } catch (error) {
+        next(error)
+      }
+    }
   );
 
   router.get(
     "/:restaurantId/:productId",
-    asyncHandler(async (req, res) => {
-      const { restaurantId, productId } = req.params;
+    async (req, res, next) => {
+      try {
+        const { restaurantId, productId } = req.params;
 
-      const response = await productController.getRestaurantsProductsById(
-        restaurantId,
-        productId
-      );
+        const product = await productController.getRestaurantsProductsById(
+          restaurantId,
+          productId
+        );
 
-      res.status(response.statusCode).send(response.data);
-    })
+        res.status(200).send(product);
+      } catch (error) {
+        next(error)
+      }
+    }
   );
 
-  router.post("/admin",
+  router.post(
+    "/admin",
     authMiddleware.restaurantAdmin(productController.authRepository),
-    async (req, res) => {
-      const response = await productController.createProduct(req.body, req.auth);
+    async (req, res, next) => {
+      try {
+        const newProduct = await productController.createProduct(req.body, req.auth);
 
-      res.send(response);
+        res.status(201).send(newProduct);
+      } catch (error) {
+        next(error);
+      }
     });
 
   router.patch(
     "/admin/:productId",
-    authMiddleware.restaurantAdmin(),
+    authMiddleware.restaurantAdmin(productController.authRepository),
     async (req, res, next) => {
       try {
-        const updatedProductData = req.body;
-        const response = await productControllers.updateProduct(
+        const updatedProduct = await productController.updateProduct(
+          req.body,
           req.params.productId,
-          updatedProductData
+          req.auth
         );
-        res.status(response.statusCode).send(response.data);
+
+        res.status(200).send(updatedProduct);
       } catch (error) {
         next(error);
       }
@@ -54,13 +67,14 @@ const productRouter = (productController, authMiddleware) => {
 
   router.delete(
     "/admin/:productId",
-    authMiddleware.restaurantAdmin(),
+    authMiddleware.restaurantAdmin(productController.authRepository),
     async (req, res, next) => {
       try {
-        const respone = await productControllers.deleteProduct(
-          req.params.productId
+        const isDeleted = await productController.deleteProduct(
+          req.params.productId,
+          req.auth
         );
-        res.status(respone.statusCode).send(respone.data);
+        res.status(200).send(isDeleted);
       } catch (error) {
         next(error);
       }

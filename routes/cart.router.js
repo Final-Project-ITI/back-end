@@ -4,72 +4,84 @@ const asyncHandler = require("express-async-handler");
 
 const cartRouter = (cartController, authMiddleware) => {
   router.get(
-    "/:userId",
-    // authMiddleware.user(cartController.authRepository),
-    asyncHandler(async (req, res) => {
-      const userId = req.params.userId;
-      console.log(userId);
-      const response = await cartController.getUserCart(userId);
-      res.status(response.statusCode).send(response.data);
-    })
+    "/",
+    authMiddleware.user(cartController.authRepository),
+    async (req, res, next) => {
+      try {
+        const cart = await cartController.getUserCart(req.auth._id);
+
+        if (!cart) {
+          res.status(200).send({ message: "cart is empty" });
+        }
+
+        res.status(200).send(cart);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
   router.post(
     "/",
     authMiddleware.user(cartController.authRepository),
-    asyncHandler(async (req, res) => {
-      const response = await cartController.addItemToCart(
-        req.body,
-        req.auth._id
-      );
+    async (req, res, next) => {
+      try {
+        const newItem = await cartController.addItemToCart(
+          req.body,
+          req.auth._id
+        );
 
-      res.status(response.statusCode).send(response.data);
-    })
+        res.status(200).send(newItem);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
   router.patch(
-    "/",
+    "/:itemId",
     authMiddleware.user(cartController.authRepository),
-    asyncHandler(async (req, res) => {
-      const response = await cartController.updateItem(req.body, req.auth._id);
+    async (req, res, next) => {
+      try {
+        const updatedItem = await cartController.updateItem(req.body, req.params.itemId, req.auth._id);
 
-      res.status(response.statusCode).send(response.data);
-    })
-  );
-
-  router.delete(
-    "/",
-    authMiddleware.user(cartController.authRepository),
-    asyncHandler(async (req, res) => {
-      const response = await cartController.addItemToCart(
-        req.body,
-        req.auth._id
-      );
-
-      res.status(response.statusCode).send(response.data);
-    })
+        res.status(200).send(updatedItem);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
   router.delete(
     "/clear",
     authMiddleware.user(cartController.authRepository),
-    asyncHandler(async (req, res) => {
-      const response = await cartController.clearUserCart(req.auth._id);
+    async (req, res, next) => {
+      try {
+        const deletedCart = await cartController.clearUserCart(req.auth._id);
 
-      res.status(response.statusCode).send(response.data);
-    })
+        res.status(200).send(deletedCart);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
-  router.delete("/:itemId", async (req, res, next) => {
-    try {
-      const response = await cartController.deleteItemFromCart(
-        req.params.itemId
-      );
-      res.status(response.statusCode).send(response.data);
-    } catch (error) {
-      next(error);
+  router.delete(
+    "/:itemId",
+    authMiddleware.user(cartController.authRepository),
+    async (req, res, next) => {
+      try {
+        const deletedItem = await cartController.deleteItemFromCart(
+          req.params.itemId,
+          req.auth._id
+        );
+        res.status(200).send(deletedItem);
+      } catch (error) {
+        next(error);
+      }
     }
-  });
+  );
+
   return router;
 };
 

@@ -1,10 +1,9 @@
+const Errors = require("../error/error");
+
 class RestaurantController {
   restaurantRepository;
   authRepository;
-  response = {
-    statusCode: 0,
-    data: {},
-  };
+
   constructor(_restaurantRepository, _authRepository) {
     this.restaurantRepository = _restaurantRepository;
     this.authRepository = _authRepository;
@@ -15,42 +14,27 @@ class RestaurantController {
       name.toLowerCase()
     );
 
-    if (!restaurants.length) {
-      this.response = {
-        statusCode: 404,
-        data: {
-          message: "restaurants not found",
-        },
-      };
-      return this.response;
+    return restaurants;
+  }
+
+  async getRestaurantById(_id) {
+    const restaurant = await this.restaurantRepository.getRestaurantById({ _id });
+
+    if (!restaurant) {
+      throw new Errors.NotFoundError("restaurant not found");
     }
 
-    this.response = {
-      statusCode: 200,
-      data: restaurants,
-    };
-
-    return this.response;
+    return restaurant;
   }
 
   async getAllRestaurants() {
     const restaurants = await this.restaurantRepository.getAllRestaurants();
+
     if (!restaurants) {
-      this.response = {
-        statusCode: 404,
-        data: {
-          message: "restaurants not found",
-        },
-      };
-      return this.response;
+      throw new Errors.NotFoundError("restaurants not found");
     }
 
-    this.response = {
-      statusCode: 200,
-      data: restaurants,
-    };
-
-    return this.response;
+    return restaurants;
   }
 
   async addRestaurant(restaurantInfo) {
@@ -63,17 +47,12 @@ class RestaurantController {
     let user = await this.authRepository.getUser({ _id: restaurantInfo.userId });
 
     if (!user) {
-      this.response = {
-        statusCode: 401,
-        data: { message: "user not found " },
-      };
-
-      return this.response;
+      throw new Errors.NotFoundError('user not found');
     }
 
     user = await this.authRepository.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
 
-    return { statusCode: 200, data: { ...restaurant, ...user } }
+    return { ...restaurant, ...user };
   }
 }
 

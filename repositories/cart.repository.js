@@ -1,38 +1,26 @@
 const CartModel = require("../models/cart.model");
 
 class CartService {
-  constructor() {}
+  constructor() { }
 
   async getUserCart(userId) {
-    try {
-      return await CartModel.findOne({ userId }).populate("itemsIds");
-    } catch (error) {
-      return error;
-    }
+    return await CartModel.findOne({ userId }).populate("itemsIds");
+  }
+
+  async getUserItems(userId) {
+    return await CartModel.findOne({ userId });
   }
 
   async updateUserCart(userId, val) {
-    try {
-      return await CartModel.updateMany({ userId }, val);
-    } catch (error) {
-      return error;
-    }
+    return await CartModel.updateMany({ userId }, val);
   }
 
   async deleteUserCart(userId) {
-    try {
-      return await CartModel.deleteOne({ userId });
-    } catch (error) {
-      return error;
-    }
+    return await CartModel.deleteOne({ userId });
   }
 
   async createCart(cartInfo) {
-    try {
-      return await CartModel.create(cartInfo);
-    } catch (error) {
-      return error;
-    }
+    return await CartModel.create(cartInfo);
   }
 }
 

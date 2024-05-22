@@ -1,8 +1,10 @@
+const Errors = require("../error/error");
+
 class CartController {
   cartRepository;
   itemRepository;
-  authRepository;
   productRepository;
+  authRepository;
 
   constructor(
     _cartRepository,
@@ -15,182 +17,105 @@ class CartController {
     this.productRepository = _productRepository;
     this.authRepository = _authRepository;
   }
-  getCartItems() {
-    return this.cartRepository.getCartItems();
-  }
-  async deleteItemFromCart(itemId) {
-    try {
-      const isDeleted = await cartRepository.deleteItemFromCart(itemId);
-      if (isDeleted) {
-        return {
-          statusCode: 200,
-          data: { message: "Item removed from cart successfully" },
-        };
-      }
-    } catch (error) {
-      return {
-        statusCode: 400,
-        data: { message: error.message },
-      };
-    }
-  }
 
   async getUserCart(userId) {
-    try {
-      const cartItems = await this.cartRepository.getUserCart(userId);
-      if (!cartItems || cartItems.length === 0) {
-        return { statusCode: 404, data: { message: "Cart items not found" } };
-      }
-      return { statusCode: 200, data: cartItems };
-    } catch (error) {
-      console.error("Error fetching user cart:", error);
-      return { statusCode: 500, data: { message: "Internal server error" } };
-    }
+    const cart = await this.cartRepository.getUserCart(userId);
+
+    return cart;
   }
 
   async addItemToCart(itemInfo, userId) {
-    const { productId, quantity } = itemInfo;
-
     /* Checks if the product exists */
 
+    const { productId, quantity } = itemInfo;
     const product = await this.productRepository.getProductsById(productId);
 
     if (!product) {
-      return {
-        statusCode: 400,
-        data: { message: "product not found" },
-      };
+      throw new Errors.NotFoundError("product not found");
     }
-
-    /* Checks if the number of quantities exceeded the food item limit & Creating the item*/
-
-    // if (quantity && quantity > product.limit) {
-    //     return {
-    //         statusCode: 400,
-    //         data: { message: 'quantity exceeded the product limit' }
-    //     }
-    // }
 
     /* Checks if there is a cart */
 
     const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
-      const item = await this.itemRepository.createItem(itemInfo);
+      /* Create new cart */
 
+      const item = await this.itemRepository.createItem(itemInfo);
       await this.createCart(item, userId);
 
-      return {
-        statusCode: 200,
-        data: "Cart Created",
-      };
+      return await this.cartRepository.getUserCart(userId);
     } else {
+      /* Add new item to the existed cart */
+      const firstProduct = await this.productRepository.getProductsById(cart.itemsIds[0].productId);
+
+      if (firstProduct.restaurantId._id.toString() !== product.restaurantId._id.toString()) {
+        throw new Errors.ApiError("can not include multiple restaurants in the cart", 400);
+      }
+
       const item = cart.itemsIds.find((item) => {
         return item.productId == productId;
       });
 
       if (item) {
+        /* Increment the quantity if the product already in the cart */
+
         await this.itemRepository.updateUserItemById(
           { _id: item._id },
-          { quantity: ++item.quantity }
+          { quantity: quantity ? quantity + item.quantity : ++item.quantity }
         );
       } else {
+        /* Create new item if the product is not in the cart */
         const item = await this.itemRepository.createItem(itemInfo);
-
         cart.itemsIds.push(item);
-
         await this.cartRepository.updateUserCart(userId, cart);
       }
 
-      return {
-        statusCode: 200,
-        data: cart,
-      };
+      return await this.cartRepository.getUserCart(userId);
     }
   }
 
-  async updateItem(itemInfo, userId) {
-    const { productId, quantity } = itemInfo;
+  async updateItem(itemInfo, itemId, userId) {
+    const { quantity } = itemInfo;
+    const cart = await this.cartRepository.getUserItems(userId);
+    const isItemInCart = cart.itemsIds.filter((item) => item.toString() === itemId);
 
-    /* Checks if the product exists */
-
-    const product = await this.productRepository.getProductsById(productId);
-
-    if (!product) {
-      return {
-        statusCode: 400,
-        data: { message: "product not found" },
-      };
+    if (!isItemInCart.length) {
+      throw new Errors.UnAuthError();
     }
-  }
 
-  async createCart(itemId, userId) {
-    await this.cartRepository.createCart({
-      itemsIds: [itemId],
-      userId: userId,
-    });
-    /* Checks if there is a cart */
+    /* Update the quantity */
 
-    const cart = await this.cartRepository.getUserCart(userId);
-
-    if (!cart) {
-      return {
-        statusCode: 400,
-        data: { message: "item not found" },
-      };
-    } else {
-      const item = cart.itemsIds.find((item) => {
-        return item.productId == productId;
-      });
-
-      /* Checks if the number of quantities exceeded the food item limit & Creating the item*/
-
-      if (item.quantity + quantity > product.limit) {
-        return {
-          statusCode: 400,
-          data: { message: "quantity exceeded the product limit" },
-        };
-      }
-
-      if (item) {
-        await this.itemRepository.updateUserItemById(
-          { _id: item._id },
-          { quantity: item.quantity + quantity }
-        );
-      } else {
-        return {
-          statusCode: 400,
-          data: { message: "item not found" },
-        };
-      }
-
-      return {
-        statusCode: 200,
-        data: cart,
-      };
-    }
+    return await this.itemRepository.updateUserItemById({ _id: itemId }, { quantity });
   }
 
   async clearUserCart(userId) {
     const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
-      return {
-        statusCode: 404,
-        data: { message: "there is no cart to clear" },
-      };
+      throw new Errors.ApiError("there is no cart to clear", 400);
     }
 
     cart.itemsIds.forEach((item) => {
       this.itemRepository.deleteUserItemById(item);
     });
 
-    this.cartRepository.deleteUserCart(userId);
+    const deletedCart = await this.cartRepository.deleteUserCart(userId);
 
-    return {
-      statusCode: 200,
-      data: { message: "cart has been cleared" },
-    };
+    return deletedCart;
+  }
+
+  async deleteItemFromCart(itemId, userId) {
+    const cart = await this.cartRepository.getUserItems(userId);
+    const isItemInCart = cart.itemsIds.filter((item) => item.toString() === itemId);
+
+    if (!isItemInCart.length) {
+      throw new Errors.UnAuthError();
+    }
+
+    /* Delete Item */
+
+    return await this.itemRepository.deleteUserItemById({ _id: itemId });
   }
 
   async createCart(itemId, userId) {
