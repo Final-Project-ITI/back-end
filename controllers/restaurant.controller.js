@@ -39,16 +39,18 @@ class RestaurantController {
 
   async addRestaurant(restaurantInfo) {
     const { name, description, icon } = restaurantInfo;
-    //Add new restaurant information to the database.
-
-    const restaurant = await this.restaurantRepository.addRestaurant({ name, description, icon });
-
-    //assign restaurant to user
     let user = await this.authRepository.getUser({ _id: restaurantInfo.userId });
 
     if (!user) {
       throw new Errors.NotFoundError('user not found');
     }
+    
+    //Add new restaurant information to the database.
+
+    const restaurant = await this.restaurantRepository.addRestaurant({ name, description, icon });
+
+    //assign restaurant to user
+
 
     user = await this.authRepository.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
 

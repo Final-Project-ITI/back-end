@@ -66,6 +66,9 @@ class AuthController {
       //Implement logic to securely hash user password before storing.
       const passwordHash = await bcrypt.hash(registerInfo.password, 10);
       registerInfo.password = passwordHash;
+      if(registerInfo.typeId){
+      registerInfo.typeId=null
+      }
 
       //Add new user information to the database.
       user = await this.authRepository.addUser(registerInfo)
