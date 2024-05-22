@@ -37,14 +37,20 @@ class RestaurantController {
     return restaurants;
   }
 
-  async addRestaurant(restaurantInfo) {
+  async addRestaurant(body) {
+    const { error, restaurantInfo } = await validateUser(body);
+      if (error) {
+        res.status(404).send("Invalid request");
+        return;
+      }
+
     const { name, description, icon } = restaurantInfo;
     let user = await this.authRepository.getUser({ _id: restaurantInfo.userId });
 
     if (!user) {
       throw new Errors.NotFoundError('user not found');
     }
-    
+
     //Add new restaurant information to the database.
 
     const restaurant = await this.restaurantRepository.addRestaurant({ name, description, icon });
