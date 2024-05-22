@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require("bcrypt");
+const validateUser = require('../validators/user.validator');
 
 class AuthController {
 
@@ -37,8 +38,13 @@ class AuthController {
     return { statusCode: 200, data: { token } };
   }
 
-  async register(registerInfo) {
+  async register(body) {
     try {
+      const { error, registerInfo } = await validateUser(body);
+      if (error) {
+        res.status(404).send("Invalid request");
+        return;
+      }
 
       registerInfo.email = registerInfo.email.toLowerCase()
 
