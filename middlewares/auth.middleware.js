@@ -10,7 +10,7 @@ class AuthMiddleware {
 
         if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-        const payload = jwt.verify(token, "WaRsM");
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const { _id } = payload;
         const user = await authRepository.getUser({ _id });
 
@@ -35,7 +35,7 @@ class AuthMiddleware {
 
         if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-        const payload = jwt.verify(token, "WaRsM");
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const { _id } = payload;
         const user = await authRepository.getUser({ _id });
 
@@ -60,7 +60,7 @@ class AuthMiddleware {
 
         if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-        const payload = jwt.verify(token, "WaRsM");
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const { _id } = payload;
         const user = await authRepository.getUser({ _id });
 
@@ -85,7 +85,7 @@ class AuthMiddleware {
 
         if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-        const payload = jwt.verify(token, "WaRsM");
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const { _id } = payload;
         const user = await authRepository.getUser({ _id });
 

@@ -28,7 +28,7 @@ class AuthController {
 
     /* generate token that will be send to the client */
 
-    const token = jwt.sign({ _id: user.id, role: user.role }, "WaRsM", { expiresIn: "6h" });
+    const token = jwt.sign({ _id: user.id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }
@@ -70,7 +70,7 @@ class AuthController {
     user = await this.authRepository.addUser(body)
 
     /* generate token that will be send to the client */
-    const token = jwt.sign({ _id: user.id, role: type.name }, "WaRsM", { expiresIn: "6h" });
+    const token = jwt.sign({ _id: user.id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }

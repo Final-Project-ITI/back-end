@@ -1,7 +1,7 @@
 const PhoneModel = require("../models/phone.model");
 var ObjectId = require("mongoose").Types.ObjectId;
 
-class CartRepository {
+class PhoneRepository {
     constructor() { }
 
     async getUserPhoneNumbers(userId) {
@@ -27,4 +27,4 @@ class CartRepository {
 }
 
 
-module.exports = CartRepository;
+module.exports = PhoneRepository;

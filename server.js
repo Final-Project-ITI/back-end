@@ -1,8 +1,9 @@
 const express = require("express");
+require("dotenv").config();
 
 const mainRouter = express.Router();
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 /* Connect To Database */
 
@@ -19,6 +20,7 @@ const restaurantRouter = require("./routes/restaurant.router.js");
 const orderRouter = require("./routes/orders.router.js");
 const productRouter = require("./routes/product.router.js");
 const phoneRouter = require("./routes/phone.router.js");
+const addressRouter = require("./routes/address.router.js");
 
 /* Repositories */
 
@@ -29,6 +31,7 @@ const RestaurantRepository = require("./repositories/restaurant.repository.js");
 const OrderRepository = require("./repositories/orders.repository.js");
 const ProductRepository = require("./repositories/product.repository.js");
 const PhoneRepository = require("./repositories/phone.repository.js");
+const AddressRepository = require("./repositories/address.repository.js");
 
 /* Controllers */
 
@@ -38,6 +41,7 @@ const CartController = require("./controllers/cart.controller.js");
 const OrderController = require("./controllers/orders.controller");
 const ProductController = require("./controllers/product.controller");
 const PhoneController = require("./controllers/phone.controller");
+const AddressController = require("./controllers/address.controller");
 
 /* Middlewares */
 
@@ -53,6 +57,7 @@ const itemRepository = new ItemRepository();
 const orderRepository = new OrderRepository();
 const productRepository = new ProductRepository();
 const phoneRepository = new PhoneRepository();
+const addressRepository = new AddressRepository();
 
 /* Controllers Instances */
 
@@ -62,6 +67,7 @@ const cartController = new CartController(cartRepository, itemRepository, produc
 const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository);
 const productController = new ProductController(productRepository, restaurantRepository, authRepository);
 const phoneController = new PhoneController(phoneRepository, authRepository);
+const addressController = new AddressController(addressRepository, authRepository);
 
 /* Middlewares Instances */
 
@@ -75,6 +81,7 @@ mainRouter.use("/authentication", authRouter(authController, authMiddleware));
 mainRouter.use("/orders", orderRouter(orderController, authMiddleware));
 mainRouter.use("/products", productRouter(productController, authMiddleware));
 mainRouter.use("/phones", phoneRouter(phoneController, authMiddleware));
+mainRouter.use("/addresses", addressRouter(addressController, authMiddleware));
 
 /* --------------------- */
 

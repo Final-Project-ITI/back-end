@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const asyncHandler = require('express-async-handler');
 
-const cartRouter = (phoneController, authMiddleware) => {
+const phoneRouter = (phoneController, authMiddleware) => {
     router.get(
         "/",
         authMiddleware.user(phoneController.authRepository),
@@ -76,8 +75,7 @@ const cartRouter = (phoneController, authMiddleware) => {
         }
     );
 
-
     return router;
 };
 
-module.exports = cartRouter;
+module.exports = phoneRouter;
