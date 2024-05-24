@@ -1,3 +1,5 @@
+const Errors = require("../error/error");
+
 class OrderController {
   orderRepository;
   cartRepository;
@@ -22,107 +24,92 @@ class OrderController {
     this.restaurantRepository = _restaurantRepository;
   }
 
-  async updateOrderStatus(orderId, status) {
-    try {
-      const updatedOrder = await orderRepository.updateOrderStatus(
-        orderId,
-        status
-      );
-      return { statusCode: 200, data: updatedOrder };
-    } catch (error) {
-      return {
-        statusCode: 400,
-        data: { message: error.message },
-      };
-    }
-  }
-
-  async getRestaurantOrderById(orderId) {
-    try {
-      const order = await orderRepository.getOrderById(orderId);
-      if (!order) {
-        return { statusCode: 404, data: { message: "Order not found" } };
-      }
-      return { statusCode: 200, data: order };
-    } catch (error) {
-      return {
-        statusCode: 400,
-        data: { message: error.message },
-      };
-    }
-  }
-
   async getAllOrders() {
-    const orders = await this.orderRepository.getAllOrders();
-    this.respones = {
-      statusCode: 200,
-      data: orders,
-    };
-    return this.respones;
+    return await this.orderRepository.getAllOrders();
   }
 
   async getAllRestaurantOrders(restaurantAdmin) {
-    const orders = await this.orderRepository.getAllRestaurantOrders(
-      restaurantAdmin.restaurantId
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) => item.productId.restaurantId.toString() === restaurantAdmin.restaurantId.toString());
+    const orderIds = filteredItems.map((items) => items.orderId);
+
+    return await this.orderRepository.getAllRestaurantOrders(orderIds);
+  }
+
+  async getFilteredOrdersByDate(restaurantAdmin, startDate, endDate) {
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) =>
+      item.productId.restaurantId.toString() === restaurantAdmin.restaurantId.toString()
     );
-    this.respones = {
-      statusCode: 200,
-      data: orders,
-    };
-    return this.respones;
+    const orderIds = filteredItems.map((item) => item.orderId);
+
+    return await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate);;
+  }
+
+  async getRestaurantOrderById(restaurantAdmin, orderId) {
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) =>
+      item.productId.restaurantId.toString() === restaurantAdmin.restaurantId.toString()
+    );
+    const orderIds = filteredItems.map((item) => item.orderId.toString());
+
+    if (!orderIds.includes(orderId)) {
+      throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
+    }
+
+    return await this.orderRepository.getOrderById(orderId);
+  }
+
+  async updateOrderStatus(restaurantCashier, orderId, statusId) {
+    /* Check if the status exist */
+
+    const status = this.orderRepository.getStatus(statusId);
+
+    if (!status) {
+      throw new Errors.NotFoundError("status not found");
+    }
+
+    /* Check if the order exist */
+
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) =>
+      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
+    );
+    const orderIds = filteredItems.map((item) => item.orderId.toString());
+
+
+    if (!orderIds.includes(orderId)) {
+      throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
+    }
+
+    return await this.orderRepository.updateOrderStatus(orderId, statusId);
   }
 
   async getAllUserOrders(userId) {
-    try {
-      const userOrders = await this.orderRepository.getAllUserOrders(userId);
-      if (!userOrders || userOrders.length === 0) {
-        return { statusCode: 404, data: { message: "user Orders not found" } };
-      }
-      return { statusCode: 200, data: userOrders };
-    } catch (error) {
-      console.error("Error fetching Orders:", error);
-      return { statusCode: 500, data: { message: "Internal server error" } };
-    }
+    return await this.orderRepository.getAllUserOrders(userId);
   }
 
   async getUserOrderById(userId, orderId) {
-    try {
-      const order = await this.orderRepository.getUserOrderById(
-        userId,
-        orderId
-      );
-      if (!order) {
-        return { statusCode: 404, data: { message: "Order not found" } };
-      }
-      return { statusCode: 200, data: order };
-    } catch (error) {
-      console.error("Error fetching user Order:", error);
-      return { statusCode: 500, data: { message: "Internal server error" } };
-    }
+    return await this.orderRepository.getUserOrderById(userId, orderId);
   }
 
-  async createNewOrder({ phoneId }, userId, restaurantId) {
+  async createNewOrder({ phoneId }, userId) {
     const phone = await this.phoneRepository.getUserPhoneNumberById(phoneId);
 
     if (!phone) {
-      return {
-        statusCode: 404,
-        data: { message: "can't find phone number" },
-      };
+      throw new Errors.NotFoundError("can't find phone number");
     }
 
     const orderInfo = {
       phoneId,
       statusId: "6646747dd96fa5f4ee9cacd8",
+      userId
     };
 
     const cart = await this.cartRepository.getUserCart(userId);
 
     if (!cart) {
-      return {
-        statusCode: 404,
-        data: { message: "cart is empty" },
-      };
+      throw new Errors.NotFoundError("cart is empty");
     }
 
     const order = await this.orderRepository.createNewOrder(orderInfo);
@@ -136,10 +123,7 @@ class OrderController {
 
     await this.cartRepository.deleteUserCart(userId);
 
-    return {
-      statusCode: 201,
-      data: { message: "order placed successfuly" },
-    };
+    return order;
   }
 }
 

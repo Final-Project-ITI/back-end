@@ -1,3 +1,5 @@
+const Errors = require("../error/error");
+const validatePhone = require("../validators/phone.validator");
 class ProductController {
     phoneRepository;
     authRepository;
@@ -8,46 +10,53 @@ class ProductController {
     }
 
     async getUserPhoneNumbers(userId) {
-        const phoneNumbers = await this.phoneRepository.getUserPhoneNumbers(userId);
-
-        if (!phoneNumbers) {
-            return {
-                statusCode: 404,
-                data: { message: "no phone numbers for the user" }
-            }
-        }
-
-        return {
-            statusCode: 200,
-            data: phoneNumbers
-        }
+        return await this.phoneRepository.getUserPhoneNumbers(userId);
     }
 
-    async getUserPhoneNumberById(phoneId) { }
+    async getUserPhoneNumberById(userId, phoneId) {
+        return await this.phoneRepository.getUserPhoneNumberById(userId, phoneId);
+    }
 
-    async updateUserPhoneNumberById(phoneId, newNumber) { }
+    async createUserPhoneNumber(userId, phoneNumber) {
+        const { error } = validatePhone({ phoneNumber });
 
-    async createUserPhoneNumber({ phoneNumber }, userId) {
+        if (error) {
+            throw new Errors.ApiError(error.message, 400);
+        }
+
         const phoneNumbers = await this.phoneRepository.getUserPhoneNumbers(userId);
 
         const isPhoneNumberExists = phoneNumbers.find((phone) => phoneNumber === phone.phoneNumber);
 
         if (isPhoneNumberExists) {
-            return {
-                statusCode: 400,
-                data: { message: "phone already exists" }
-            }
+            throw new Errors.ApiError("phone already exist", 400);
         }
 
-        await this.phoneRepository.createUserPhoneNumber({ userId, phoneNumber });
+        const newPhone = await this.phoneRepository.createUserPhoneNumber({ userId, phoneNumber });
 
-        return {
-            statusCode: 200,
-            data: { message: "new phone created" }
-        }
+        return newPhone;
     }
 
-    async deleteUserPhoneNumber(phoneId) { }
+    async updateUserPhoneNumberById(userId, phoneId, { phoneNumber }) {
+        const { error } = validatePhone({ phoneNumber });
+
+        if (error) {
+            throw new Errors.ApiError(error.message, 400);
+        }
+
+        const phone = await this.phoneRepository.getUserPhoneNumberById(userId, phoneId);
+
+        if (!phone) {
+            throw new Errors.NotFoundError("phone not found");
+        }
+
+        console.log(userId, phone, phoneNumber)
+        return await this.phoneRepository.updateUserPhoneNumberById(userId, phoneId, { phoneNumber });
+    }
+
+    async deleteUserPhoneNumber(userId, phoneId) {
+        return await this.phoneRepository.deleteUserPhoneNumber(userId, phoneId);
+    }
 }
 
 module.exports = ProductController;

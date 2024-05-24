@@ -2,7 +2,7 @@ const ApiError = require("../error/error");
 const ProductModel = require("../models/product.model");
 var ObjectId = require("mongoose").Types.ObjectId;
 
-class ProductService {
+class ProductRepository {
   constructor() { }
 
   async getAllProducts(restaurantId) {
@@ -45,4 +45,4 @@ class ProductService {
   }
 }
 
-module.exports = ProductService;
+module.exports = ProductRepository;

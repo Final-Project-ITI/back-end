@@ -13,7 +13,7 @@ const orderSchema = mongoose.Schema({
   },
   statusId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Status",
+    ref: "OrderStatus",
     default: null,
   },
   paymentMethodId: {

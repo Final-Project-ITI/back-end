@@ -40,10 +40,9 @@ class RestaurantController {
 
   async addRestaurant(body) {
     const { error, restaurantInfo } = await validateRestaurant(body);
-      if (error) {
-        res.status(404).send("Invalid request");
-        return;
-      }
+    if (error) {
+      throw new Errors.ApiError(error.message, 400);
+    }
 
     const { name, description, icon } = restaurantInfo;
     let user = await this.authRepository.getUser({ _id: restaurantInfo.userId });
@@ -57,7 +56,6 @@ class RestaurantController {
     const restaurant = await this.restaurantRepository.addRestaurant({ name, description, icon });
 
     //assign restaurant to user
-
 
     user = await this.authRepository.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
 

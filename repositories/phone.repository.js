@@ -1,50 +1,30 @@
 const PhoneModel = require("../models/phone.model");
+var ObjectId = require("mongoose").Types.ObjectId;
 
-class CartService {
+class CartRepository {
     constructor() { }
 
     async getUserPhoneNumbers(userId) {
-        try {
-            return await PhoneModel.find({ userId }).populate('userId');
-        } catch (error) {
-            return error;
-        }
+        return await PhoneModel.find({ userId }).populate('userId');
     }
 
-    async getUserPhoneNumberById(_id) {
-        try {
-            return await PhoneModel.findOne({ _id }).populate('userId');
-        } catch (error) {
-            return error;
-        }
+    async getUserPhoneNumberById(userId, _id) {
+        return await PhoneModel.findOne({ _id, userId: new ObjectId(userId) }).populate('userId');
     }
 
-    async updateUserPhoneNumberById(_id, val) {
-        try {
-            return await PhoneModel.updateMany({ _id }, val);
-        } catch (error) {
-            return error;
-        }
+    async updateUserPhoneNumberById(userId, _id, val) {
+        return await PhoneModel.updateMany({ _id, userId: new ObjectId(userId) }, val);
     }
 
     async createUserPhoneNumber(phoneInfo) {
-        try {
-            return await PhoneModel.create(phoneInfo);
-        } catch (error) {
-            console.log(error.message)
-            return error;
-        }
+        return await PhoneModel.create(phoneInfo);
     }
 
-    async deleteUserPhoneNumber(_id) {
-        try {
-            return await PhoneModel.deleteOne({ _id });
-        } catch (error) {
-            return error;
-        }
+    async deleteUserPhoneNumber(userId, _id) {
+        return await PhoneModel.deleteOne({ _id, userId: new ObjectId(userId) });
     }
 
 }
 
 
-module.exports = CartService;
+module.exports = CartRepository;

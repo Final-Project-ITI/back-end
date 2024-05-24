@@ -1,7 +1,7 @@
 const { options } = require("joi");
 const RestaurantModel = require("../models/restaurant.model");
 
-class RestaurantService {
+class RestaurantRepository {
   async getRestaurantsByName(name) {
     return await RestaurantModel.find({ name: { $regex: name, $options: "i" } });
   }
@@ -19,4 +19,4 @@ class RestaurantService {
   }
 }
 
-module.exports = RestaurantService;
+module.exports = RestaurantRepository;

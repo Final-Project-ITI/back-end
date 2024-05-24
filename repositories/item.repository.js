@@ -1,10 +1,10 @@
 const ItemModel = require("../models/item.model");
 
-class ItemService {
+class ItemRepository {
     constructor() { }
 
-    async getAllUserItems() {
-        return await ItemModel.find();
+    async getAllItems() {
+        return await ItemModel.find().populate("productId");
     }
 
     async getUserItemById(id) {
@@ -32,4 +32,4 @@ class ItemService {
     }
 }
 
-module.exports = ItemService;
+module.exports = ItemRepository;

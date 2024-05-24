@@ -6,42 +6,75 @@ const cartRouter = (phoneController, authMiddleware) => {
     router.get(
         "/",
         authMiddleware.user(phoneController.authRepository),
-        asyncHandler(
-            async (req, res) => {
-                const response = await phoneController.getUserPhoneNumbers(req.auth._id)
-                res.status(response.statusCode).send(response.data);
+        async (req, res, next) => {
+            try {
+                const phones = await phoneController.getUserPhoneNumbers(req.auth._id);
+
+                if (!phones.length) {
+                    res.status(200).send({ message: "no phones to show" });
+                }
+                res.status(200).send(phones);
+            } catch (error) {
+                next(error);
             }
-        ));
+        }
+    );
+
+    router.get(
+        "/:phoneId",
+        authMiddleware.user(phoneController.authRepository),
+        async (req, res, next) => {
+            try {
+                const phone = await phoneController.getUserPhoneNumberById(req.auth._id, req.params.phoneId);
+
+                if (!phone) {
+                    res.status(200).send({ message: "no phone to show" });
+                }
+                res.status(200).send(phone);
+            } catch (error) {
+                next(error);
+            }
+        }
+    );
 
     router.post("/",
         authMiddleware.user(phoneController.authRepository),
-        asyncHandler(
-            async (req, res) => {
-                const response = await phoneController.createUserPhoneNumber(req.body, req.auth._id);
+        async (req, res, next) => {
+            try {
+                const newPhone = await phoneController.createUserPhoneNumber(req.auth._id, req.body.phoneNumber);
 
-                res.status(response.statusCode).send(response.data);
+                res.status(200).send(newPhone);
+            } catch (error) {
+                next(error);
             }
-        ));
+        }
+    );
 
-    router.patch("/",
+    router.patch("/:phoneId",
         authMiddleware.user(phoneController.authRepository),
-        asyncHandler(
-            async (req, res) => {
-                const response = await phoneController.updateUserPhoneNumberById(req.body, req.auth._id);
+        async (req, res, next) => {
+            try {
+                const updatedPhone = await phoneController.updateUserPhoneNumberById(req.auth._id, req.params.phoneId, req.body);
 
-                res.status(response.statusCode).send(response.data);
+                res.status(200).send(updatedPhone);
+            } catch (error) {
+                next(error);
             }
-        ));
+        }
+    );
 
-    router.delete("/",
+    router.delete("/:phoneId",
         authMiddleware.user(phoneController.authRepository),
-        asyncHandler(
-            async (req, res) => {
-                const response = await phoneController.deleteUserPhoneNumber(req.body, req.auth._id);
+        async (req, res, next) => {
+            try {
+                const deletedPhone = await phoneController.deleteUserPhoneNumber(req.auth._id, req.params.phoneId);
 
-                res.status(response.statusCode).send(response.data);
+                res.status(200).send(deletedPhone);
+            } catch (error) {
+                next(error);
             }
-        ));
+        }
+    );
 
 
     return router;

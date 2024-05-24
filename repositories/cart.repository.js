@@ -1,6 +1,6 @@
 const CartModel = require("../models/cart.model");
 
-class CartService {
+class CartRepository {
   constructor() { }
 
   async getUserCart(userId) {
@@ -24,4 +24,4 @@ class CartService {
   }
 }
 
-module.exports = CartService;
+module.exports = CartRepository;

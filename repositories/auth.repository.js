@@ -1,7 +1,7 @@
 const UserModel = require("../models/user.model");
 const UserTypesModel = require("../models/userTypes.model");
 
-class AuthService {
+class AuthRepository {
   constructor() { }
 
   async getAllUsers() {
@@ -43,4 +43,4 @@ class AuthService {
     }
   }
 }
-module.exports = AuthService;
+module.exports = AuthRepository;
