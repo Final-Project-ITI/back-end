@@ -1,91 +1,130 @@
+const Errors = require("../error/error");
+
 class OrderController {
-    orderServices;
-    cartService;
-    itemService;
-    phoneService;
-    authService;
-    restaurantService;
+  orderRepository;
+  cartRepository;
+  itemRepository;
+  phoneRepository;
+  authRepository;
+  restaurantRepository;
 
-    constructor(_orderServices, _cartService, _itemService, _phoneService, _authService,_restaurantService) {
-        this.orderServices = _orderServices;
-        this.cartService = _cartService;
-        this.itemService = _itemService;
-        this.phoneService = _phoneService;
-        this.authService = _authService;
-        this.restaurantService=_restaurantService;
+  constructor(
+    _orderRepository,
+    _cartRepository,
+    _itemRepository,
+    _phoneRepository,
+    _authRepository,
+    _restaurantRepository
+  ) {
+    this.orderRepository = _orderRepository;
+    this.cartRepository = _cartRepository;
+    this.itemRepository = _itemRepository;
+    this.phoneRepository = _phoneRepository;
+    this.authRepository = _authRepository;
+    this.restaurantRepository = _restaurantRepository;
+  }
+
+  async getAllOrders() {
+    return await this.orderRepository.getAllOrders();
+  }
+
+  async getAllRestaurantOrders(restaurantCashier) {
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) => item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString());
+    const orderIds = filteredItems.map((items) => items.orderId);
+
+    return await this.orderRepository.getAllRestaurantOrders(orderIds);
+  }
+
+  async getFilteredOrdersByDate(restaurantCashier, startDate, endDate) {
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) =>
+      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
+    );
+    const orderIds = filteredItems.map((item) => item.orderId);
+
+    return await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate);;
+  }
+
+  async getRestaurantOrderById(restaurantCashier, orderId) {
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) =>
+      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
+    );
+    const orderIds = filteredItems.map((item) => item.orderId.toString());
+
+    if (!orderIds.includes(orderId)) {
+      throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
     }
 
-    async getAllOrders() {
-        const orders= await this.orderServices.getAllOrders()
-        this.respones = {
-            statusCode: 200,
-            data:  orders 
-          }
-        return this.respones;
+    return await this.orderRepository.getOrderById(orderId);
+  }
+
+  async updateOrderStatus(restaurantCashier, orderId, statusId) {
+    /* Check if the status exist */
+
+    const status = this.orderRepository.getStatus(statusId);
+
+    if (!status) {
+      throw new Errors.NotFoundError("status not found");
     }
 
-    async getAllRestaurantOrders(restaurantAdmin) {
-        const orders= await this.orderServices.getAllRestaurantOrders(restaurantAdmin.restaurantId)
-        this.respones = {
-            statusCode: 200,
-            data:  orders 
-          }
-        return this.respones;
+    /* Check if the order exist */
+
+    const items = await this.itemRepository.getAllItems();
+    const filteredItems = items.filter((item) =>
+      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
+    );
+    const orderIds = filteredItems.map((item) => item.orderId.toString());
+
+
+    if (!orderIds.includes(orderId)) {
+      throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
     }
 
-    getRestaurantOrderById() {
-        return this.orderServices.getRestaurantOrderById()
+    return await this.orderRepository.updateOrderStatus(orderId, statusId);
+  }
+
+  async getAllUserOrders(userId) {
+    return await this.orderRepository.getAllUserOrders(userId);
+  }
+
+  async getUserOrderById(userId, orderId) {
+    return await this.orderRepository.getUserOrderById(userId, orderId);
+  }
+
+  async createNewOrder({ phoneId }, userId) {
+    const phone = await this.phoneRepository.getUserPhoneNumberById(phoneId);
+
+    if (!phone) {
+      throw new Errors.NotFoundError("can't find phone number");
     }
 
-    getAllUserOrders() {
-        return this.orderServices.getAllUserOrders()
+    const orderInfo = {
+      phoneId,
+      statusId: "6646747dd96fa5f4ee9cacd8",
+      userId
+    };
+
+    const cart = await this.cartRepository.getUserCart(userId);
+
+    if (!cart) {
+      throw new Errors.NotFoundError("cart is empty");
     }
 
-    getUserOrderById() {
-        return this.orderServices.getUserOrderById()
-    }
+    const order = await this.orderRepository.createNewOrder(orderInfo);
 
-    async createNewOrder({ phoneId }, userId, restaurantId) {
-        const phone = await this.phoneService.getUserPhoneNumberById(phoneId);
+    cart.itemsIds.forEach(async (item) => {
+      await this.itemRepository.updateUserItemById(
+        { _id: item._id },
+        { orderId: order._id }
+      );
+    });
 
-        if (!phone) {
-            return {
-                statusCode: 404,
-                data: { message: "can't find phone number" }
-            }
-        }
+    await this.cartRepository.deleteUserCart(userId);
 
-        const orderInfo = {
-            phoneId,
-            statusId: "6646747dd96fa5f4ee9cacd8",
-        }
-
-        const cart = await this.cartService.getUserCart(userId);
-
-        if (!cart) {
-            return {
-                statusCode: 404,
-                data: { message: "cart is empty" }
-            }
-        }
-
-        const order = await this.orderServices.createNewOrder(orderInfo);
-
-        cart.itemsIds.forEach(async (item) => {
-            await this.itemService.updateUserItemById({ _id: item._id }, { orderId: order._id });
-        })
-
-        await this.cartService.deleteUserCart(userId);
-
-        return {
-            statusCode: 201,
-            data: { message: "order placed successfuly" }
-        }
-    }
-
-    updateOrderStatus() {
-        return this.orderServices.updateOrderStatus()
-    }
+    return order;
+  }
 }
 
 module.exports = OrderController;

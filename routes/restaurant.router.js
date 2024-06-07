@@ -6,29 +6,61 @@ const restaurantRouter = (restaurantController, authMiddleware) => {
 
   router.get(
     "/search/:name",
-    asyncHandler(async (req, res) => {
-      const response = await restaurantController.getRestaurantsByName(
-        req.params.name
-      );
-      res.status(response.statusCode).send(response.data);
-    })
+    async (req, res, next) => {
+      try {
+        const restaurants = await restaurantController.getRestaurantsByName(
+          req.params.name
+        );
+
+        if (!restaurants.length) {
+          res.status(200).send({ message: "No results found" });
+        }
+
+        res.status(200).send(restaurants);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  router.get(
+    "/:id",
+    async (req, res, next) => {
+      try {
+        const restaurant = await restaurantController.getRestaurantById(req.params.id);
+
+        res.status(200).send(restaurant);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
   router.get(
     "/",
-    asyncHandler(async (req, res) => {
-      const response = await restaurantController.getAllRestaurants();
-      res.status(response.statusCode).send(response.data);
-    })
+    async (req, res, next) => {
+      try {
+        const restaurants = await restaurantController.getAllRestaurants();
+
+        res.status(200).send(restaurants);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
   router.post("/authorization/register",
-    authMiddleware.admin(restaurantController.authService),
-    asyncHandler(async (req, res) => {
-      const response = await restaurantController.addRestaurant(req.body);
+    authMiddleware.admin(restaurantController.authRepository),
+    async (req, res, next) => {
+      try {
+        const newRestaurant = await restaurantController.addRestaurant(req.body);
 
-      res.status(response.statusCode).send(response.data);
-    }));
+        res.status(201).send(newRestaurant);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
   return router;
 };

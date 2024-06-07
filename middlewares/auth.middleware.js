@@ -1,73 +1,107 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 class AuthMiddleware {
-    constructor() { }
+  constructor() { }
 
-    user(authService) {
-        return async (req, res, next) => {
-            const token = req.headers["jwt"];
+  user(authRepository) {
+    return async (req, res, next) => {
+      try {
+        const token = req.headers["jwt"];
 
-            if (!token) return res.status(401).send({ message: "unauthorized user" });
+        if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            const payload = jwt.verify(token, "WaRsM");
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const { _id } = payload;
+        const user = await authRepository.getUser({ _id });
 
-            const { _id } = payload;
+        if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-            const user = await authService.getUser({ _id });
+        if (!user.typeId.equals("663dfebba2ede177e6885e42"))
+          return res.status(401).send({ message: "unauthorized user" });
 
-            if (!user) return res.status(401).send({ message: "unauthorized user" });
+        req.auth = user;
 
-            req.auth = user;
+        next();
+      } catch (error) {
+        return res.status(403).send({ message: error.message });
+      }
+    };
+  }
 
-            next();
-        }
-    }
+  admin(authRepository) {
+    return async (req, res, next) => {
+      try {
+        const token = req.headers["jwt"];
 
-    admin(authService) {
-        return async (req, res, next) => {
-            const token = req.headers["jwt"];
+        if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!token) return res.status(401).send({ message: "unauthorized user" });
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const { _id } = payload;
+        const user = await authRepository.getUser({ _id });
 
-            const payload = jwt.verify(token, "WaRsM");
+        if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-            const { _id } = payload;
+        if (!user.typeId.equals("663dfe9ba2ede177e6885e41"))
+          return res.status(401).send({ message: "unauthorized user" });
 
-            const user = await authService.getUser({ _id });
+        req.auth = user;
 
-            if (!user) return res.status(401).send({ message: "unauthorized user" });
+        next();
+      } catch (error) {
+        return res.status(403).send({ message: error.message });
+      }
+    };
+  }
 
-            if (!(user.typeId.equals("663dfe9ba2ede177e6885e41"))) return res.status(401).send({ message: "unauthorized user" });
+  restaurantAdmin(authRepository) {
+    return async (req, res, next) => {
+      try {
+        const token = req.headers["jwt"];
 
-            req.auth = user;
+        if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            next();
-        }
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const { _id } = payload;
+        const user = await authRepository.getUser({ _id });
 
-    }
+        if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-    restaurantAdmin(authService) {
-        return async (req, res, next) => {
-            const token = req.headers["jwt"];
+        if (!user.typeId.equals("663e9b24a2ede177e6885e45"))
+          return res.status(401).send({ message: "unauthorized user" });
 
-            if (!token) return res.status(401).send({ message: "unauthorized user" });
+        req.auth = user;
 
-            const payload = jwt.verify(token, "WaRsM");
+        next();
+      } catch (error) {
+        return res.status(403).send({ message: error.message });
+      }
+    };
+  }
 
-            const { _id } = payload;
+  restaurantCashier(authRepository) {
+    return async (req, res, next) => {
+      try {
+        const token = req.headers["jwt"];
 
-            const user = await authService.getUser({ _id });
+        if (!token) return res.status(401).send({ message: "unauthorized user" });
 
-            if (!user) return res.status(401).send({ message: "unauthorized user" });
+        const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const { _id } = payload;
+        const user = await authRepository.getUser({ _id });
 
-            if (!(user.typeId.equals("663e9b24a2ede177e6885e45"))) return res.status(401).send({ message: "unauthorized user" });
+        if (!user) return res.status(401).send({ message: "unauthorized user" });
 
-            req.auth = user;
+        if (!user.typeId.equals("664fc05da9a0560d2742da1b"))
+          return res.status(401).send({ message: "unauthorized user" });
 
-            next();
-        }
+        req.auth = user;
 
-    }
+        next();
+      } catch (error) {
+        return res.status(403).send({ message: error.message });
+      }
+    };
+  }
 }
 
 module.exports = AuthMiddleware;

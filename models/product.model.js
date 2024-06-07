@@ -24,6 +24,12 @@ const productSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
   },
+  ingredientsIds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ingredient",
+    }
+  ]
 });
 const ProductModel = mongoose.model("Product", productSchema);
 module.exports = ProductModel;

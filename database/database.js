@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const ServerUrl =
-  "mongodb+srv://waleedAlmenawy:nf3VSmHh27xHStWa@iti.t3i9ucu.mongodb.net/foodi";
+  `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@iti.t3i9ucu.mongodb.net/foodi`;
 
 const database = () => {
   mongoose

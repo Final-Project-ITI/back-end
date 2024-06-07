@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const { mongoose } = require("mongoose");
 const restaurantSchema = mongoose.Schema({
     name: {
@@ -19,9 +20,16 @@ const restaurantSchema = mongoose.Schema({
     icon: {
         type: String,
         default: null,
-        maxLength: 255,
     },
-
+    banner: {
+        type: String,
+        default: null,
+    },
+    address: {
+        type: String,
+        required: true,
+        maxLength: 255,
+    }
 });
 const RestaurantModel = mongoose.model("Restaurant", restaurantSchema);
 module.exports = RestaurantModel;

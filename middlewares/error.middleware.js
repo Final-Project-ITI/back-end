@@ -9,4 +9,5 @@ const Error = (err, req, res, next) => {
     stack: err.stack,
   });
 };
+
 module.exports = Error;

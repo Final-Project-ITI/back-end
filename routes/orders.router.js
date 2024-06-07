@@ -1,53 +1,152 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const asyncHandler = require('express-async-handler');
+const asyncHandler = require("express-async-handler");
 
 const orderRouter = (orderControllers, authMiddleware) => {
-    router.get('/authorization',authMiddleware.admin(orderControllers.authService), async(req, res) => {
-        const response = await orderControllers.getAllOrders();
-        res.status(response.statusCode).send(response.data);
-    })
+  router.get(
+    "/authorization",
+    authMiddleware.admin(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const orders = await orderControllers.getAllOrders();
+        if (!orders.length) {
+          res.status(200).send({ message: "no orders to show" });
+        }
+        res.status(200).send(orders);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-    router.get('/admin',authMiddleware.restaurantAdmin(orderControllers.authService), async(req, res) => {
-        const response = await orderControllers.getAllRestaurantOrders(req.auth);
+  router.get(
+    "/cashier",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const orders = await orderControllers.getAllRestaurantOrders(req.auth);
+        if (!orders.length) {
+          res.status(200).send({ message: "no orders to show" });
+        }
+        res.status(200).send(orders);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-        res.status(response.statusCode).send(response.data);
-    })
+  router.get(
+    "/cashier/filter",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const { startDate, endDate } = req.query;
+        const restaurantAdmin = req.auth;
+        const orders = await orderControllers.getFilteredOrdersByDate(restaurantAdmin, startDate, endDate);
 
-    router.get('/admin/:orderId', (req, res) => {
-        const response = orderControllers.getRestaurantOrderById();
+        if (!orders.length) {
+          return res.status(200).send({ message: "no orders to show" });
+        }
 
-        res.send(response)
-    })
+        res.status(200).send(orders);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-    router.get('/user', (req, res) => {
-        const response = orderControllers.getAllUserOrders();
+  router.get(
+    "/cashier/:orderId",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const order = await orderControllers.getRestaurantOrderById(req.auth, req.params.orderId);
 
-        res.send(response)
-    })
+        if (!order) {
+          return res.status(200).send({ message: "no order to show" });
+        }
 
-    router.get('/user/:orderId', (req, res) => {
-        const response = orderControllers.getUserOrderById();
+        res.status(200).send(order);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-        res.send(response)
-    })
+  router.patch(
+    "/cashier/:orderId",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
+    async (req, res, next) => {
+      const { orderId } = req.params;
+      const { statusId } = req.body;
+      try {
+        if (!statusId) {
+          return res.status(400).send({ error: "order status id is required" });
+        }
 
-    router.post(
-        '/:restaurantId/user',
-        authMiddleware.user(orderControllers.authService),
-        asyncHandler(async (req, res) => {
-            const response = await orderControllers.createNewOrder(req.body, req.auth._id, req.params.restaurantId);
+        const updatedOrder = await orderControllers.updateOrderStatus(
+          req.auth,
+          orderId,
+          statusId
+        );
 
-            res.status(response.statusCode).send(response.data)
-        }))
+        res.status(200).send(updatedOrder);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-    router.patch('/cashier/:orderId', (req, res) => {
-        const response = orderControllers.updateOrderStatus();
+  router.get(
+    "/user",
+    authMiddleware.user(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const orders = await orderControllers.getAllUserOrders(req.auth._id);
+        if (!orders.length) {
+          res.status(200).send({ message: "no orders to show" });
+        }
+        res.status(200).send(orders);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-        res.send(response)
-    })
+  router.get(
+    "/user/:orderId",
+    authMiddleware.user(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const order = await orderControllers.getUserOrderById(req.auth._id, req.params.orderId);
+        if (!order) {
+          res.status(200).send({ message: "no order to show" });
+        }
+        res.status(200).send(order);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-    return router;
-}
+  router.post(
+    "/:restaurantId/user",
+    authMiddleware.user(orderControllers.authRepository),
+    async (req, res, next) => {
+      try {
+        const newOrder = await orderControllers.createNewOrder(
+          req.body,
+          req.auth._id
+        );
+
+        res.status(201).send(newOrder);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  return router;
+};
 
 module.exports = orderRouter;

@@ -2,38 +2,46 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 
-const authRouter = (authController) => {
-  router.get("/:userId", asyncHandler(
-    async (req, res) => {
-      const respones = await authController.getAllUsers(req.body);
+const authRouter = (authController, authMiddleware) => {
+  router.post(
+    "/login",
+    async (req, res, next) => {
+      try {
+        const token = await authController.login(req.body);
 
-      res.status(respones.statusCode).send(respones.data);
+        res.status(200).send(token);
+      } catch (error) {
+        next(error);
+      }
     }
-  ));
+  );
 
-  router.get("/:userId", asyncHandler(
-    async (req, res) => {
-      const respones = await authController.getUserById(req.body);
+  router.post(
+    "/register",
+    async (req, res, next) => {
+      try {
+        const token = await authController.register(req.body);
 
-      res.status(respones.statusCode).send(respones.data);
+        res.status(201).send(token);
+      } catch (error) {
+        next(error);
+      }
     }
-  ));
+  );
 
-  router.post("/login", asyncHandler(
-    async (req, res) => {
-      const respones = await authController.login(req.body);
+  router.post(
+    "/admin/register/cashier",
+    authMiddleware.restaurantAdmin(authController.authRepository),
+    async (req, res, next) => {
+      try {
+        const token = await authController.register(req.body, req.auth.restaurantId);
 
-      res.status(respones.statusCode).send(respones.data);
+        res.status(201).send(token);
+      } catch (error) {
+        next(error);
+      }
     }
-  ));
-
-  router.post("/register", asyncHandler(
-    async (req, res) => {
-      const respones = await authController.register(req.body);
-      res.status(respones.statusCode).send(respones.data);
-    }
-  ));
-
+  );
 
   return router;
 };

@@ -1,79 +1,65 @@
+const Errors = require("../error/error");
+const validateRestaurant = require("../validators/restaurant.validator");
+
 class RestaurantController {
-  restaurantService;
-  authService;
-  response = {
-    statusCode: 0,
-    data: {},
-  };
-  constructor(_restaurantService, _authService) {
-    this.restaurantService = _restaurantService;
-    this.authService = _authService;
+  restaurantRepository;
+  authRepository;
+
+  constructor(_restaurantRepository, _authRepository) {
+    this.restaurantRepository = _restaurantRepository;
+    this.authRepository = _authRepository;
   }
 
   async getRestaurantsByName(name) {
-    const restaurants = await this.restaurantService.getRestaurantsByName(
+    const restaurants = await this.restaurantRepository.getRestaurantsByName(
       name.toLowerCase()
     );
 
-    if (!restaurants.length) {
-      this.response = {
-        statusCode: 404,
-        data: {
-          message: "restaurants not found",
-        },
-      };
-      return this.response;
+    return restaurants;
+  }
+
+  async getRestaurantById(_id) {
+    const restaurant = await this.restaurantRepository.getRestaurantById({ _id });
+
+    if (!restaurant) {
+      throw new Errors.NotFoundError("restaurant not found");
     }
 
-    this.response = {
-      statusCode: 200,
-      data: restaurants,
-    };
-
-    return this.response;
+    return restaurant;
   }
 
   async getAllRestaurants() {
-    const restaurants = await this.restaurantService.getAllRestaurants();
+    const restaurants = await this.restaurantRepository.getAllRestaurants();
+
     if (!restaurants) {
-      this.response = {
-        statusCode: 404,
-        data: {
-          message: "restaurants not found",
-        },
-      };
-      return this.response;
+      throw new Errors.NotFoundError("restaurants not found");
     }
 
-    this.response = {
-      statusCode: 200,
-      data: restaurants,
-    };
-
-    return this.response;
+    return restaurants;
   }
 
-  async addRestaurant(restaurantInfo) {
-    const { name, description, icon } = restaurantInfo;
-    //Add new restaurant information to the database.
-
-    const restaurant = await this.restaurantService.addRestaurant({ name, description, icon });
-
-    //assign restaurant to user
-    let user = await this.authService.getUser({ _id: restaurantInfo.userId });
-
-    if (!user) {
-      this.response = {
-        statusCode: 401,
-        data: { message: "user not found " },
-      };
-
-      return this.response;
+  async addRestaurant(body) {
+    const { error, restaurantInfo } = await validateRestaurant(body);
+    if (error) {
+      throw new Errors.ApiError(error.message, 400);
     }
 
-    user = await this.authService.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
+    const { name, description, icon } = restaurantInfo;
+    let user = await this.authRepository.getUser({ _id: restaurantInfo.userId });
 
-    return { statusCode: 200, data: { ...restaurant, ...user } }
+    if (!user) {
+      throw new Errors.NotFoundError('user not found');
+    }
+
+    //Add new restaurant information to the database.
+
+    const restaurant = await this.restaurantRepository.addRestaurant({ name, description, icon });
+
+    //assign restaurant to user
+
+    user = await this.authRepository.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
+
+    return { ...restaurant, ...user };
   }
 }
 

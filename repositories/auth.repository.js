@@ -1,7 +1,7 @@
 const UserModel = require("../models/user.model");
 const UserTypesModel = require("../models/userTypes.model");
 
-class AuthService {
+class AuthRepository {
   constructor() { }
 
   async getAllUsers() {
@@ -14,7 +14,7 @@ class AuthService {
 
   async getUser(val) {
     try {
-      return await UserModel.findOne(val);
+      return await UserModel.findOne(val).populate("typeId");
     } catch (error) {
       return error;
     }
@@ -43,4 +43,4 @@ class AuthService {
     }
   }
 }
-module.exports = AuthService;
+module.exports = AuthRepository;
