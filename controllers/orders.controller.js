@@ -28,28 +28,28 @@ class OrderController {
     return await this.orderRepository.getAllOrders();
   }
 
-  async getAllRestaurantOrders(restaurantAdmin) {
+  async getAllRestaurantOrders(restaurantCashier) {
     const items = await this.itemRepository.getAllItems();
-    const filteredItems = items.filter((item) => item.productId.restaurantId.toString() === restaurantAdmin.restaurantId.toString());
+    const filteredItems = items.filter((item) => item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString());
     const orderIds = filteredItems.map((items) => items.orderId);
 
     return await this.orderRepository.getAllRestaurantOrders(orderIds);
   }
 
-  async getFilteredOrdersByDate(restaurantAdmin, startDate, endDate) {
+  async getFilteredOrdersByDate(restaurantCashier, startDate, endDate) {
     const items = await this.itemRepository.getAllItems();
     const filteredItems = items.filter((item) =>
-      item.productId.restaurantId.toString() === restaurantAdmin.restaurantId.toString()
+      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
     );
     const orderIds = filteredItems.map((item) => item.orderId);
 
     return await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate);;
   }
 
-  async getRestaurantOrderById(restaurantAdmin, orderId) {
+  async getRestaurantOrderById(restaurantCashier, orderId) {
     const items = await this.itemRepository.getAllItems();
     const filteredItems = items.filter((item) =>
-      item.productId.restaurantId.toString() === restaurantAdmin.restaurantId.toString()
+      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
     );
     const orderIds = filteredItems.map((item) => item.orderId.toString());
 

@@ -20,8 +20,8 @@ const orderRouter = (orderControllers, authMiddleware) => {
   );
 
   router.get(
-    "/admin",
-    authMiddleware.restaurantAdmin(orderControllers.authRepository),
+    "/cashier",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
     async (req, res, next) => {
       try {
         const orders = await orderControllers.getAllRestaurantOrders(req.auth);
@@ -36,8 +36,8 @@ const orderRouter = (orderControllers, authMiddleware) => {
   );
 
   router.get(
-    "/admin/filter",
-    authMiddleware.restaurantAdmin(orderControllers.authRepository),
+    "/cashier/filter",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
     async (req, res, next) => {
       try {
         const { startDate, endDate } = req.query;
@@ -56,8 +56,8 @@ const orderRouter = (orderControllers, authMiddleware) => {
   );
 
   router.get(
-    "/admin/:orderId",
-    authMiddleware.restaurantAdmin(orderControllers.authRepository),
+    "/cashier/:orderId",
+    authMiddleware.restaurantCashier(orderControllers.authRepository),
     async (req, res, next) => {
       try {
         const order = await orderControllers.getRestaurantOrderById(req.auth, req.params.orderId);

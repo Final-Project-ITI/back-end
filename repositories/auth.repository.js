@@ -14,7 +14,7 @@ class AuthRepository {
 
   async getUser(val) {
     try {
-      return await UserModel.findOne(val);
+      return await UserModel.findOne(val).populate("typeId");
     } catch (error) {
       return error;
     }
