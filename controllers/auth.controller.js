@@ -25,7 +25,6 @@ class AuthController {
       throw new Errors.ApiError("Incorrect email or password", 401);
     }
 
-    console.log(user)
 
     /* generate token that will be send to the client */
 
@@ -71,7 +70,7 @@ class AuthController {
     user = await this.authRepository.addUser(body)
 
     /* generate token that will be send to the client */
-    const token = jwt.sign({ _id: user.id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
+    const token = jwt.sign({ id: user._id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }

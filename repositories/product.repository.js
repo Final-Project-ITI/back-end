@@ -31,7 +31,6 @@ class ProductRepository {
   }
 
   async updateProduct(updatedProductData, productId, restaurantId) {
-    console.log(updatedProductData, productId, restaurantId)
     const updatedProduct = await ProductModel.updateOne(
       { _id: productId, restaurantId: new ObjectId(restaurantId), },
       updatedProductData,

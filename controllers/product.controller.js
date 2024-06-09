@@ -33,7 +33,6 @@ class ProductController {
   async createProduct(productInfo, user) {
     const product = await this.productRepository.createProduct(productInfo, user.restaurantId);
 
-    console.log(product);
 
     return product;
   }
