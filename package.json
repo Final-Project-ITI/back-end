@@ -10,15 +10,20 @@
   "author": "Waleed Almenawy",
   "license": "ISC",
   "dependencies": {
+    "@types/multer": "^1.4.11",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
+    "firebase": "^10.12.2",
     "joi": "^17.13.1",
     "joi-objectid": "^4.0.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.4"
+    "mongoose": "^8.3.4",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.4",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",

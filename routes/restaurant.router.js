@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const asyncHandler = require("express-async-handler");
 
-const restaurantRouter = (restaurantController, authMiddleware) => {
+const restaurantRouter = (restaurantController, authMiddleware, multerMiddleware) => {
 
   router.get(
     "/search/:name",
@@ -51,9 +50,10 @@ const restaurantRouter = (restaurantController, authMiddleware) => {
 
   router.post("/authorization/register",
     authMiddleware.admin(restaurantController.authRepository),
+    multerMiddleware.uploadMultipleImages(["icon", "banner"]),
     async (req, res, next) => {
       try {
-        const newRestaurant = await restaurantController.addRestaurant(req.body);
+        const newRestaurant = await restaurantController.addRestaurant(req.body, req.files.banner[0], req.files.icon[0]);
 
         res.status(201).send(newRestaurant);
       } catch (error) {

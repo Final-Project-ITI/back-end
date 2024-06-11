@@ -24,6 +24,10 @@ const productSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
   },
+  menuCategoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MenuCategory",
+  },
   ingredientsIds: [
     {
       type: mongoose.Schema.Types.ObjectId,

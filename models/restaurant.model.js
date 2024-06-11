@@ -29,6 +29,11 @@ const restaurantSchema = mongoose.Schema({
         type: String,
         required: true,
         maxLength: 255,
+    },
+    phone: {
+        type: String,
+        required: true,
+        maxLength: 20,
     }
 });
 const RestaurantModel = mongoose.model("Restaurant", restaurantSchema);

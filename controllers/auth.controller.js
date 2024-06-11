@@ -25,11 +25,9 @@ class AuthController {
       throw new Errors.ApiError("Incorrect email or password", 401);
     }
 
-    console.log(user)
-
     /* generate token that will be send to the client */
 
-    const token = jwt.sign({ id: user._id, role: user.typeId }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
+    const token = jwt.sign({ _id: user._id, role: user.typeId }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }
@@ -64,7 +62,7 @@ class AuthController {
       body.typeId = "664fc05da9a0560d2742da1b";
       body.restaurantId = restaurantId;
     } else {
-      body.typeId = null
+      delete body.typeId;
     }
 
     //Add new user information to the database.
