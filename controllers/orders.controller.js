@@ -94,7 +94,7 @@ class OrderController {
   }
 
   async createNewOrder({ phoneId }, userId) {
-    const phone = await this.phoneRepository.getUserPhoneNumberById(phoneId);
+    const phone = await this.phoneRepository.getUserPhoneNumberById(userId,phoneId);
 
     if (!phone) {
       throw new Errors.NotFoundError("can't find phone number");

@@ -4,7 +4,14 @@ class CartRepository {
   constructor() { }
 
   async getUserCart(userId) {
-    return await CartModel.findOne({ userId }).populate("itemsIds");
+    return await CartModel.findOne({ userId }).populate({ 
+      path: 'itemsIds',
+      populate: {
+        path: 'productId',
+        model: 'Product'
+      } 
+   })
+
   }
 
   async getUserItems(userId) {
@@ -22,6 +29,10 @@ class CartRepository {
   async createCart(cartInfo) {
     return await CartModel.create(cartInfo);
   }
+  async deleteItem(userId,itemId) {
+    return await CartModel.updateOne({ userId },{ $pull: { 'itemsIds': itemId } });
+  }
+
 }
 
 module.exports = CartRepository;

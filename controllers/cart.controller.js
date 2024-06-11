@@ -45,7 +45,16 @@ class CartController {
       await this.createCart(item, userId);
 
       return await this.cartRepository.getUserCart(userId);
-    } else {
+    }
+    else if(!cart.itemsIds.length){
+      const item = await this.itemRepository.createItem(itemInfo);
+      cart.itemsIds.push(item);
+      await this.cartRepository.updateUserCart(userId, cart);
+      return await this.cartRepository.getUserCart(userId);
+
+    }
+     else {
+     
       /* Add new item to the existed cart */
       const firstProduct = await this.productRepository.getProductsById(cart.itemsIds[0].productId);
 
@@ -54,7 +63,7 @@ class CartController {
       }
 
       const item = cart.itemsIds.find((item) => {
-        return item.productId == productId;
+        return item.productId._id == productId;
       });
 
       if (item) {
@@ -106,7 +115,9 @@ class CartController {
   }
 
   async deleteItemFromCart(itemId, userId) {
+    
     const cart = await this.cartRepository.getUserItems(userId);
+
     const isItemInCart = cart.itemsIds.filter((item) => item.toString() === itemId);
 
     if (!isItemInCart.length) {
@@ -114,7 +125,7 @@ class CartController {
     }
 
     /* Delete Item */
-
+    this.cartRepository.deleteItem(userId,itemId)
     return await this.itemRepository.deleteUserItemById({ _id: itemId });
   }
 
