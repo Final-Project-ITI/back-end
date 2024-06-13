@@ -9,9 +9,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
     async (req, res, next) => {
       try {
         const orders = await orderControllers.getAllOrders();
-        if (!orders.length) {
-          res.status(200).send({ message: "no orders to show" });
-        }
+
         res.status(200).send(orders);
       } catch (error) {
         next(error);
@@ -25,9 +23,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
     async (req, res, next) => {
       try {
         const orders = await orderControllers.getAllRestaurantOrders(req.auth);
-        if (!orders.length) {
-          res.status(200).send({ message: "no orders to show" });
-        }
+
         res.status(200).send(orders);
       } catch (error) {
         next(error);
@@ -44,10 +40,6 @@ const orderRouter = (orderControllers, authMiddleware) => {
         const restaurantAdmin = req.auth;
         const orders = await orderControllers.getFilteredOrdersByDate(restaurantAdmin, startDate, endDate);
 
-        if (!orders.length) {
-          return res.status(200).send({ message: "no orders to show" });
-        }
-
         res.status(200).send(orders);
       } catch (error) {
         next(error);
@@ -61,10 +53,6 @@ const orderRouter = (orderControllers, authMiddleware) => {
     async (req, res, next) => {
       try {
         const order = await orderControllers.getRestaurantOrderById(req.auth, req.params.orderId);
-
-        if (!order) {
-          return res.status(200).send({ message: "no order to show" });
-        }
 
         res.status(200).send(order);
       } catch (error) {
@@ -80,10 +68,6 @@ const orderRouter = (orderControllers, authMiddleware) => {
       const { orderId } = req.params;
       const { statusId } = req.body;
       try {
-        if (!statusId) {
-          return res.status(400).send({ error: "order status id is required" });
-        }
-
         const updatedOrder = await orderControllers.updateOrderStatus(
           req.auth,
           orderId,
@@ -103,9 +87,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
     async (req, res, next) => {
       try {
         const orders = await orderControllers.getAllUserOrders(req.auth._id);
-        if (!orders.length) {
-          res.status(200).send({ message: "no orders to show" });
-        }
+
         res.status(200).send(orders);
       } catch (error) {
         next(error);
@@ -119,9 +101,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
     async (req, res, next) => {
       try {
         const order = await orderControllers.getUserOrderById(req.auth._id, req.params.orderId);
-        if (!order) {
-          res.status(200).send({ message: "no order to show" });
-        }
+
         res.status(200).send(order);
       } catch (error) {
         next(error);

@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const { mongoose } = require("mongoose");
 const productSchema = mongoose.Schema({
   title: {
@@ -6,14 +7,15 @@ const productSchema = mongoose.Schema({
     minLength: 3,
     maxLength: 50,
   },
-  price:{
-    type:Number,
+  price: {
+    type: Number,
     required: true,
   },
-  decription: {
+  description: {
     type: String,
     minLength: 3,
     maxLength: 50,
+    required: true
   },
   createdOn: {
     type: Date,
@@ -21,17 +23,24 @@ const productSchema = mongoose.Schema({
   },
   icon: {
     type: String,
-    default: null,
     maxLength: 255,
+    required: true
   },
   restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Restaurant",
+    required: true
+  },
+  menuCategoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MenuCategory",
+    required: true
   },
   ingredientsIds: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Ingredient",
+      required: true
     }
   ]
 });

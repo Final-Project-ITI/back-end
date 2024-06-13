@@ -33,7 +33,7 @@ class OrderController {
     const filteredItems = items.filter((item) => item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString());
     const orderIds = filteredItems.map((items) => items.orderId);
 
-    return await this.orderRepository.getAllRestaurantOrders(orderIds);
+    return { orders: await this.orderRepository.getAllRestaurantOrders(orderIds), items: filteredItems };
   }
 
   async getFilteredOrdersByDate(restaurantCashier, startDate, endDate) {
@@ -94,7 +94,7 @@ class OrderController {
   }
 
   async createNewOrder({ phoneId }, userId) {
-    const phone = await this.phoneRepository.getUserPhoneNumberById(userId,phoneId);
+    const phone = await this.phoneRepository.getUserPhoneNumberById(userId, phoneId);
 
     if (!phone) {
       throw new Errors.NotFoundError("can't find phone number");

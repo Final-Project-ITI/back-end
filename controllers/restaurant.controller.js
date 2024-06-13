@@ -1,5 +1,7 @@
 const Errors = require("../error/error");
 const validateRestaurant = require("../validators/restaurant.validator");
+const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require("firebase/storage");
+const { v4: uuidv4 } = require("uuid");
 
 class RestaurantController {
   restaurantRepository;
@@ -38,26 +40,53 @@ class RestaurantController {
     return restaurants;
   }
 
-  async addRestaurant(body) {
+  async addRestaurant(body, banner, icon) {
     const { error, restaurantInfo } = await validateRestaurant(body);
     if (error) {
       throw new Errors.ApiError(error.message, 400);
     }
 
-    const { name, description, icon } = restaurantInfo;
-    let user = await this.authRepository.getUser({ _id: restaurantInfo.userId });
+    const { name, description, address, email, phone } = body;
+    let user = await this.authRepository.getUser({ email });
 
     if (!user) {
       throw new Errors.NotFoundError('user not found');
     }
 
+    if (user.typeId._id.toString() !== "663dfebba2ede177e6885e42") {
+      throw new Errors.ApiError("can only assign normal user", "400");
+    }
+
+    //Upload restaurant images
+
+    const storage = getStorage();
+
+    const iconSnapshot = await uploadBytesResumable(
+      ref(storage, `restaurants/${name}/${uuidv4()}`),
+      icon.buffer,
+      { contentType: icon.mimetype }
+    );
+
+    const bannerSnapshot = await uploadBytesResumable(
+      ref(storage, `restaurants/${name}/${uuidv4()}`),
+      banner.buffer,
+      { contentType: banner.mimetype }
+    );
+
     //Add new restaurant information to the database.
 
-    const restaurant = await this.restaurantRepository.addRestaurant({ name, description, icon });
+    const restaurant = await this.restaurantRepository.addRestaurant({
+      name,
+      description,
+      address,
+      phone,
+      icon: await getDownloadURL(iconSnapshot.ref),
+      banner: await getDownloadURL(bannerSnapshot.ref)
+    });
 
     //assign restaurant to user
 
-    user = await this.authRepository.updateUser({ _id: restaurantInfo.userId }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
+    user = await this.authRepository.updateUser({ _id: user._id }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
 
     return { ...restaurant, ...user };
   }
