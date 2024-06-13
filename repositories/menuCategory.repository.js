@@ -5,11 +5,11 @@ class CategoryRepository {
     constructor() { }
 
     async getRestaurantMenuCategories(restaurantId) {
-        return await MenuCategoryModel.find({ restaurantId }).populate('restaurantId');
+        return await MenuCategoryModel.find({ restaurantId });
     }
 
     async getRestaurantMenuCategoryById(restaurantId, _id) {
-        return await MenuCategoryModel.findOne({ _id, restaurantId: new ObjectId(restaurantId) }).populate('restaurantId');
+        return await MenuCategoryModel.findOne({ _id, restaurantId: new ObjectId(restaurantId) });
     }
 
     async updateRestaurantMenuCategoryById(restaurantId, _id, val) {

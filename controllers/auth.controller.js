@@ -69,7 +69,7 @@ class AuthController {
     user = await this.authRepository.addUser(body)
 
     /* generate token that will be send to the client */
-    const token = jwt.sign({ id: user._id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
+    const token = jwt.sign({ _id: user._id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }

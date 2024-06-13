@@ -9,9 +9,6 @@ const menuCategoryRouter = (menuCategoryController, authMiddleware, multerMiddle
             try {
                 const menuCategories = await menuCategoryController.getRestaurantMenuCategories(req.auth.restaurantId);
 
-                if (!menuCategories.length) {
-                    res.status(200).send({ message: "no menu categories to show" });
-                }
                 res.status(200).send(menuCategories);
             } catch (error) {
                 next(error);
@@ -26,9 +23,6 @@ const menuCategoryRouter = (menuCategoryController, authMiddleware, multerMiddle
             try {
                 const menuCategory = await menuCategoryController.getRestaurantMenuCategoryById(req.auth.restaurantId, req.params.menuCategoryId);
 
-                if (!menuCategory) {
-                    res.status(200).send({ message: "no menu category to show" });
-                }
                 res.status(200).send(menuCategory);
             } catch (error) {
                 next(error);

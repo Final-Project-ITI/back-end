@@ -4,7 +4,7 @@ var ObjectId = require("mongoose").Types.ObjectId;
 
 class UserRepository {
     async getUser(userId) {
-        return await UserModel.findOne({ _id: userId });
+        return await UserModel.findOne({ _id: userId }).populate("restaurantId");
     }
 
     async getRestaurantsAdmins({ startIndex, endIndex }) {
