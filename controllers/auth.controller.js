@@ -48,12 +48,8 @@ class AuthController {
       throw new Errors.ApiError("email already exist", 401);
     }
 
-    //* checks if the type exits 
-    let type = await this.authRepository.getType(body.typeId);
-
-    if (!type) {
-      throw new Errors.ApiError("wrong type", 401);
-    }
+    // //* checks if the type exits 
+     let type = await this.authRepository.getType("user");
 
     //Implement logic to securely hash user password before storing.
     const passwordHash = await bcrypt.hash(body.password, 10);
@@ -62,9 +58,7 @@ class AuthController {
     if (restaurantId) {
       body.typeId = "664fc05da9a0560d2742da1b";
       body.restaurantId = restaurantId;
-    } else {
-      body.typeId = null
-    }
+    } 
 
     //Add new user information to the database.
     user = await this.authRepository.addUser(body)
