@@ -15,6 +15,18 @@ const menuCategoryRouter = (menuCategoryController, authMiddleware, multerMiddle
             }
         }
     );
+    router.get(
+        "/:resId",
+        async (req, res, next) => {
+            try {
+                const menuCategories = await menuCategoryController.getRestaurantMenuCategories(req.params.resId);
+
+                res.status(200).send(menuCategories);
+            } catch (error) {
+                next(error);
+            }
+        }
+    );
 
     router.get(
         "/:menuCategoryId",
