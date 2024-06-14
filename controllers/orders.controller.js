@@ -86,7 +86,17 @@ class OrderController {
   }
 
   async getAllUserOrders(userId) {
-    return await this.orderRepository.getAllUserOrders(userId);
+    const orders = await this.orderRepository.getAllUserOrders(userId);
+    const orderIds = orders.map((order) => order._id);
+
+    const items = await this.itemRepository.getUserItemByOrderIds(orderIds);
+
+    console.log(items)
+    const filteredItems = items.filter((item) =>
+      orderIds.includes(item.orderId.toString())
+    );
+
+    return { orders: orders, items };
   }
 
   async getUserOrderById(userId, orderId) {

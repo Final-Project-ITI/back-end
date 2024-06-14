@@ -7,6 +7,10 @@ class UserRepository {
         return await UserModel.findOne({ _id: userId }).populate("restaurantId");
     }
 
+    async updateUser(userId, val) {
+        return await UserModel.updateOne({ _id: userId }, val);
+    }
+
     async getRestaurantsAdmins({ startIndex, endIndex }) {
         const admins = await UserModel.find({ typeId: new ObjectId("663e9b24a2ede177e6885e45") }).populate("restaurantId");
 

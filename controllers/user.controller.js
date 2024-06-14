@@ -15,6 +15,12 @@ class UserController {
         return user;
     }
 
+    async updateUser(userId, val) {
+        const user = await this.userRepository.getUser(userId);
+
+        return user;
+    }
+
     async getRestaurantsAdmins(pagination) {
         const admins = await this.userRepository.getRestaurantsAdmins(pagination);
 

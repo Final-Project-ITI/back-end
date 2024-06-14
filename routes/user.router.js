@@ -16,6 +16,20 @@ const userRouter = (userController, authMiddleware, paginationMiddleware) => {
         }
     );
 
+    router.patch(
+        "/",
+        authMiddleware.anyUser(userController.authRepository),
+        async (req, res, next) => {
+            try {
+                const user = await userController.updateUser(req.auth._id, req.body);
+
+                res.status(200).send(user);
+            } catch (error) {
+                next(error);
+            }
+        }
+    );
+
     router.get(
         "/restaurantsAdmins",
         authMiddleware.admin(userController.authRepository),
