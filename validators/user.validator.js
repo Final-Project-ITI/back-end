@@ -6,7 +6,6 @@ const validateUser = (user) => {
     fullName: joi.string().min(3).max(50).required(),
     email: joi.string().regex(emailPattern).required(),
     password: joi.string().min(3).max(50).required(),
-    image: joi.string().max(255),
   });
   return schemaRequirements.validate(user);
 };
