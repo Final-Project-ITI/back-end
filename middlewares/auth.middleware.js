@@ -113,7 +113,6 @@ class AuthMiddleware {
 
         const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-        console.log(payload)
         const { _id } = payload;
         const user = await authRepository.getUser({ _id });
 

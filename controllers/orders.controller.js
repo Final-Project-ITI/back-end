@@ -43,7 +43,7 @@ class OrderController {
     );
     const orderIds = filteredItems.map((item) => item.orderId);
 
-    return await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate);;
+    return { orders: await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate), items: filteredItems };
   }
 
   async getRestaurantOrderById(restaurantCashier, orderId) {
@@ -91,7 +91,6 @@ class OrderController {
 
     const items = await this.itemRepository.getUserItemByOrderIds(orderIds);
 
-    console.log(items)
     const filteredItems = items.filter((item) =>
       orderIds.includes(item.orderId.toString())
     );
