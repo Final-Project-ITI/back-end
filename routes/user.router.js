@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const userRouter = (userController, authMiddleware, paginationMiddleware) => {
+const userRouter = (userController, authMiddleware) => {
     router.get(
         "/",
         authMiddleware.anyUser(userController.authRepository),
@@ -33,7 +33,6 @@ const userRouter = (userController, authMiddleware, paginationMiddleware) => {
     router.get(
         "/restaurantsAdmins",
         authMiddleware.admin(userController.authRepository),
-        paginationMiddleware.paginate(3),
         async (req, res, next) => {
             try {
                 const admins = await userController.getRestaurantsAdmins(req.pagination);

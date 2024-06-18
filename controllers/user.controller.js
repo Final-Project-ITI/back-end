@@ -21,8 +21,8 @@ class UserController {
         return user;
     }
 
-    async getRestaurantsAdmins(pagination) {
-        const admins = await this.userRepository.getRestaurantsAdmins(pagination);
+    async getRestaurantsAdmins() {
+        const admins = await this.userRepository.getRestaurantsAdmins();
 
         return admins;
     }

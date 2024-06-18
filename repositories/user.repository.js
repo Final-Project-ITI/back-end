@@ -11,10 +11,10 @@ class UserRepository {
         return await UserModel.updateOne({ _id: userId }, val);
     }
 
-    async getRestaurantsAdmins({ startIndex, endIndex }) {
+    async getRestaurantsAdmins() {
         const admins = await UserModel.find({ typeId: new ObjectId("663e9b24a2ede177e6885e45") }).populate("restaurantId");
 
-        return admins.slice(startIndex, endIndex);
+        return admins;
     }
 
     async getRestaurantCashiers(restaurantId) {

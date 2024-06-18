@@ -11,7 +11,7 @@ const restaurantSchema = mongoose.Schema({
         type: String,
         required: true,
         minLength: 3,
-        maxLength: 50,
+        maxLength: 255,
     },
     createdOn: {
         type: Date,
@@ -29,7 +29,7 @@ const restaurantSchema = mongoose.Schema({
         type: String,
         required: true,
         minLength: 3,
-        maxLength: 50,
+        maxLength: 100,
     },
     phone: {
         type: String,
