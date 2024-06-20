@@ -2,9 +2,22 @@ const express = require("express");
 require("dotenv").config();
 
 const cors = require("cors");
+const app = express();
+
+const http = require('http');
+const server = http.createServer(app);
+
+const { instrument } = require("@socket.io/admin-ui")
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://admin.socket.io"],
+    methods: ["GET", "POST"],
+    credentials: true // Allow credentials
+  }
+});
 
 const mainRouter = express.Router();
-const app = express();
 const port = process.env.PORT;
 
 const firebaseConfig = require("./config/firebase.config.js");
@@ -18,7 +31,10 @@ const database = require("./database/database");
 
 database();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "http://localhost:5174", "https://admin.socket.io"], // React app's port and admin UI
+  credentials: true // Allow credentials
+}));
 
 /* Routers */
 
@@ -125,6 +141,24 @@ app.use("/api/v1", mainRouter);
 
 app.use(errorMiddleware);
 
-app.listen(port, () => {
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+  socket.on("new-order-req", (room) => {
+    if (room) {
+      socket.to(room).emit("new-order-res");
+    }
+  });
+
+  socket.on("join-restaurant", room => {
+    socket.join(room)
+  })
+});
+
+server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
+
+instrument(io, { auth: false });
