@@ -146,13 +146,25 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
+  /* Events */
   socket.on("new-order-req", (room) => {
     if (room) {
       socket.to(room).emit("new-order-res");
     }
   });
 
+  socket.on("change-order-status", (room, restaurantId, newStatus) => {
+    if (room) {
+      socket.to(room).emit("notify-user", restaurantId, newStatus);
+    }
+  });
+
+  /* Join Rooms */
   socket.on("join-restaurant", room => {
+    socket.join(room)
+  })
+
+  socket.on("join-user", room => {
     socket.join(room)
   })
 });

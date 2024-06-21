@@ -16,7 +16,7 @@ class UserController {
     }
 
     async updateUser(userId, val) {
-        const user = await this.userRepository.getUser(userId);
+        const user = await this.userRepository.updateUser(userId, val);
 
         return user;
     }
