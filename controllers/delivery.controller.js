@@ -37,7 +37,7 @@ class DeliveryController {
 
         await this.deliveryManRepository.updateDeliveryMan({_id:deliveryManId},{currentlyDeliver:_id});        
         
-        return await this.deliveryRepository.updateDelivery({_id},{deliverdAt:date.now})
+        return await this.deliveryRepository.updateDelivery({_id},{assignedAt:date.now})
     }
     async updateDelivery(_id,deliveryManId,info){
         const delivery= await this.deliveryRepository.getDelivery({_id})

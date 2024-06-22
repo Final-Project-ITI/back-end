@@ -13,7 +13,6 @@ const deliverySchema = mongoose.Schema({
     },
     assignedAt: {
         type: Date,
-        default: Date.now,
     },
     deliverdAt: {
         type: Date,
