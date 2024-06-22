@@ -24,6 +24,7 @@ const orderRouter = require("./routes/orders.router.js");
 const productRouter = require("./routes/product.router.js");
 const phoneRouter = require("./routes/phone.router.js");
 const addressRouter = require("./routes/address.router.js");
+const paymentRouter = require("./routes/payment.router.js");
 const ingredientRouter = require("./routes/ingredient.router.js");
 
 /* Repositories */
@@ -36,6 +37,7 @@ const OrderRepository = require("./repositories/orders.repository.js");
 const ProductRepository = require("./repositories/product.repository.js");
 const PhoneRepository = require("./repositories/phone.repository.js");
 const AddressRepository = require("./repositories/address.repository.js");
+const PaymentRepository = require("./repositories/payment.repository.js");
 const IngredientRepository = require("./repositories/ingredient.repository.js");
 
 /* Controllers */
@@ -47,12 +49,13 @@ const OrderController = require("./controllers/orders.controller");
 const ProductController = require("./controllers/product.controller");
 const PhoneController = require("./controllers/phone.controller");
 const AddressController = require("./controllers/address.controller");
+const PaymentController = require("./controllers/payment.controller");
 const IngredientController = require("./controllers/ingredient.controller");
 
 /* Middlewares */
 
 const AuthMiddleware = require("./middlewares/auth.middleware");
-const errorMiddleware = require('./middlewares/error.middleware.js')
+const errorMiddleware = require("./middlewares/error.middleware.js");
 
 /* Repositories Instances */
 
@@ -64,18 +67,48 @@ const orderRepository = new OrderRepository();
 const productRepository = new ProductRepository();
 const phoneRepository = new PhoneRepository();
 const addressRepository = new AddressRepository();
+const paymentRepository = new PaymentRepository();
 const ingredientRepository = new IngredientRepository();
 
 /* Controllers Instances */
 
 const authController = new AuthController(authRepository);
-const restaurantController = new RestaurantController(restaurantRepository, authRepository);
-const cartController = new CartController(cartRepository, itemRepository, productRepository, authRepository);
-const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository);
-const productController = new ProductController(productRepository, restaurantRepository, authRepository);
+const restaurantController = new RestaurantController(
+  restaurantRepository,
+  authRepository
+);
+const cartController = new CartController(
+  cartRepository,
+  itemRepository,
+  productRepository,
+  authRepository
+);
+const orderController = new OrderController(
+  orderRepository,
+  cartRepository,
+  itemRepository,
+  phoneRepository,
+  authRepository,
+  restaurantRepository
+);
+const productController = new ProductController(
+  productRepository,
+  restaurantRepository,
+  authRepository
+);
 const phoneController = new PhoneController(phoneRepository, authRepository);
-const addressController = new AddressController(addressRepository, authRepository);
-const ingredientController = new IngredientController(ingredientRepository, authRepository);
+const addressController = new AddressController(
+  addressRepository,
+  authRepository
+);
+const paymentController = new PaymentController(
+  paymentRepository,
+  authRepository
+);
+const ingredientController = new IngredientController(
+  ingredientRepository,
+  authRepository
+);
 
 /* Middlewares Instances */
 
@@ -84,13 +117,20 @@ const authMiddleware = new AuthMiddleware(authRepository);
 /* --------------------- */
 
 mainRouter.use("/cart", cartRouter(cartController, authMiddleware));
-mainRouter.use("/restaurant", restaurantRouter(restaurantController, authMiddleware));
+mainRouter.use(
+  "/restaurant",
+  restaurantRouter(restaurantController, authMiddleware)
+);
 mainRouter.use("/authentication", authRouter(authController, authMiddleware));
 mainRouter.use("/orders", orderRouter(orderController, authMiddleware));
 mainRouter.use("/products", productRouter(productController, authMiddleware));
 mainRouter.use("/phones", phoneRouter(phoneController, authMiddleware));
 mainRouter.use("/addresses", addressRouter(addressController, authMiddleware));
-mainRouter.use("/ingredients", ingredientRouter(ingredientController, authMiddleware));
+mainRouter.use("/payments", paymentRouter(paymentController, authMiddleware));
+mainRouter.use(
+  "/ingredients",
+  ingredientRouter(ingredientController, authMiddleware)
+);
 
 /* --------------------- */
 
