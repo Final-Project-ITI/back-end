@@ -55,6 +55,10 @@ class DeliveryController {
         return await this.deliveryRepository.updateDelivery({_id},{deliverdAt:Date.now()})
     }
 
+    async getDeliverManDeliveries(deliveryManId){
+        return await this.deliveryRepository.getDeliveries({deliveryManId})
+    }
+
 }
 
 module.exports = DeliveryController

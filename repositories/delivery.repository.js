@@ -7,6 +7,9 @@ class DeliveryRepository {
   async getDelivery(val) {
     return await DeliveryModel.findOne(val).populate("orderId");
   }
+  async getDeliveries(val){
+    return await DeliveryModel.find(val).populate("orderId");
+  }
   async getAllDeliveries() {
     return await DeliveryModel.find().populate("orderId");
   }

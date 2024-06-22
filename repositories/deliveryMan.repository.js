@@ -5,10 +5,10 @@ class DeliveryManRepository {
     return await DeliveryManModel.create(deliverymanInfo);
   }
   async getDeliveryMan(val) {
-      return await DeliveryManModel.findOne(val).populate("userId");
+      return await DeliveryManModel.findOne(val).populate("userId").populate("currentlyDeliver")
   }
   async getAllDeliveryMen() {
-      return await DeliveryManModel.find().populate("userId");
+      return await DeliveryManModel.find().populate("userId").populate("currentlyDeliver");
   }
   async updateDeliveryMan(id,val) {
       return await DeliveryManModel.updateOne(id,val)

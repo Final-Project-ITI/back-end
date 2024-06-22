@@ -27,7 +27,19 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
     }
   );
 
+  router.get(
+    "/:deliveryManId/deliveryMan",
+    authMiddleware.admin(deliveryController.authRepository),
+    async (req, res, next) => {
+      try {
+        const delivery = await deliveryController.getDeliverManDeliveries(req.params.deliveryManId);
 
+        res.status(200).send(delivery);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
   router.get(
     "/:id",
@@ -36,9 +48,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
       try {
         const delivery = await deliveryController.getDelivery();
 
-        if (!delivery) {
-          res.status(200).send({ message: "delivery is empty" });
-        }
+
 
         res.status(200).send(delivery);
       } catch (error) {
@@ -46,6 +56,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
       }
     }
   );
+
   
   router.get(
     "/",
@@ -54,9 +65,6 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
       try {
         const delivery = await deliveryController.getAllDeliveries();
 
-        if (!delivery) {
-          res.status(200).send({ message: "delivery is empty" });
-        }
 
         res.status(200).send(delivery);
       } catch (error) {
