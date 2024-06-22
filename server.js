@@ -49,6 +49,8 @@ const phoneRouter = require("./routes/phone.router.js");
 const addressRouter = require("./routes/address.router.js");
 const menuCategoryRouter = require("./routes/menuCategory.router.js");
 const ingredientRouter = require("./routes/ingredient.router.js");
+const deliveryRouter =require("./routes/delivery.router.js");
+const deliveryManRouter =require("./routes/deliveryMan.router.js");
 
 /* Repositories */
 
@@ -64,6 +66,8 @@ const PhoneRepository = require("./repositories/phone.repository.js");
 const AddressRepository = require("./repositories/address.repository.js");
 const MenuCategoryRepository = require("./repositories/menuCategory.repository.js");
 const IngredientRepository = require("./repositories/ingredient.repository.js");
+const DeliveryRepository= require("./repositories/delivery.repository.js")
+const DeliveryManRepository= require("./repositories/deliveryMan.repository.js")
 
 /* Controllers */
 
@@ -78,6 +82,8 @@ const PhoneController = require("./controllers/phone.controller");
 const AddressController = require("./controllers/address.controller");
 const MenuCategoryController = require("./controllers/menuCategory.controller");
 const IngredientController = require("./controllers/ingredient.controller");
+const DeliveryController = require("./controllers/delivery.controller.js");
+const DeliveryManController = require("./controllers/deliveryMan.controller.js");
 
 /* Middlewares */
 
@@ -100,6 +106,8 @@ const phoneRepository = new PhoneRepository();
 const addressRepository = new AddressRepository();
 const menuCategoryRepository = new MenuCategoryRepository();
 const ingredientRepository = new IngredientRepository();
+const deliveryRepository= new DeliveryRepository();
+const deliveryManRepository= new DeliveryManRepository();
 
 /* Controllers Instances */
 
@@ -114,6 +122,8 @@ const phoneController = new PhoneController(phoneRepository, authRepository);
 const addressController = new AddressController(addressRepository, authRepository);
 const menuCategoryController = new MenuCategoryController(menuCategoryRepository, authRepository);
 const ingredientController = new IngredientController(ingredientRepository, authRepository);
+const deliveryController= new DeliveryController(deliveryRepository,deliveryManRepository,orderRepository)
+const deliveryManController= new DeliveryManController(deliveryManRepository,authRepository)
 
 /* Middlewares Instances */
 
@@ -134,6 +144,8 @@ mainRouter.use("/phones", phoneRouter(phoneController, authMiddleware));
 mainRouter.use("/addresses", addressRouter(addressController, authMiddleware));
 mainRouter.use("/categories", menuCategoryRouter(menuCategoryController, authMiddleware, multerMiddleware, paginationMiddleware));
 mainRouter.use("/ingredients", ingredientRouter(ingredientController, authMiddleware, multerMiddleware, paginationMiddleware));
+mainRouter.use("/delivery",deliveryRouter(deliveryController,authMiddleware))
+mainRouter.use("/deliveryman",deliveryManRouter(deliveryManController,authMiddleware))
 
 /* --------------------- */
 

@@ -1,0 +1,23 @@
+const mongoose = require("mongoose");
+const deliverySchema = mongoose.Schema({
+
+    orderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+        required: true
+    },
+    deliveryManId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "DeliveryMan",
+        required: true
+    },
+    assignedAt: {
+        type: Date,
+        default: Date.now,
+    },
+    deliverdAt: {
+        type: Date,
+    }
+});
+const DeliveryModel = mongoose.model("Delivery", deliverySchema);
+module.exports = DeliveryModel;
