@@ -11,6 +11,10 @@ class ItemRepository {
         return await ItemModel.findOne(id);
     }
 
+    async getUserItemByOrderIds(orderIds) {
+        return await ItemModel.find({ orderId: { $in: orderIds } }).populate("productId");
+    }
+
     async updateAllUserItems(id, val) {
         return await ItemModel.updateMany(id, val);
     }

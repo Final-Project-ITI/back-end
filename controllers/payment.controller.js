@@ -1,38 +1,57 @@
+const { BadRequestError } = require("../error/error");
+require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 class PaymentController {
-  constructor(paymentRepository) {
-    this.paymentRepository = paymentRepository;
+  constructor(cartRepository, authRepository) {
+    this.cartRepository = cartRepository;
+    this.authRepository = authRepository;
   }
 
-  async payWithStripe(req, userId) {
+  async payWithStripe(userId) {
     try {
-      const cart = await this.paymentRepository.payWithStripe(userId);
+      const cart = await this.cartRepository.getUserCart(userId);
       const itemsIds = cart.itemsIds;
 
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: itemsIds.map((item) => ({
+      console.log("Cart:", cart);
+
+      const user = await this.authRepository.getUser(userId);
+      const customerEmail = user.email;
+
+      const lineItems = itemsIds.map((item) => {
+        const unitAmount = Math.round(item.productId.price * 100);
+
+        if (isNaN(unitAmount) || unitAmount <= 0) {
+          throw new Error(
+            `Invalid unit amount: ${unitAmount} for item ${item.productId.title}`
+          );
+        }
+
+        return {
           price_data: {
             currency: "usd",
-            unit_amount: item.quantity * item.productId.price * 100,
+            unit_amount: unitAmount,
             product_data: {
               name: item.productId.title,
               description: item.productId.description,
             },
           },
-          quantity: 1,
-        })),
+          quantity: item.quantity,
+        };
+      });
+
+      const session = await stripe.checkout.sessions.create({
+        line_items: lineItems,
         mode: "payment",
         success_url: `http://localhost:5173/paymentSuccess`,
         cancel_url: `http://localhost:5173/cart`,
-        customer_email: "shimaaabd@gmnail.com", // Replace with actual customer email
+        customer_email: customerEmail,
       });
 
       return session;
     } catch (error) {
-      console.error("Error processing payment:", error);
-      throw error; // Rethrow the error for the caller to handle
+      console.error("Error in payWithStripe:", error.message);
+      throw new BadRequestError(error.message);
     }
   }
 }

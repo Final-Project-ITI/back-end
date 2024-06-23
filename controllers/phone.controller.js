@@ -50,7 +50,6 @@ class ProductController {
             throw new Errors.NotFoundError("phone not found");
         }
 
-        console.log(userId, phone, phoneNumber)
         return await this.phoneRepository.updateUserPhoneNumberById(userId, phoneId, { phoneNumber });
     }
 

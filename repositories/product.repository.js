@@ -8,7 +8,7 @@ class ProductRepository {
   async getAllProducts(restaurantId) {
     return await ProductModel.find({
       restaurantId: new ObjectId(restaurantId),
-    }).populate("restaurantId");
+    }).populate("ingredientsIds").populate("menuCategoryId");
   }
 
   async getRestaurantsProductsById(restaurantId, productId) {
@@ -31,7 +31,6 @@ class ProductRepository {
   }
 
   async updateProduct(updatedProductData, productId, restaurantId) {
-    console.log(updatedProductData, productId, restaurantId)
     const updatedProduct = await ProductModel.updateOne(
       { _id: productId, restaurantId: new ObjectId(restaurantId), },
       updatedProductData,

@@ -6,18 +6,18 @@ class OrderRepository {
   constructor() { }
 
   async getAllOrders() {
-    return await OrderModel.find().populate("statusId").populate("phoneId").populate("userId");
+    return await OrderModel.find().populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getAllRestaurantOrders(orders) {
-    return await OrderModel.find({ _id: { $in: orders } }).populate("statusId").populate("phoneId").populate("userId");
+    return await OrderModel.find({ _id: { $in: orders } }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getOrdersByIdsAndDateRange(orderIds, startDate, endDate) {
     return await OrderModel.find({
       _id: { $in: orderIds },
       createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }
-    }).populate("statusId").populate("phoneId").populate("userId");
+    }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getOrderById(orderId) {
@@ -29,7 +29,7 @@ class OrderRepository {
   }
 
   async getAllUserOrders(userId) {
-    return await OrderModel.find({ userId: userId }).populate("statusId").populate("phoneId").populate("userId");
+    return await OrderModel.find({ userId: userId }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getUserOrderById(userId, orderId) {

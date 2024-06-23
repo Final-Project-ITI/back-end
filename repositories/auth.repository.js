@@ -42,5 +42,14 @@ class AuthRepository {
       return error;
     }
   }
+
+  async getTypeIdByName(name){
+    try {
+      return await UserTypesModel.find({ name })._id;
+    } catch (error) {
+      return error;
+    }
+
+  }
 }
 module.exports = AuthRepository;

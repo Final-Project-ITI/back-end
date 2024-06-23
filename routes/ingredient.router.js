@@ -9,9 +9,6 @@ const ingredientRouter = (ingredientController, authMiddleware) => {
             try {
                 const ingredients = await ingredientController.getRestaurantIngredients(req.auth.restaurantId);
 
-                if (!ingredients.length) {
-                    res.status(200).send({ message: "no ingredients to show" });
-                }
                 res.status(200).send(ingredients);
             } catch (error) {
                 next(error);
@@ -26,9 +23,6 @@ const ingredientRouter = (ingredientController, authMiddleware) => {
             try {
                 const ingredient = await ingredientController.getRestaurantIngredientById(req.auth.restaurantId, req.params.ingredientId);
 
-                if (!ingredient) {
-                    res.status(200).send({ message: "no ingredient to show" });
-                }
                 res.status(200).send(ingredient);
             } catch (error) {
                 next(error);

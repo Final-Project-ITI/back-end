@@ -25,11 +25,9 @@ class AuthController {
       throw new Errors.ApiError("Incorrect email or password", 401);
     }
 
-    console.log(user)
-
     /* generate token that will be send to the client */
 
-    const token = jwt.sign({ id: user._id, role: user.typeId }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
+    const token = jwt.sign({ _id: user._id, role: user.typeId }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }
@@ -49,12 +47,8 @@ class AuthController {
       throw new Errors.ApiError("email already exist", 401);
     }
 
-    //* checks if the type exits 
-    let type = await this.authRepository.getType(body.typeId);
-
-    if (!type) {
-      throw new Errors.ApiError("wrong type", 401);
-    }
+    // //* checks if the type exits 
+     let type = await this.authRepository.getType("user");
 
     //Implement logic to securely hash user password before storing.
     const passwordHash = await bcrypt.hash(body.password, 10);
@@ -63,15 +57,13 @@ class AuthController {
     if (restaurantId) {
       body.typeId = "664fc05da9a0560d2742da1b";
       body.restaurantId = restaurantId;
-    } else {
-      body.typeId = null
     }
 
     //Add new user information to the database.
     user = await this.authRepository.addUser(body)
 
     /* generate token that will be send to the client */
-    const token = jwt.sign({ _id: user.id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
+    const token = jwt.sign({ _id: user._id, role: type.name }, process.env.JWT_SECRET_KEY, { expiresIn: "6h" });
 
     return { token };
   }

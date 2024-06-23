@@ -11,7 +11,7 @@ const restaurantSchema = mongoose.Schema({
         type: String,
         required: true,
         minLength: 3,
-        maxLength: 50,
+        maxLength: 255,
     },
     createdOn: {
         type: Date,
@@ -19,16 +19,23 @@ const restaurantSchema = mongoose.Schema({
     },
     icon: {
         type: String,
-        default: null,
+        required: true,
     },
     banner: {
         type: String,
-        default: null,
+        required: true,
     },
     address: {
         type: String,
         required: true,
-        maxLength: 255,
+        minLength: 3,
+        maxLength: 100,
+    },
+    phone: {
+        type: String,
+        required: true,
+        minLength: 11,
+        maxLength: 11,
     }
 });
 const RestaurantModel = mongoose.model("Restaurant", restaurantSchema);

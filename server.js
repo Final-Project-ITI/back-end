@@ -37,7 +37,7 @@ const OrderRepository = require("./repositories/orders.repository.js");
 const ProductRepository = require("./repositories/product.repository.js");
 const PhoneRepository = require("./repositories/phone.repository.js");
 const AddressRepository = require("./repositories/address.repository.js");
-const PaymentRepository = require("./repositories/payment.repository.js");
+// const PaymentRepository = require("./repositories/payment.repository.js");
 const IngredientRepository = require("./repositories/ingredient.repository.js");
 
 /* Controllers */
@@ -67,7 +67,7 @@ const orderRepository = new OrderRepository();
 const productRepository = new ProductRepository();
 const phoneRepository = new PhoneRepository();
 const addressRepository = new AddressRepository();
-const paymentRepository = new PaymentRepository();
+// const paymentRepository = new PaymentRepository();
 const ingredientRepository = new IngredientRepository();
 
 /* Controllers Instances */
@@ -101,10 +101,7 @@ const addressController = new AddressController(
   addressRepository,
   authRepository
 );
-const paymentController = new PaymentController(
-  paymentRepository,
-  authRepository
-);
+const paymentController = new PaymentController(cartRepository, authRepository);
 const ingredientController = new IngredientController(
   ingredientRepository,
   authRepository
