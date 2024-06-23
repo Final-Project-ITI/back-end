@@ -6,22 +6,23 @@ class OrderRepository {
   constructor() { }
 
   async getAllOrders() {
-    return await OrderModel.find().populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
+    return await OrderModel.find({ isDeleted: false }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getAllRestaurantOrders(orders) {
-    return await OrderModel.find({ _id: { $in: orders } }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
+    return await OrderModel.find({ _id: { $in: orders }, isDeleted: false }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getOrdersByIdsAndDateRange(orderIds, startDate, endDate) {
     return await OrderModel.find({
       _id: { $in: orderIds },
-      createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }
+      createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      isDeleted: false
     }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getOrderById(orderId) {
-    return await OrderModel.findOne({ _id: orderId }).populate("statusId").populate("phoneId").populate("userId");
+    return await OrderModel.findOne({ _id: orderId, isDeleted: false }).populate("statusId").populate("phoneId").populate("userId");
   }
 
   async updateOrderStatus(orderId, statusId) {
@@ -29,11 +30,11 @@ class OrderRepository {
   }
 
   async getAllUserOrders(userId) {
-    return await OrderModel.find({ userId: userId }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
+    return await OrderModel.find({ userId: userId, isDeleted: false }).populate("statusId").populate("phoneId").populate("userId").sort({ createdAt: -1 });
   }
 
   async getUserOrderById(userId, orderId) {
-    return await OrderModel.findOne({ _id: orderId, userId: new ObjectId(userId) }).populate("statusId").populate("phoneId").populate("userId");
+    return await OrderModel.findOne({ _id: orderId, userId: new ObjectId(userId), isDeleted: false }).populate("statusId").populate("phoneId").populate("userId");
   }
 
   async createNewOrder(orderInfo) {

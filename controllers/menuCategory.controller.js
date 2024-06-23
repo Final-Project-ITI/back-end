@@ -80,7 +80,9 @@ class MenuCategoryController {
             val.icon = await getDownloadURL(iconSnapshot.ref);
         }
 
-        return await this.categoryRepository.updateRestaurantMenuCategoryById(restaurantId, menuCategoryId, val);
+        await this.categoryRepository.updateRestaurantMenuCategoryById(restaurantId, menuCategoryId, val);
+
+        return val;
     }
 
     async deleteRestaurantMenuCategory(restaurantId, menuCategoryId) {
