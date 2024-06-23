@@ -7,6 +7,7 @@ class OrderController {
   phoneRepository;
   authRepository;
   restaurantRepository;
+  notificationRepository;
 
   constructor(
     _orderRepository,
@@ -14,7 +15,8 @@ class OrderController {
     _itemRepository,
     _phoneRepository,
     _authRepository,
-    _restaurantRepository
+    _restaurantRepository,
+    _notificationRepository
   ) {
     this.orderRepository = _orderRepository;
     this.cartRepository = _cartRepository;
@@ -22,6 +24,7 @@ class OrderController {
     this.phoneRepository = _phoneRepository;
     this.authRepository = _authRepository;
     this.restaurantRepository = _restaurantRepository;
+    this.notificationRepository = _notificationRepository;
   }
 
   async getAllOrders() {
@@ -43,7 +46,7 @@ class OrderController {
     );
     const orderIds = filteredItems.map((item) => item.orderId);
 
-    return await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate);;
+    return { orders: await this.orderRepository.getOrdersByIdsAndDateRange(orderIds, startDate, endDate), items: filteredItems };
   }
 
   async getRestaurantOrderById(restaurantCashier, orderId) {
@@ -60,10 +63,10 @@ class OrderController {
     return await this.orderRepository.getOrderById(orderId);
   }
 
-  async updateOrderStatus(restaurantCashier, orderId, statusId) {
+  async updateOrderStatus(restaurantCashier, orderId, statusId, userId) {
     /* Check if the status exist */
 
-    const status = this.orderRepository.getStatus(statusId);
+    const status = await this.orderRepository.getStatus(statusId);
 
     if (!status) {
       throw new Errors.NotFoundError("status not found");
@@ -72,21 +75,43 @@ class OrderController {
     /* Check if the order exist */
 
     const items = await this.itemRepository.getAllItems();
+
     const filteredItems = items.filter((item) =>
       item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
     );
     const orderIds = filteredItems.map((item) => item.orderId.toString());
 
+    const restaurant = await this.restaurantRepository.getRestaurantById(restaurantCashier.restaurantId.toString());
+
+    const notification = {
+      name: status.status,
+      orderId,
+      userId,
+      restaurantIcon: restaurant.icon
+    }
+
+    const notificationRes = await this.notificationRepository.createUserNotification(notification);
 
     if (!orderIds.includes(orderId)) {
       throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
     }
 
-    return await this.orderRepository.updateOrderStatus(orderId, statusId);
+    await this.orderRepository.updateOrderStatus(orderId, statusId);
+
+    return notificationRes;
   }
 
   async getAllUserOrders(userId) {
-    return await this.orderRepository.getAllUserOrders(userId);
+    const orders = await this.orderRepository.getAllUserOrders(userId);
+    const orderIds = orders.map((order) => order._id);
+
+    const items = await this.itemRepository.getUserItemByOrderIds(orderIds);
+
+    const filteredItems = items.filter((item) =>
+      orderIds.includes(item.orderId.toString())
+    );
+
+    return { orders: orders, items };
   }
 
   async getUserOrderById(userId, orderId) {

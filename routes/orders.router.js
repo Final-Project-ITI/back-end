@@ -67,11 +67,13 @@ const orderRouter = (orderControllers, authMiddleware) => {
     async (req, res, next) => {
       const { orderId } = req.params;
       const { statusId } = req.body;
+      const { userId } = req.body;
       try {
         const updatedOrder = await orderControllers.updateOrderStatus(
           req.auth,
           orderId,
-          statusId
+          statusId,
+          userId
         );
 
         res.status(200).send(updatedOrder);

@@ -40,6 +40,8 @@ class ProductController {
   }
 
   async createProduct(body, user, icon) {
+    if (!Array.isArray(body.ingredientsIds)) body.ingredientsIds = [body.ingredientsIds];
+
     const { error } = validateProduct(body);
 
     if (error) {
@@ -47,6 +49,10 @@ class ProductController {
     }
 
     /* checks if the menu category exits */
+
+    if (!body.menuCategoryId) {
+      throw new Errors.NotFoundError("menu category does not exits");
+    }
 
     const menuCategory = this.menuCategoryRepository.getRestaurantMenuCategoryById(user.restaurantId, body.menuCategoryId);
 
@@ -102,13 +108,13 @@ class ProductController {
       throw new Errors.ApiError("faild to update", 400);
     }
 
-    return updatedProduct;
+    return updatedProductData;
   }
 
   async deleteProduct(productId, user) {
     const isDeleted = await this.productRepository.deleteProduct(productId, user.restaurantId);
 
-    if (!isDeleted.deletedCount) {
+    if (!isDeleted.matchedCount) {
       throw new Errors.ApiError("faild to delete", 400);
     }
 

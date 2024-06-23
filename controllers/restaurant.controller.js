@@ -88,7 +88,7 @@ class RestaurantController {
 
     user = await this.authRepository.updateUser({ _id: user._id }, { typeId: "663e9b24a2ede177e6885e45", restaurantId: restaurant._id });
 
-    return { ...restaurant, ...user };
+    return restaurant;
   }
 }
 

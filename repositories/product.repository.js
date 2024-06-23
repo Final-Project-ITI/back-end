@@ -8,6 +8,7 @@ class ProductRepository {
   async getAllProducts(restaurantId) {
     return await ProductModel.find({
       restaurantId: new ObjectId(restaurantId),
+      isDeleted: false
     }).populate("ingredientsIds").populate("menuCategoryId");
   }
 
@@ -15,12 +16,14 @@ class ProductRepository {
     return await ProductModel.findOne({
       _id: productId,
       restaurantId: new ObjectId(restaurantId),
+      isDeleted: false
     }).populate("restaurantId");
   }
 
   async getProductsById(productId) {
     return await ProductModel.findOne({
       _id: productId,
+      isDeleted: false
     }).populate("restaurantId");
   }
 
@@ -40,7 +43,7 @@ class ProductRepository {
   }
 
   async deleteProduct(productId, restaurantId) {
-    return await ProductModel.deleteOne({ _id: productId, restaurantId: new ObjectId(restaurantId) });
+    return await ProductModel.updateOne({ _id: productId, restaurantId: new ObjectId(restaurantId) }, { isDeleted: true });
   }
 }
 

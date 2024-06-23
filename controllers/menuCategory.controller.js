@@ -102,7 +102,12 @@ class MenuCategoryController {
         { contentType: icon.mimetype }
       );
 
+
       val.icon = await getDownloadURL(iconSnapshot.ref);
+
+        await this.categoryRepository.updateRestaurantMenuCategoryById(restaurantId, menuCategoryId, val);
+
+        return val;
     }
 
     return await this.categoryRepository.updateRestaurantMenuCategoryById(

@@ -42,7 +42,11 @@ const productSchema = mongoose.Schema({
       ref: "Ingredient",
       required: true
     }
-  ]
+  ],
+  isDeleted: {
+    type: Boolean,
+    default: false
+  }
 });
 const ProductModel = mongoose.model("Product", productSchema);
 module.exports = ProductModel;
