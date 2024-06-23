@@ -20,7 +20,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
     authMiddleware.deliveryMan(deliveryController.authRepository,deliveryController.deliveryRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(deliveryController.updateDelivery(req.params.id,req.deliveryMan._id,req.body));
+        res.status(200).send(await deliveryController.updateDelivery(req.params.id,req.deliveryMan._id,req.body));
       } catch (error) {
         next(error);
       }
