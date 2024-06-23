@@ -108,13 +108,13 @@ class ProductController {
       throw new Errors.ApiError("faild to update", 400);
     }
 
-    return updatedProduct;
+    return updatedProductData;
   }
 
   async deleteProduct(productId, user) {
     const isDeleted = await this.productRepository.deleteProduct(productId, user.restaurantId);
 
-    if (!isDeleted.deletedCount) {
+    if (!isDeleted.matchedCount) {
       throw new Errors.ApiError("faild to delete", 400);
     }
 

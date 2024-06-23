@@ -49,8 +49,11 @@ const phoneRouter = require("./routes/phone.router.js");
 const addressRouter = require("./routes/address.router.js");
 const menuCategoryRouter = require("./routes/menuCategory.router.js");
 const ingredientRouter = require("./routes/ingredient.router.js");
-const deliveryRouter =require("./routes/delivery.router.js");
-const deliveryManRouter =require("./routes/deliveryMan.router.js");
+const categoryRouter = require("./routes/category.router.js");
+const notificationTypeRouter = require("./routes/notificationType.router.js");
+const notificationRouter = require("./routes/notification.router.js");
+const deliveryRouter = require("./routes/delivery.router.js");
+const deliveryManRouter = require("./routes/deliveryMan.router.js");
 
 /* Repositories */
 
@@ -66,8 +69,11 @@ const PhoneRepository = require("./repositories/phone.repository.js");
 const AddressRepository = require("./repositories/address.repository.js");
 const MenuCategoryRepository = require("./repositories/menuCategory.repository.js");
 const IngredientRepository = require("./repositories/ingredient.repository.js");
-const DeliveryRepository= require("./repositories/delivery.repository.js")
-const DeliveryManRepository= require("./repositories/deliveryMan.repository.js")
+const CategoryRepository = require("./repositories/category.repositories.js");
+const NotificationTypeRepository = require("./repositories/notificationType.repository.js");
+const NotificationRepository = require("./repositories/notification.repository.js");
+const DeliveryRepository = require("./repositories/delivery.repository.js")
+const DeliveryManRepository = require("./repositories/deliveryMan.repository.js")
 
 /* Controllers */
 
@@ -82,6 +88,9 @@ const PhoneController = require("./controllers/phone.controller");
 const AddressController = require("./controllers/address.controller");
 const MenuCategoryController = require("./controllers/menuCategory.controller");
 const IngredientController = require("./controllers/ingredient.controller");
+const CategoryController = require("./controllers/category.controller.js");
+const NotificationTypeController = require("./controllers/notificationType.controller");
+const NotificationController = require("./controllers/notification.controller");
 const DeliveryController = require("./controllers/delivery.controller.js");
 const DeliveryManController = require("./controllers/deliveryMan.controller.js");
 
@@ -90,7 +99,7 @@ const DeliveryManController = require("./controllers/deliveryMan.controller.js")
 const AuthMiddleware = require("./middlewares/auth.middleware");
 const PaginationMiddleware = require("./middlewares/pagination.middleware");
 const MulterMiddleware = require("./middlewares/multer.middleware");
-const errorMiddleware = require('./middlewares/error.middleware.js');
+const errorMiddleware = require("./middlewares/error.middleware.js");
 
 /* Repositories Instances */
 
@@ -106,19 +115,34 @@ const phoneRepository = new PhoneRepository();
 const addressRepository = new AddressRepository();
 const menuCategoryRepository = new MenuCategoryRepository();
 const ingredientRepository = new IngredientRepository();
-const deliveryRepository= new DeliveryRepository();
-const deliveryManRepository= new DeliveryManRepository();
+const categoryRepository = new CategoryRepository();
+const notificationTypeRepository = new NotificationTypeRepository();
+const notificationRepository = new NotificationRepository();
+const deliveryRepository = new DeliveryRepository();
+const deliveryManRepository = new DeliveryManRepository();
 
 /* Controllers Instances */
 
 const authController = new AuthController(authRepository);
 const userController = new UserController(userRepository, authRepository);
+const notificationTypeController = new NotificationTypeController(notificationTypeRepository, authRepository);
+const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository);
 const restaurantController = new RestaurantController(restaurantRepository, authRepository);
 const cartController = new CartController(cartRepository, itemRepository, productRepository, authRepository);
-const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository);
+const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository, notificationController);
 const orderStatusController = new OrderStatusController(orderStatusRepository);
-const productController = new ProductController(productRepository, restaurantRepository, authRepository, menuCategoryRepository, ingredientRepository);
+const productController = new ProductController(
+  productRepository,
+  restaurantRepository,
+  authRepository,
+  menuCategoryRepository,
+  ingredientRepository
+);
 const phoneController = new PhoneController(phoneRepository, authRepository);
+const categoryController = new CategoryController(
+  categoryRepository,
+  authRepository
+);
 const addressController = new AddressController(addressRepository, authRepository);
 const menuCategoryController = new MenuCategoryController(menuCategoryRepository, authRepository);
 const ingredientController = new IngredientController(ingredientRepository, authRepository);
@@ -133,19 +157,57 @@ const multerMiddleware = new MulterMiddleware();
 
 /* --------------------- */
 
-mainRouter.use("/user", userRouter(userController, authMiddleware, paginationMiddleware));
+mainRouter.use(
+  "/user",
+  userRouter(userController, authMiddleware, paginationMiddleware)
+);
 mainRouter.use("/cart", cartRouter(cartController, authMiddleware));
-mainRouter.use("/restaurant", restaurantRouter(restaurantController, authMiddleware, multerMiddleware));
+mainRouter.use(
+  "/restaurant",
+  restaurantRouter(restaurantController, authMiddleware, multerMiddleware)
+);
 mainRouter.use("/authentication", authRouter(authController, authMiddleware));
 mainRouter.use("/orders", orderRouter(orderController, authMiddleware));
 mainRouter.use("/orderStatuses", orderStatusRouter(orderStatusController));
-mainRouter.use("/products", productRouter(productController, authMiddleware, multerMiddleware, paginationMiddleware));
+mainRouter.use(
+  "/products",
+  productRouter(
+    productController,
+    authMiddleware,
+    multerMiddleware,
+    paginationMiddleware
+  )
+);
 mainRouter.use("/phones", phoneRouter(phoneController, authMiddleware));
 mainRouter.use("/addresses", addressRouter(addressController, authMiddleware));
+mainRouter.use(
+  "/categories",
+  menuCategoryRouter(
+    menuCategoryController,
+    authMiddleware,
+    multerMiddleware,
+    paginationMiddleware
+  )
+);
+mainRouter.use(
+  "/ingredients",
+  ingredientRouter(
+    ingredientController,
+    authMiddleware,
+    multerMiddleware,
+    paginationMiddleware
+  )
+);
+mainRouter.use(
+  "/restaurantCategory",
+  categoryRouter(categoryController, authMiddleware, multerMiddleware)
+);
 mainRouter.use("/categories", menuCategoryRouter(menuCategoryController, authMiddleware, multerMiddleware, paginationMiddleware));
 mainRouter.use("/ingredients", ingredientRouter(ingredientController, authMiddleware, multerMiddleware, paginationMiddleware));
-mainRouter.use("/delivery",deliveryRouter(deliveryController,authMiddleware))
-mainRouter.use("/deliveryman",deliveryManRouter(deliveryManController,authMiddleware))
+mainRouter.use("/notificationType", notificationTypeRouter(notificationTypeController, authMiddleware));
+mainRouter.use("/notification", notificationRouter(notificationController, authMiddleware));
+mainRouter.use("/delivery", deliveryRouter(deliveryController, authMiddleware))
+mainRouter.use("/deliveryman", deliveryManRouter(deliveryManController, authMiddleware))
 
 /* --------------------- */
 
@@ -165,18 +227,14 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on("change-order-status", (room, restaurantId, newStatus) => {
+  socket.on("change-order-status", (room, notificationId) => {
     if (room) {
-      socket.to(room).emit("notify-user", restaurantId, newStatus);
+      socket.to(room).emit("notify-user", notificationId);
     }
   });
 
   /* Join Rooms */
-  socket.on("join-restaurant", room => {
-    socket.join(room)
-  })
-
-  socket.on("join-user", room => {
+  socket.on("join-room", room => {
     socket.join(room)
   })
 });
