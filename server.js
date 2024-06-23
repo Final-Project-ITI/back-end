@@ -122,7 +122,7 @@ const phoneController = new PhoneController(phoneRepository, authRepository);
 const addressController = new AddressController(addressRepository, authRepository);
 const menuCategoryController = new MenuCategoryController(menuCategoryRepository, authRepository);
 const ingredientController = new IngredientController(ingredientRepository, authRepository);
-const deliveryController= new DeliveryController(deliveryRepository,deliveryManRepository,orderRepository)
+const deliveryController= new DeliveryController(deliveryRepository,deliveryManRepository,orderRepository,authRepository)
 const deliveryManController= new DeliveryManController(deliveryManRepository,authRepository)
 
 /* Middlewares Instances */

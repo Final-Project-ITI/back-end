@@ -8,8 +8,7 @@ const deliverySchema = mongoose.Schema({
     },
     deliveryManId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "DeliveryMan",
-        required: true
+        ref: "DeliveryMan"
     },
     assignedAt: {
         type: Date,

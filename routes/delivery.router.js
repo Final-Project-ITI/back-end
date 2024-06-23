@@ -6,10 +6,10 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
 
   router.patch(
     "/:id/accept",
-    authMiddleware.deliveryMan(deliveryController.authRepository,deliveryController.deliveryRepository),
+    authMiddleware.deliveryMan(deliveryController.authRepository,deliveryController.deliveryManRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(deliveryController.acceptDelivery(req.params.id,req.deliveryMan._id,req.body));
+        res.status(200).send(await deliveryController.acceptDelivery(req.params.id,req.deliveryMan._id,req.body));
       } catch (error) {
         next(error);
       }

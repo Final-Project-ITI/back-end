@@ -11,6 +11,7 @@ const deliveryManSchema = mongoose.Schema({
     },
     status: {
         type: String,
+        default:"offline"
     }
 });
 const DeliveryManModel = mongoose.model("DeliveryMan", deliveryManSchema);

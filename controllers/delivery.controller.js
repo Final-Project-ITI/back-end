@@ -4,12 +4,14 @@ class DeliveryController {
     deliveryRepository;
     orderRepository;
     deliveryManRepository;
+    authRepository;
     
 
-    constructor(_deliveryRepository,_deliveryManRepository,_orderRepository ) {
+    constructor(_deliveryRepository,_deliveryManRepository,_orderRepository,_authRepository ) {
         this.deliveryRepository = _deliveryRepository;
         this.orderRepository=_orderRepository
         this.deliveryManRepository=_deliveryManRepository;
+        this.authRepository=_authRepository;
     }
 
     async createDelivery(orderId,deliveryInfo){
