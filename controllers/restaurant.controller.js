@@ -41,12 +41,14 @@ class RestaurantController {
   }
 
   async addRestaurant(body, banner, icon) {
+    if (!Array.isArray(body.categoriesIds)) body.categoriesIds = [body.categoriesIds];
+
     const { error, restaurantInfo } = await validateRestaurant(body);
     if (error) {
       throw new Errors.ApiError(error.message, 400);
     }
 
-    const { name, description, address, email, phone } = body;
+    const { name, description, address, email, phone, categoriesIds } = body;
     let user = await this.authRepository.getUser({ email });
 
     if (!user) {
@@ -81,7 +83,8 @@ class RestaurantController {
       address,
       phone,
       icon: await getDownloadURL(iconSnapshot.ref),
-      banner: await getDownloadURL(bannerSnapshot.ref)
+      banner: await getDownloadURL(bannerSnapshot.ref),
+      categoriesIds
     });
 
     //assign restaurant to user

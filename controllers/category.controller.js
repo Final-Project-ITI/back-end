@@ -71,7 +71,9 @@ class CategoryController {
       val.icon = await getDownloadURL(iconSnapshot.ref);
     }
 
-    return await this.categoryRepository.updateCategoryById(categoryId, val);
+    await this.categoryRepository.updateCategoryById(categoryId, val);
+
+    return val;
   }
 
   async deleteCategory(categoryId) {

@@ -1,17 +1,11 @@
 const { required } = require("joi");
 const { mongoose } = require("mongoose");
 const restaurantSchema = mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minLength: 3,
-    maxLength: 50,
-  },
-  categoryIds: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
+    name: {
+        type: String,
+        required: true,
+        minLength: 3,
+        maxLength: 50,
     },
     description: {
         type: String,
@@ -43,6 +37,13 @@ const restaurantSchema = mongoose.Schema({
         minLength: 11,
         maxLength: 11,
     },
+    categoriesIds: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            required: true
+        }
+    ],
     isDeleted: {
         type: Boolean,
         default: false

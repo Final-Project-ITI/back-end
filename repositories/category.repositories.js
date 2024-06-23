@@ -2,14 +2,14 @@ const CategoryModel = require("../models/category.model");
 var ObjectId = require("mongoose").Types.ObjectId;
 
 class CategoryRepository {
-  constructor() {}
+  constructor() { }
 
   async getCategories() {
-    return await CategoryModel.find();
+    return await CategoryModel.find({ isDeleted: false });
   }
 
   async getCategoryById(_id) {
-    return await CategoryModel.findOne({ _id: new ObjectId(_id) });
+    return await CategoryModel.findOne({ _id: new ObjectId(_id), isDeleted: false });
   }
 
   async updateCategoryById(_id, val) {
@@ -21,7 +21,7 @@ class CategoryRepository {
   }
 
   async deleteCategory(_id) {
-    return await CategoryModel.deleteOne({ _id: new ObjectId(_id) });
+    return await CategoryModel.updateOne({ _id: new ObjectId(_id) }, { isDeleted: true });
   }
 }
 

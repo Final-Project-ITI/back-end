@@ -125,24 +125,6 @@ const deliveryManRepository = new DeliveryManRepository();
 
 const authController = new AuthController(authRepository);
 const userController = new UserController(userRepository, authRepository);
-const restaurantController = new RestaurantController(
-  restaurantRepository,
-  authRepository
-);
-const cartController = new CartController(
-  cartRepository,
-  itemRepository,
-  productRepository,
-  authRepository
-);
-const orderController = new OrderController(
-  orderRepository,
-  cartRepository,
-  itemRepository,
-  phoneRepository,
-  authRepository,
-  restaurantRepository
-);
 const notificationTypeController = new NotificationTypeController(notificationTypeRepository, authRepository);
 const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository);
 const restaurantController = new RestaurantController(restaurantRepository, authRepository);
@@ -157,18 +139,6 @@ const productController = new ProductController(
   ingredientRepository
 );
 const phoneController = new PhoneController(phoneRepository, authRepository);
-const addressController = new AddressController(
-  addressRepository,
-  authRepository
-);
-const menuCategoryController = new MenuCategoryController(
-  menuCategoryRepository,
-  authRepository
-);
-const ingredientController = new IngredientController(
-  ingredientRepository,
-  authRepository
-);
 const categoryController = new CategoryController(
   categoryRepository,
   authRepository

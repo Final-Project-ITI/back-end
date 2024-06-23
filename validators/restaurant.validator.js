@@ -1,5 +1,5 @@
 const joi = require("joi");
-const Restaurant = require("../models/restaurant.model");
+joi.objectId = require('joi-objectid')(joi);
 
 const validateRestaurant = (restaurant) => {
   const schemaRequirements = joi.object({
@@ -10,6 +10,7 @@ const validateRestaurant = (restaurant) => {
     email: joi.string(),
     icon: joi.string().allow(null).allow('').optional(),
     banner: joi.string().allow(null).allow('').optional(),
+    categoriesIds: joi.array().items(joi.objectId()).required(),
   });
   return schemaRequirements.validate(restaurant);
 };
