@@ -51,6 +51,8 @@ const menuCategoryRouter = require("./routes/menuCategory.router.js");
 const ingredientRouter = require("./routes/ingredient.router.js");
 const notificationTypeRouter = require("./routes/notificationType.router.js");
 const notificationRouter = require("./routes/notification.router.js");
+const deliveryRouter = require("./routes/delivery.router.js");
+const deliveryManRouter = require("./routes/deliveryMan.router.js");
 
 /* Repositories */
 
@@ -68,6 +70,8 @@ const MenuCategoryRepository = require("./repositories/menuCategory.repository.j
 const IngredientRepository = require("./repositories/ingredient.repository.js");
 const NotificationTypeRepository = require("./repositories/notificationType.repository.js");
 const NotificationRepository = require("./repositories/notification.repository.js");
+const DeliveryRepository = require("./repositories/delivery.repository.js")
+const DeliveryManRepository = require("./repositories/deliveryMan.repository.js")
 
 /* Controllers */
 
@@ -84,6 +88,8 @@ const MenuCategoryController = require("./controllers/menuCategory.controller");
 const IngredientController = require("./controllers/ingredient.controller");
 const NotificationTypeController = require("./controllers/notificationType.controller");
 const NotificationController = require("./controllers/notification.controller");
+const DeliveryController = require("./controllers/delivery.controller.js");
+const DeliveryManController = require("./controllers/deliveryMan.controller.js");
 
 /* Middlewares */
 
@@ -108,6 +114,8 @@ const menuCategoryRepository = new MenuCategoryRepository();
 const ingredientRepository = new IngredientRepository();
 const notificationTypeRepository = new NotificationTypeRepository();
 const notificationRepository = new NotificationRepository();
+const deliveryRepository = new DeliveryRepository();
+const deliveryManRepository = new DeliveryManRepository();
 
 /* Controllers Instances */
 
@@ -124,6 +132,8 @@ const phoneController = new PhoneController(phoneRepository, authRepository);
 const addressController = new AddressController(addressRepository, authRepository);
 const menuCategoryController = new MenuCategoryController(menuCategoryRepository, authRepository);
 const ingredientController = new IngredientController(ingredientRepository, authRepository);
+const deliveryController = new DeliveryController(deliveryRepository, deliveryManRepository, orderRepository)
+const deliveryManController = new DeliveryManController(deliveryManRepository, authRepository)
 
 /* Middlewares Instances */
 
@@ -146,6 +156,8 @@ mainRouter.use("/categories", menuCategoryRouter(menuCategoryController, authMid
 mainRouter.use("/ingredients", ingredientRouter(ingredientController, authMiddleware, multerMiddleware, paginationMiddleware));
 mainRouter.use("/notificationType", notificationTypeRouter(notificationTypeController, authMiddleware));
 mainRouter.use("/notification", notificationRouter(notificationController, authMiddleware));
+mainRouter.use("/delivery", deliveryRouter(deliveryController, authMiddleware))
+mainRouter.use("/deliveryman", deliveryManRouter(deliveryManController, authMiddleware))
 
 /* --------------------- */
 
