@@ -1,5 +1,7 @@
 const DeliveryModel = require("../models/delivery.model");
 const DeliveryManModel = require("../models/deliveryMan.model");
+const ItemModel = require("../models/item.model");
+
 class DeliveryRepository {
   async createDelivery(deliveryInfo) {
     return await DeliveryModel.create(deliveryInfo);
@@ -8,7 +10,17 @@ class DeliveryRepository {
     return await DeliveryModel.findOne(val).populate("orderId");
   }
   async getDeliveries(val){
-    return await DeliveryModel.find(val).populate("orderId");
+    const deliveries= await DeliveryModel.find(val).populate({ 
+      path: 'orderId',
+      populate:[{
+        path: 'userId',
+        model: 'User'
+      },{
+        path: 'phoneId',
+        model: 'Phone'
+      }]
+   })
+   return deliveries
   }
   async getAllDeliveries() {
     return await DeliveryModel.find().populate("orderId");

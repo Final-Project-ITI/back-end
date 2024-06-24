@@ -146,7 +146,7 @@ const categoryController = new CategoryController(
 const addressController = new AddressController(addressRepository, authRepository);
 const menuCategoryController = new MenuCategoryController(menuCategoryRepository, authRepository);
 const ingredientController = new IngredientController(ingredientRepository, authRepository);
-const deliveryController= new DeliveryController(deliveryRepository,deliveryManRepository,orderRepository,authRepository)
+const deliveryController= new DeliveryController(deliveryRepository,deliveryManRepository,orderRepository,authRepository,itemRepository)
 const deliveryManController= new DeliveryManController(deliveryManRepository,authRepository)
 
 /* Middlewares Instances */

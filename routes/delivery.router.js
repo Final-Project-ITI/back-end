@@ -42,11 +42,25 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
   );
 
   router.get(
+    "/:deliveryManId/current/deliveryMan",
+    authMiddleware.admin(deliveryController.authRepository),
+    async (req, res, next) => {
+      try {
+        const delivery = await deliveryController.getDeliveryManCurrentDeliveries(req.params.deliveryManId);
+
+        res.status(200).send(delivery);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  router.get(
     "/:id",
     authMiddleware.admin(deliveryController.authRepository),
     async (req, res, next) => {
       try {
-        const delivery = await deliveryController.getDelivery();
+        const delivery = await deliveryController.getDelivery(req.params.id);
 
 
 

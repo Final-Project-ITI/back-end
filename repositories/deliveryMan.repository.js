@@ -5,7 +5,24 @@ class DeliveryManRepository {
     return await DeliveryManModel.create(deliverymanInfo);
   }
   async getDeliveryMan(val) {
-      return await DeliveryManModel.findOne(val).populate("userId").populate("currentlyDeliver")
+      return await DeliveryManModel.findOne(val).populate("userId").populate({ 
+        path: 'currentlyDeliver',
+        populate: {
+          path: 'orderId',
+          model: 'Order',
+          populate:[{
+            path: 'userId',
+            model: 'User'
+          },{
+            path: 'phoneId',
+            model: 'Phone'
+          },{
+            path: 'addressId',
+            model: 'Address'
+          }]
+
+        } 
+     })
   }
   async getAllDeliveryMen() {
       return await DeliveryManModel.find().populate("userId").populate("currentlyDeliver");

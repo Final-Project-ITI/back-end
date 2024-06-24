@@ -118,7 +118,7 @@ class OrderController {
     return await this.orderRepository.getUserOrderById(userId, orderId);
   }
 
-  async createNewOrder({ phoneId }, userId) {
+  async createNewOrder({ phoneId, addressId }, userId) {
     const phone = await this.phoneRepository.getUserPhoneNumberById(userId, phoneId);
 
     if (!phone) {
@@ -127,6 +127,7 @@ class OrderController {
 
     const orderInfo = {
       phoneId,
+      addressId,
       statusId: "6646747dd96fa5f4ee9cacd8",
       userId
     };

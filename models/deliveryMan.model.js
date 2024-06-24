@@ -5,10 +5,10 @@ const deliveryManSchema = mongoose.Schema({
         ref: "User",
         required: true
     },
-    currentlyDeliver: {
+    currentlyDeliver: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Delivery",
-    },
+    }],
     status: {
         type: String,
         default:"offline"

@@ -11,6 +11,16 @@ class ItemRepository {
         return await ItemModel.findOne(id);
     }
 
+    async getAllItemsWithRes() {
+        return await ItemModel.find().populate({ 
+            path: 'productId',
+            populate: {
+              path: 'restaurantId',
+              model: 'Restaurant'
+            } 
+         })
+    }
+
     async getUserItemByOrderIds(orderIds) {
         return await ItemModel.find({ orderId: { $in: orderIds } }).populate("productId");
     }
