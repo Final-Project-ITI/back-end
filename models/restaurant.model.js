@@ -36,6 +36,17 @@ const restaurantSchema = mongoose.Schema({
         required: true,
         minLength: 11,
         maxLength: 11,
+    },
+    categoriesIds: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            required: true
+        }
+    ],
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 });
 const RestaurantModel = mongoose.model("Restaurant", restaurantSchema);

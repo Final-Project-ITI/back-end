@@ -7,6 +7,7 @@ class OrderController {
   phoneRepository;
   authRepository;
   restaurantRepository;
+  notificationRepository;
 
   constructor(
     _orderRepository,
@@ -14,7 +15,8 @@ class OrderController {
     _itemRepository,
     _phoneRepository,
     _authRepository,
-    _restaurantRepository
+    _restaurantRepository,
+    _notificationRepository
   ) {
     this.orderRepository = _orderRepository;
     this.cartRepository = _cartRepository;
@@ -22,6 +24,7 @@ class OrderController {
     this.phoneRepository = _phoneRepository;
     this.authRepository = _authRepository;
     this.restaurantRepository = _restaurantRepository;
+    this.notificationRepository = _notificationRepository;
   }
 
   async getAllOrders() {
@@ -60,10 +63,10 @@ class OrderController {
     return await this.orderRepository.getOrderById(orderId);
   }
 
-  async updateOrderStatus(restaurantCashier, orderId, statusId) {
+  async updateOrderStatus(restaurantCashier, orderId, statusId, userId) {
     /* Check if the status exist */
 
-    const status = this.orderRepository.getStatus(statusId);
+    const status = await this.orderRepository.getStatus(statusId);
 
     if (!status) {
       throw new Errors.NotFoundError("status not found");
@@ -72,17 +75,30 @@ class OrderController {
     /* Check if the order exist */
 
     const items = await this.itemRepository.getAllItems();
+
     const filteredItems = items.filter((item) =>
       item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
     );
     const orderIds = filteredItems.map((item) => item.orderId.toString());
 
+    const restaurant = await this.restaurantRepository.getRestaurantById(restaurantCashier.restaurantId.toString());
+
+    const notification = {
+      name: status.status,
+      orderId,
+      userId,
+      restaurantIcon: restaurant.icon
+    }
+
+    const notificationRes = await this.notificationRepository.createUserNotification(notification);
 
     if (!orderIds.includes(orderId)) {
       throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
     }
 
-    return await this.orderRepository.updateOrderStatus(orderId, statusId);
+    await this.orderRepository.updateOrderStatus(orderId, statusId);
+
+    return notificationRes;
   }
 
   async getAllUserOrders(userId) {
@@ -102,7 +118,7 @@ class OrderController {
     return await this.orderRepository.getUserOrderById(userId, orderId);
   }
 
-  async createNewOrder({ phoneId }, userId) {
+  async createNewOrder({ phoneId, addressId }, userId) {
     const phone = await this.phoneRepository.getUserPhoneNumberById(userId, phoneId);
 
     if (!phone) {
@@ -111,6 +127,7 @@ class OrderController {
 
     const orderInfo = {
       phoneId,
+      addressId,
       statusId: "6646747dd96fa5f4ee9cacd8",
       userId
     };

@@ -5,11 +5,11 @@ class CategoryRepository {
     constructor() { }
 
     async getRestaurantMenuCategories(restaurantId) {
-        return await MenuCategoryModel.find({ restaurantId });
+        return await MenuCategoryModel.find({ restaurantId, isDeleted: false });
     }
 
     async getRestaurantMenuCategoryById(restaurantId, _id) {
-        return await MenuCategoryModel.findOne({ _id, restaurantId: new ObjectId(restaurantId) });
+        return await MenuCategoryModel.findOne({ _id, restaurantId: new ObjectId(restaurantId), isDeleted: false });
     }
 
     async updateRestaurantMenuCategoryById(restaurantId, _id, val) {
@@ -21,7 +21,7 @@ class CategoryRepository {
     }
 
     async deleteRestaurantMenuCategory(restaurantId, _id) {
-        return await MenuCategoryModel.deleteOne({ _id, restaurantId: new ObjectId(restaurantId) });
+        return await MenuCategoryModel.updateOne({ _id, restaurantId: new ObjectId(restaurantId) }, { isDeleted: true });
     }
 
 }

@@ -12,6 +12,10 @@ class PhoneRepository {
         return await PhoneModel.findOne({ _id, userId: new ObjectId(userId) }).populate('userId');
     }
 
+    async getPhoneNumber(val) {
+        return await PhoneModel.findOne(val).populate('userId');
+    }
+
     async updateUserPhoneNumberById(userId, _id, val) {
         return await PhoneModel.updateMany({ _id, userId: new ObjectId(userId) }, val);
     }

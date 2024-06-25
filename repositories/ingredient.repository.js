@@ -5,19 +5,19 @@ class IngredientRepository {
     constructor() { }
 
     async getRestaurantIngredients(restaurantId) {
-        return await IngredientModel.find({ restaurantId });
+        return await IngredientModel.find({ restaurantId, isDeleted: false });
     }
 
     async getRestaurantIngredientsByIds(ids) {
         return await IngredientModel.find({
             '_id': {
                 $in: ids
-            }
+            }, isDeleted: false
         });
     }
 
     async getRestaurantIngredientById(restaurantId, _id) {
-        return await IngredientModel.findOne({ _id, restaurantId: new ObjectId(restaurantId) });
+        return await IngredientModel.findOne({ _id, restaurantId: new ObjectId(restaurantId), isDeleted: false });
     }
 
     async updateRestaurantIngredientById(restaurantId, _id, val) {
@@ -29,7 +29,7 @@ class IngredientRepository {
     }
 
     async deleteRestaurantIngredient(restaurantId, _id) {
-        return await IngredientModel.deleteOne({ _id, restaurantId: new ObjectId(restaurantId) });
+        return await IngredientModel.updateOne({ _id, restaurantId: new ObjectId(restaurantId) }, { isDeleted: true });
     }
 
 }
