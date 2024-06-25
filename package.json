@@ -10,6 +10,7 @@
   "author": "Waleed Almenawy",
   "license": "ISC",
   "dependencies": {
+    "@socket.io/admin-ui": "^0.5.1",
     "@stripe/stripe-js": "^4.0.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -21,6 +22,8 @@
     "joi-objectid": "^4.0.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.4",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.4",
     "stripe": "^15.12.0",
     "uuid": "^10.0.0"
   },
