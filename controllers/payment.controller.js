@@ -8,7 +8,7 @@ class PaymentController {
     this.authRepository = authRepository;
   }
 
-  async payWithStripe(userId) {
+  async payWithStripe({ phoneId, addressId }, userId) {
     try {
       const cart = await this.cartRepository.getUserCart(userId);
       const itemsIds = cart.itemsIds;
@@ -47,6 +47,36 @@ class PaymentController {
         cancel_url: `http://localhost:5173/cart`,
         customer_email: customerEmail,
       });
+      ///////////////////////////////////////
+
+      const phone = await this.phoneRepository.getUserPhoneNumberById(
+        userId,
+        phoneId
+      );
+
+      if (!phone) {
+        throw new Errors.NotFoundError("can't find phone number");
+      }
+
+      const orderInfo = {
+        phoneId,
+        paymentMethodId: "667ae95124daa8cfea1cb7fa",
+        paymentStatusId: "667ae98424daa8cfea1cb7fc",
+        statusId: "6646747dd96fa5f4ee9cacd8",
+        userId,
+        addressId,
+      };
+
+      const order = await this.orderRepository.createNewOrder(orderInfo);
+
+      cart.itemsIds.forEach(async (item) => {
+        await this.itemRepository.updateUserItemById(
+          { _id: item._id },
+          { orderId: order._id }
+        );
+      });
+
+      await this.cartRepository.deleteUserCart(userId);
 
       return session;
     } catch (error) {

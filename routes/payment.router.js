@@ -7,7 +7,10 @@ const paymentRouter = (paymentController, authMiddleware) => {
     authMiddleware.user(paymentController.authRepository),
     async (req, res, next) => {
       try {
-        let response = await paymentController.payWithStripe(req.auth._id);
+        let response = await paymentController.payWithStripe(
+          req.body,
+          req.auth._id
+        );
         res.status(200).json({ status: "success", session: response });
       } catch (error) {
         next(error);
