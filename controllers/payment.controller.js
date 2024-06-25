@@ -3,9 +3,18 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 class PaymentController {
-  constructor(cartRepository, authRepository) {
+  constructor(
+    cartRepository,
+    authRepository,
+    phoneRepository,
+    orderRepository,
+    itemRepository
+  ) {
     this.cartRepository = cartRepository;
     this.authRepository = authRepository;
+    this.phoneRepository = phoneRepository;
+    this.orderRepository = orderRepository;
+    this.itemRepository = itemRepository;
   }
 
   async payWithStripe({ phoneId, addressId }, userId) {

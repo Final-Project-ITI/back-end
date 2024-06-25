@@ -202,7 +202,13 @@ const deliveryManController = new DeliveryManController(
   authRepository,
   phoneRepository
 );
-const paymentController = new PaymentController(cartRepository, authRepository);
+const paymentController = new PaymentController(
+  cartRepository,
+  authRepository,
+  phoneRepository,
+  orderRepository,
+  itemRepository
+);
 
 /* Middlewares Instances */
 
