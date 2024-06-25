@@ -12,6 +12,10 @@ const deliveryManSchema = mongoose.Schema({
     status: {
         type: String,
         default:"offline"
+    },
+    phoneId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Phone"
     }
 });
 const DeliveryManModel = mongoose.model("DeliveryMan", deliveryManSchema);

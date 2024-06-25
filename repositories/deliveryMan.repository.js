@@ -25,7 +25,7 @@ class DeliveryManRepository {
      })
   }
   async getAllDeliveryMen() {
-      return await DeliveryManModel.find().populate("userId").populate("currentlyDeliver");
+      return await DeliveryManModel.find().populate("userId").populate("currentlyDeliver").populate("phoneId");
   }
   async updateDeliveryMan(id,val) {
       return await DeliveryManModel.updateOne(id,val)

@@ -76,7 +76,7 @@ class DeliveryController {
     }
 
     async getDeliveryManCurrentDeliveries(deliveryManId){
-        try{
+       
         const deliveryMan= await this.deliveryManRepository.getDeliveryMan({_id:deliveryManId})
         const deliveries =deliveryMan.currentlyDeliver
         const items = await this.itemRepository.getAllItemsWithRes();
@@ -88,7 +88,7 @@ class DeliveryController {
         })
         
 
-        return updatedDeliveries}catch(error){console.log(error)}
+        return updatedDeliveries
     }
 
 }

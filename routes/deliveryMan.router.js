@@ -10,7 +10,7 @@ const deliveryManRouter = (deliveryManController,authMiddleware) => {
     authMiddleware.admin(deliveryManController.authRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(await deliveryManController.createDeliveryMan(req.body));
+        res.status(200).send(await deliveryManController.createDeliveryMan({phoneNumber:req.body.phone,email:req.body.email}));
       } catch (error) {
         next(error);
       }
