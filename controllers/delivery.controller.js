@@ -75,7 +75,7 @@ class DeliveryController {
     );
     await this.deliveryManRepository.updateDeliveryMan(
       { _id: deliveryManId },
-      { currentlyDeliver: null }
+      { $pull: { 'currentlyDeliver': { _id: delivery.orderId._id } } }
     );
 
     return await this.deliveryRepository.updateDelivery(
