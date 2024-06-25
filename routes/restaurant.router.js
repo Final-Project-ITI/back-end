@@ -44,19 +44,19 @@ const restaurantRouter = (
     }
   });
 
-  // router.post("/authorization/register",
-  //   authMiddleware.admin(restaurantController.authRepository),
-  //   multerMiddleware.uploadMultipleImages(["icon", "banner"]),
-  //   async (req, res, next) => {
-  //     try {
-  //       const newRestaurant = await restaurantController.addRestaurant(req.body, req.files.banner[0], req.files.icon[0]);
+  router.post("/authorization/register",
+    authMiddleware.admin(restaurantController.authRepository),
+    multerMiddleware.uploadMultipleImages(["icon", "banner"]),
+    async (req, res, next) => {
+      try {
+        const newRestaurant = await restaurantController.addRestaurant(req.body, req.files.banner[0], req.files.icon[0]);
 
-  //       res.status(201).send(newRestaurant);
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
-  // );
+        res.status(201).send(newRestaurant);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
   return router;
 };

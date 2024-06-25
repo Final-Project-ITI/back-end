@@ -35,55 +35,55 @@ const productRouter = (
     }
   });
 
-  // router.post(
-  //   "/admin",
-  //   authMiddleware.restaurantAdmin(productController.authRepository),
-  //   multerMiddleware.uploadSingleImage("icon"),
-  //   async (req, res, next) => {
-  //     try {
-  //       const newProduct = await productController.createProduct(req.body, req.auth, req.file);
+  router.post(
+    "/admin",
+    authMiddleware.restaurantAdmin(productController.authRepository),
+    multerMiddleware.uploadSingleImage("icon"),
+    async (req, res, next) => {
+      try {
+        const newProduct = await productController.createProduct(req.body, req.auth, req.file);
 
-  //       res.status(201).send(newProduct);
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   });
+        res.status(201).send(newProduct);
+      } catch (error) {
+        next(error);
+      }
+    });
 
-  // router.patch(
-  //   "/admin/:productId",
-  //   authMiddleware.restaurantAdmin(productController.authRepository),
-  //   multerMiddleware.uploadSingleImage("icon"),
-  //   async (req, res, next) => {
-  //     try {
-  //       const updatedProduct = await productController.updateProduct(
-  //         req.body,
-  //         req.params.productId,
-  //         req.auth,
-  //         req.file
-  //       );
+  router.patch(
+    "/admin/:productId",
+    authMiddleware.restaurantAdmin(productController.authRepository),
+    multerMiddleware.uploadSingleImage("icon"),
+    async (req, res, next) => {
+      try {
+        const updatedProduct = await productController.updateProduct(
+          req.body,
+          req.params.productId,
+          req.auth,
+          req.file
+        );
 
-  //       res.status(200).send(updatedProduct);
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
-  // );
+        res.status(200).send(updatedProduct);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
-  // router.delete(
-  //   "/admin/:productId",
-  //   authMiddleware.restaurantAdmin(productController.authRepository),
-  //   async (req, res, next) => {
-  //     try {
-  //       const isDeleted = await productController.deleteProduct(
-  //         req.params.productId,
-  //         req.auth
-  //       );
-  //       res.status(200).send(isDeleted);
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
-  // );
+  router.delete(
+    "/admin/:productId",
+    authMiddleware.restaurantAdmin(productController.authRepository),
+    async (req, res, next) => {
+      try {
+        const isDeleted = await productController.deleteProduct(
+          req.params.productId,
+          req.auth
+        );
+        res.status(200).send(isDeleted);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
   return router;
 };
