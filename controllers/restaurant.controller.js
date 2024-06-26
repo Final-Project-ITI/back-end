@@ -21,7 +21,9 @@ class RestaurantController {
   }
 
   async getRestaurantById(_id) {
-    const restaurant = await this.restaurantRepository.getRestaurantById({ _id });
+    const restaurant = await this.restaurantRepository.getRestaurantById({
+      _id,
+    });
 
     if (!restaurant) {
       throw new Errors.NotFoundError("restaurant not found");
@@ -52,7 +54,7 @@ class RestaurantController {
     let user = await this.authRepository.getUser({ email });
 
     if (!user) {
-      throw new Errors.NotFoundError('user not found');
+      throw new Errors.NotFoundError("user not found");
     }
 
     if (user.typeId._id.toString() !== "663dfebba2ede177e6885e42") {

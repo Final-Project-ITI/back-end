@@ -2,37 +2,38 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
-const productRouter = (productController, authMiddleware, multerMiddleware, paginationMiddleware) => {
-  router.get(
-    "/:restaurantId",
-    async (req, res, next) => {
-      try {
-        const products = await productController.getAllProducts(req.params.restaurantId);
+const productRouter = (
+  productController,
+  authMiddleware,
+  multerMiddleware,
+  paginationMiddleware
+) => {
+  router.get("/:restaurantId", async (req, res, next) => {
+    try {
+      const products = await productController.getAllProducts(
+        req.params.restaurantId
+      );
 
-        res.status(200).send(products);
-      } catch (error) {
-        next(error)
-      }
+      res.status(200).send(products);
+    } catch (error) {
+      next(error);
     }
-  );
+  });
 
-  router.get(
-    "/:restaurantId/:productId",
-    async (req, res, next) => {
-      try {
-        const { restaurantId, productId } = req.params;
+  router.get("/:restaurantId/:productId", async (req, res, next) => {
+    try {
+      const { restaurantId, productId } = req.params;
 
-        const product = await productController.getRestaurantsProductsById(
-          restaurantId,
-          productId
-        );
+      const product = await productController.getRestaurantsProductsById(
+        restaurantId,
+        productId
+      );
 
-        res.status(200).send(product);
-      } catch (error) {
-        next(error)
-      }
+      res.status(200).send(product);
+    } catch (error) {
+      next(error);
     }
-  );
+  });
 
   router.post(
     "/admin",

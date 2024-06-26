@@ -9,6 +9,7 @@ class OrderController {
   restaurantRepository;
   notificationRepository;
   deliveryRepository;
+  addressRepository;
 
   constructor(
     _orderRepository,
@@ -18,7 +19,8 @@ class OrderController {
     _authRepository,
     _restaurantRepository,
     _notificationRepository,
-    _deliveryRepository
+    _deliveryRepository,
+    _addressRepository
   ) {
     this.orderRepository = _orderRepository;
     this.cartRepository = _cartRepository;
@@ -28,6 +30,7 @@ class OrderController {
     this.restaurantRepository = _restaurantRepository;
     this.notificationRepository = _notificationRepository;
     this.deliveryRepository = _deliveryRepository;
+    this.addressRepository = _addressRepository;
   }
 
   async getAllOrders() {
@@ -122,10 +125,20 @@ class OrderController {
   }
 
   async createNewOrder({ phoneId, addressId }, userId) {
+    if (!phoneId | addressId) {
+      throw new Errors.NotFoundError("missing data");
+
+    }
     const phone = await this.phoneRepository.getUserPhoneNumberById(userId, phoneId);
 
     if (!phone) {
       throw new Errors.NotFoundError("can't find phone number");
+    }
+
+    const address = await this.addressRepository.getUserAddressById(userId, addressId);
+
+    if (!address) {
+      throw new Errors.NotFoundError("can't find address");
     }
 
     const orderInfo = {

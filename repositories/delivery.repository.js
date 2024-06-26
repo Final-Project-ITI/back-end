@@ -9,18 +9,27 @@ class DeliveryRepository {
   async getDelivery(val) {
     return await DeliveryModel.findOne(val).populate("orderId");
   }
-  async getDeliveries(val){
-    const deliveries= await DeliveryModel.find(val).populate({ 
+  async getDeliveries(val) {
+    const deliveries = await DeliveryModel.find(val).populate({
       path: 'orderId',
-      populate:[{
+      populate: [{
         path: 'userId',
         model: 'User'
-      },{
+      }, {
         path: 'phoneId',
         model: 'Phone'
+      }, {
+        path: 'addressId',
+        model: 'Address'
+      }, {
+        path: 'statusId',
+        model: 'OrderStatus'
+      }, {
+        path: 'paymentStatusId',
+        model: 'PaymentStatus'
       }]
-   })
-   return deliveries
+    })
+    return deliveries
   }
   async getAllDeliveries() {
     return await DeliveryModel.find().populate("orderId");

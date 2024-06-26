@@ -17,6 +17,10 @@ class DeliveryManController {
     }
     async getDeliveryMan(_id) {
         return await this.deliveryManRepository.getDeliveryMan({ _id })
+    }
+
+    async getDeliveryManByUserId(userId) {
+        return await this.deliveryManRepository.getDeliveryMan({ userId })
 
     }
     async createDeliveryMan({ email, phoneNumber }) {
@@ -33,7 +37,6 @@ class DeliveryManController {
 
 
         const phone = await this.phoneRepository.getPhoneNumber({ phoneNumber });
-        console.log(user, phone);
         if (!phone) {
             throw new Errors.ApiError("phone not found", 400);
         } if (phone.userId._id.toString() !== user._id.toString()) {

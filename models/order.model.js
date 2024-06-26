@@ -19,21 +19,16 @@ const orderSchema = mongoose.Schema({
   paymentMethodId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "PaymentMethod",
-    default: null,
+    default: "667ae90f24daa8cfea1cb7f9",
   },
   paymentStatusId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "PaymentStatus",
-    default: null,
+    default: "667ae9b624daa8cfea1cb7fd",
   },
   createdAt: {
     type: Date,
     default: Date.now,
-  },
-  deliveryManId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "DeliveryMan",
-    default: null,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

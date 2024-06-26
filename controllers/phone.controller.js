@@ -32,7 +32,6 @@ class ProductController {
             throw new Errors.ApiError("phone already exist", 400);
         }
 
-        console.log(userId)
         const newPhone = await this.phoneRepository.createUserPhoneNumber({ userId, phoneNumber });
 
         return newPhone;
