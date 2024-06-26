@@ -129,7 +129,7 @@ const notificationTypeController = new NotificationTypeController(notificationTy
 const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository);
 const restaurantController = new RestaurantController(restaurantRepository, authRepository);
 const cartController = new CartController(cartRepository, itemRepository, productRepository, authRepository);
-const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository, notificationController);
+const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository, notificationController, deliveryRepository);
 const orderStatusController = new OrderStatusController(orderStatusRepository);
 const productController = new ProductController(
   productRepository,
@@ -146,8 +146,8 @@ const categoryController = new CategoryController(
 const addressController = new AddressController(addressRepository, authRepository);
 const menuCategoryController = new MenuCategoryController(menuCategoryRepository, authRepository);
 const ingredientController = new IngredientController(ingredientRepository, authRepository);
-const deliveryController= new DeliveryController(deliveryRepository,deliveryManRepository,orderRepository,authRepository,itemRepository)
-const deliveryManController= new DeliveryManController(deliveryManRepository,authRepository,phoneRepository)
+const deliveryController = new DeliveryController(deliveryRepository, deliveryManRepository, orderRepository, authRepository, itemRepository)
+const deliveryManController = new DeliveryManController(deliveryManRepository, authRepository, phoneRepository)
 
 /* Middlewares Instances */
 

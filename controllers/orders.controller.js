@@ -8,6 +8,7 @@ class OrderController {
   authRepository;
   restaurantRepository;
   notificationRepository;
+  deliveryRepository;
 
   constructor(
     _orderRepository,
@@ -16,7 +17,8 @@ class OrderController {
     _phoneRepository,
     _authRepository,
     _restaurantRepository,
-    _notificationRepository
+    _notificationRepository,
+    _deliveryRepository
   ) {
     this.orderRepository = _orderRepository;
     this.cartRepository = _cartRepository;
@@ -25,6 +27,7 @@ class OrderController {
     this.authRepository = _authRepository;
     this.restaurantRepository = _restaurantRepository;
     this.notificationRepository = _notificationRepository;
+    this.deliveryRepository = _deliveryRepository;
   }
 
   async getAllOrders() {
@@ -147,7 +150,7 @@ class OrderController {
       );
     });
 
-    await this.cartRepository.deleteUserCart(userId);
+    await this.cartRepository.deleteUserCart(userId), await this.deliveryRepository.createDelivery({ orderId: order._id });
 
     return order;
   }
