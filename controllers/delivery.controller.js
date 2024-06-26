@@ -84,6 +84,8 @@ class DeliveryController {
     );
   }
 
+  
+
   async getDeliverManDeliveries(deliveryManId) {
     const deliveries = await this.deliveryRepository.getDeliveries({
       deliveryManId,

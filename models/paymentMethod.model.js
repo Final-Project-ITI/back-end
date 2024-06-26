@@ -1,9 +1,7 @@
 const { mongoose } = require("mongoose");
 const paymentMethodSchema = mongoose.Schema({
     method: {
-        type: String,
-        default:"cash"
-       
+        type: String,       
     }
 });
 const PaymentMethodModel = mongoose.model("PaymentMethod", paymentMethodSchema);
