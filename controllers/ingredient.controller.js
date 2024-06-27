@@ -59,7 +59,6 @@ class IngredientController {
     async deleteRestaurantIngredient(restaurantId, ingredientId) {
         const ingredient = await this.ingredientRepository.getRestaurantIngredientById(restaurantId, ingredientId);
 
-        console.log(restaurantId, ingredientId)
 
         if (!ingredient) {
             throw new Errors.NotFoundError("ingredient not found");

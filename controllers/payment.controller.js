@@ -22,7 +22,6 @@ class PaymentController {
       const cart = await this.cartRepository.getUserCart(userId);
       const itemsIds = cart.itemsIds;
 
-      console.log("Cart:", cart);
 
       const user = await this.authRepository.getUser(userId);
       const customerEmail = user.email;
