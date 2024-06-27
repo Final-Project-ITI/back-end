@@ -15,6 +15,19 @@ const notificationRouter = (notificationController, authMiddleware) => {
             }
         }
     );
+    router.get(
+        "/delivery",
+        authMiddleware.anyUser(notificationController.authRepository),
+        async (req, res, next) => {
+            try {
+                const notifications = await notificationController.getAllDeliveryNotification();
+
+                res.status(200).send(notifications);
+            } catch (error) {
+                next(error);
+            }
+        }
+    );
 
     router.get(
         "/user/:id",
@@ -22,6 +35,20 @@ const notificationRouter = (notificationController, authMiddleware) => {
         async (req, res, next) => {
             try {
                 const notification = await notificationController.getAllUserNotificationById(req.params.id, req.auth._id);
+
+                res.status(200).send(notification);
+            } catch (error) {
+                next(error);
+            }
+        }
+    );
+
+    router.delete(
+        "/user/:id",
+        authMiddleware.user(notificationController.authRepository),
+        async (req, res, next) => {
+            try {
+                const notification = await notificationController.deleteNotification(req.params.id, req.auth._id);
 
                 res.status(200).send(notification);
             } catch (error) {

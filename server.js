@@ -141,7 +141,18 @@ const notificationTypeController = new NotificationTypeController(notificationTy
 const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository);
 const restaurantController = new RestaurantController(restaurantRepository, authRepository);
 const cartController = new CartController(cartRepository, itemRepository, productRepository, authRepository);
-const orderController = new OrderController(orderRepository, cartRepository, itemRepository, phoneRepository, authRepository, restaurantRepository, notificationController, deliveryRepository, addressRepository);
+const orderController = new OrderController(
+  orderRepository,
+  cartRepository,
+  itemRepository,
+  phoneRepository,
+  authRepository,
+  restaurantRepository,
+  notificationController,
+  deliveryRepository,
+  addressRepository,
+  deliveryManRepository
+);
 const orderStatusController = new OrderStatusController(orderStatusRepository);
 const productController = new ProductController(
   productRepository,
@@ -172,7 +183,8 @@ const deliveryController = new DeliveryController(
   deliveryManRepository,
   orderRepository,
   authRepository,
-  itemRepository
+  itemRepository,
+  notificationRepository
 );
 const deliveryManController = new DeliveryManController(
   deliveryManRepository,

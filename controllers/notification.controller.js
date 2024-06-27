@@ -22,6 +22,14 @@ class NotificationController {
         return await this.notificationRepository.getAllUserNotificationById(_id, userId);
     }
 
+    async getAllDeliveryNotification() {
+        return await this.notificationRepository.getAllDeliveryNotification();
+    }
+
+    async deleteNotification(_id, userId) {
+        return await this.notificationRepository.deleteNotification(_id, userId);
+    }
+
     async createUserNotification(body) {
         const notificationType = await this.notificationTypeRepository.createNotificationType({
             name: body.name,

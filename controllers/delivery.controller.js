@@ -6,19 +6,22 @@ class DeliveryController {
     deliveryManRepository;
     authRepository;
     itemRepository;
+    notificationRepository;
 
     constructor(
         _deliveryRepository,
         _deliveryManRepository,
         _orderRepository,
         _authRepository,
-        _itemRepository
+        _itemRepository,
+        _notificationRepository
     ) {
         this.deliveryRepository = _deliveryRepository;
         this.orderRepository = _orderRepository;
         this.deliveryManRepository = _deliveryManRepository;
         this.authRepository = _authRepository;
         this.itemRepository = _itemRepository;
+        this.notificationRepository = _notificationRepository
     }
 
     async createDelivery(orderId, deliveryInfo) {
@@ -38,8 +41,8 @@ class DeliveryController {
         });
         return { delivery, items };
     }
-    async acceptDelivery(_id, deliveryManId, info) {
-        const delivery = await this.deliveryRepository.getDelivery({ _id });
+    async acceptDelivery(orderId, deliveryManId, info) {
+        const delivery = await this.deliveryRepository.getDelivery({ orderId });
         if (!delivery) {
             throw new Errors.ApiError("delivery not found", 400);
         }
@@ -47,13 +50,17 @@ class DeliveryController {
             throw new Errors.ApiError("already accepted", 400);
         }
 
+        console.log(delivery)
+
         await this.deliveryManRepository.updateDeliveryMan(
             { _id: deliveryManId },
-            { currentlyDeliver: _id }
+            { currentlyDeliver: delivery._id }
         );
 
+        await this.notificationRepository.deleteNotification(orderId)
+
         return await this.deliveryRepository.updateDelivery(
-            { _id },
+            { _id: delivery._id },
             { assignedAt: Date.now(), deliveryManId }
         );
     }

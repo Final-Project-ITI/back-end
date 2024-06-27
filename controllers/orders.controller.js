@@ -10,6 +10,7 @@ class OrderController {
   notificationRepository;
   deliveryRepository;
   addressRepository;
+  deliveryManRepository;
 
   constructor(
     _orderRepository,
@@ -20,7 +21,8 @@ class OrderController {
     _restaurantRepository,
     _notificationRepository,
     _deliveryRepository,
-    _addressRepository
+    _addressRepository,
+    _deliveryManRepository
   ) {
     this.orderRepository = _orderRepository;
     this.cartRepository = _cartRepository;
@@ -31,6 +33,7 @@ class OrderController {
     this.notificationRepository = _notificationRepository;
     this.deliveryRepository = _deliveryRepository;
     this.addressRepository = _addressRepository;
+    this.deliveryManRepository = _deliveryManRepository;
   }
 
   async getAllOrders() {
@@ -69,7 +72,7 @@ class OrderController {
     return await this.orderRepository.getOrderById(orderId);
   }
 
-  async updateOrderStatus(restaurantCashier, orderId, statusId, userId) {
+  async updateOrderStatus(deliveryMan, orderId, statusId, userId, resId) {
     /* Check if the status exist */
 
     const status = await this.orderRepository.getStatus(statusId);
@@ -83,11 +86,13 @@ class OrderController {
     const items = await this.itemRepository.getAllItems();
 
     const filteredItems = items.filter((item) =>
-      item.productId.restaurantId.toString() === restaurantCashier.restaurantId.toString()
+      item.productId.restaurantId.toString() === resId
     );
-    const orderIds = filteredItems.map((item) => item.orderId.toString());
+    const orderIds = filteredItems.map((item) => item?.orderId?.toString());
 
-    const restaurant = await this.restaurantRepository.getRestaurantById(restaurantCashier.restaurantId.toString());
+    const restaurant = await this.restaurantRepository.getRestaurantById(resId);
+
+    console.log(restaurant, resId)
 
     const notification = {
       name: status.status,
@@ -156,6 +161,14 @@ class OrderController {
 
     const order = await this.orderRepository.createNewOrder(orderInfo);
 
+    const restaurant = await this.restaurantRepository.getRestaurantById(cart.itemsIds[0].productId.restaurantId);
+
+    const notification = {
+      name: restaurant.name,
+      orderId: order._id,
+      restaurantIcon: restaurant.icon
+    }
+
     cart.itemsIds.forEach(async (item) => {
       await this.itemRepository.updateUserItemById(
         { _id: item._id },
@@ -165,7 +178,7 @@ class OrderController {
 
     await this.cartRepository.deleteUserCart(userId), await this.deliveryRepository.createDelivery({ orderId: order._id });
 
-    return order;
+    return await this.notificationRepository.createUserNotification(notification);
   }
 }
 

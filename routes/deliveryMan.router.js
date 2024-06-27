@@ -51,7 +51,7 @@ const deliveryManRouter = (deliveryManController, authMiddleware) => {
   );
   router.patch(
     "/:deliveryManId",
-    authMiddleware.admin(deliveryManController.authRepository),
+    authMiddleware.deliveryMan(deliveryManController.authRepository, deliveryManController.deliveryManRepository),
     async (req, res, next) => {
       try {
         res.status(200).send(deliveryManController.updateDeliveryMan(req.params.deliveryManId, req.body));

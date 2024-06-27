@@ -12,6 +12,14 @@ class notificationRepository {
         return await NotificationModel.findOne({ _id, userId }).populate("notificationType");
     }
 
+    async getAllDeliveryNotification() {
+        return await NotificationModel.find({ userId: null }).populate("notificationType");
+    }
+
+    async deleteNotification(orderId) {
+        return await NotificationModel.deleteOne({ orderId });
+    }
+
     async createUserNotification(body) {
         return await NotificationModel.create(body);
     }
