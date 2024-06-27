@@ -137,25 +137,10 @@ const deliveryManRepository = new DeliveryManRepository();
 
 const authController = new AuthController(authRepository);
 const userController = new UserController(userRepository, authRepository);
-const notificationTypeController = new NotificationTypeController(
-  notificationTypeRepository,
-  authRepository
-);
-const notificationController = new NotificationController(
-  notificationRepository,
-  notificationTypeRepository,
-  authRepository
-);
-const restaurantController = new RestaurantController(
-  restaurantRepository,
-  authRepository
-);
-const cartController = new CartController(
-  cartRepository,
-  itemRepository,
-  productRepository,
-  authRepository
-);
+const notificationTypeController = new NotificationTypeController(notificationTypeRepository, authRepository);
+const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository);
+const restaurantController = new RestaurantController(restaurantRepository, authRepository);
+const cartController = new CartController(cartRepository, itemRepository, productRepository, authRepository);
 const orderController = new OrderController(
   orderRepository,
   cartRepository,
@@ -163,7 +148,10 @@ const orderController = new OrderController(
   phoneRepository,
   authRepository,
   restaurantRepository,
-  notificationController
+  notificationController,
+  deliveryRepository,
+  addressRepository,
+  deliveryManRepository
 );
 const orderStatusController = new OrderStatusController(orderStatusRepository);
 const productController = new ProductController(
@@ -195,12 +183,14 @@ const deliveryController = new DeliveryController(
   deliveryManRepository,
   orderRepository,
   authRepository,
-  itemRepository
+  itemRepository,
+  notificationRepository
 );
 const deliveryManController = new DeliveryManController(
   deliveryManRepository,
   authRepository,
-  phoneRepository
+  phoneRepository,
+  deliveryRepository
 );
 const paymentController = new PaymentController(
   cartRepository,

@@ -2,15 +2,15 @@ const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
-const deliveryManRouter = (deliveryManController,authMiddleware) => {
+const deliveryManRouter = (deliveryManController, authMiddleware) => {
 
-  
+
   router.post(
     "/",
     authMiddleware.admin(deliveryManController.authRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(await deliveryManController.createDeliveryMan({phoneNumber:req.body.phone,email:req.body.email}));
+        res.status(200).send(await deliveryManController.createDeliveryMan({ phoneNumber: req.body.phone, email: req.body.email }));
       } catch (error) {
         next(error);
       }
@@ -22,6 +22,17 @@ const deliveryManRouter = (deliveryManController,authMiddleware) => {
     async (req, res, next) => {
       try {
         res.status(200).send(await deliveryManController.getAllDeliveryMen());
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+  router.get(
+    "/userId",
+    authMiddleware.deliveryMan(deliveryManController.authRepository, deliveryManController.deliveryManRepository),
+    async (req, res, next) => {
+      try {
+        res.status(200).send(await deliveryManController.getDeliveryManByUserId(req.auth._id));
       } catch (error) {
         next(error);
       }
@@ -40,10 +51,10 @@ const deliveryManRouter = (deliveryManController,authMiddleware) => {
   );
   router.patch(
     "/:deliveryManId",
-    authMiddleware.admin(deliveryManController.authRepository),
+    authMiddleware.deliveryMan(deliveryManController.authRepository, deliveryManController.deliveryManRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(deliveryManController.updateDeliveryMan(req.params.deliveryManId,req.body));
+        res.status(200).send(deliveryManController.updateDeliveryMan(req.params.deliveryManId, req.body));
       } catch (error) {
         next(error);
       }

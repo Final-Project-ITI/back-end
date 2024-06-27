@@ -8,13 +8,16 @@ const deliverySchema = mongoose.Schema({
     },
     deliveryManId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "DeliveryMan"
+        ref: "DeliveryMan",
+        default: null
     },
     assignedAt: {
         type: Date,
+        default: null
     },
     deliverdAt: {
         type: Date,
+        default: null
     }
 });
 const DeliveryModel = mongoose.model("Delivery", deliverySchema);

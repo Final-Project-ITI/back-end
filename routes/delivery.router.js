@@ -6,10 +6,10 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
 
   router.patch(
     "/:id/accept",
-    authMiddleware.deliveryMan(deliveryController.authRepository,deliveryController.deliveryManRepository),
+    authMiddleware.deliveryMan(deliveryController.authRepository, deliveryController.deliveryManRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(await deliveryController.acceptDelivery(req.params.id,req.deliveryMan._id,req.body));
+        res.status(200).send(await deliveryController.acceptDelivery(req.params.id, req.deliveryMan._id, req.body));
       } catch (error) {
         next(error);
       }
@@ -17,10 +17,10 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
   );
   router.patch(
     "/:id/deliverd",
-    authMiddleware.deliveryMan(deliveryController.authRepository,deliveryController.deliveryRepository),
+    authMiddleware.deliveryMan(deliveryController.authRepository, deliveryController.deliveryManRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(await deliveryController.updateDelivery(req.params.id,req.deliveryMan._id,req.body));
+        res.status(200).send(await deliveryController.updateDelivery(req.params.id, req.deliveryMan._id, req.body));
       } catch (error) {
         next(error);
       }
@@ -28,7 +28,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
   );
 
   router.get(
-    "/:deliveryManId/deliveryMan",
+    "/:deliveryManId/deliveryman",
     authMiddleware.admin(deliveryController.authRepository),
     async (req, res, next) => {
       try {
@@ -42,7 +42,35 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
   );
 
   router.get(
-    "/:deliveryManId/current/deliveryMan",
+    "/:deliveryManId/deliveryman",
+    authMiddleware.admin(deliveryController.authRepository),
+    async (req, res, next) => {
+      try {
+        const delivery = await deliveryController.getDeliverManDeliveries({ deliveryManId: req.params.deliveryManId });
+
+        res.status(200).send(delivery);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  router.get(
+    "/deliveryman",
+    authMiddleware.deliveryMan(deliveryController.authRepository, deliveryController.deliveryManRepository),
+    async (req, res, next) => {
+      try {
+        const delivery = await deliveryController.getDeliverManDeliveries({ userId: req.auth._id });
+
+        res.status(200).send(delivery);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  router.get(
+    "/:deliveryManId/current/deliveryman",
     authMiddleware.admin(deliveryController.authRepository),
     async (req, res, next) => {
       try {
@@ -71,7 +99,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
     }
   );
 
-  
+
   router.get(
     "/",
     authMiddleware.admin(deliveryController.authRepository),
@@ -91,7 +119,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
     authMiddleware.user(deliveryController.authRepository),
     async (req, res, next) => {
       try {
-        res.status(200).send(await deliveryController.createDelivery(req.params.orderId,req.body));
+        res.status(200).send(await deliveryController.createDelivery(req.params.orderId, req.body));
       } catch (error) {
         next(error);
       }

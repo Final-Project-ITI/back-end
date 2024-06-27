@@ -1,9 +1,12 @@
 const OrderModel = require("../models/order.model");
 const OrderStatusModel = require("../models/orderStatus.model");
+const PaymentStatusModel = require("../models/paymentStatus.model");
+const PaymentMethodModel = require("../models/paymentMethod.model");
+
 var ObjectId = require("mongoose").Types.ObjectId;
 
 class OrderRepository {
-  constructor() {}
+  constructor() { }
 
   async getAllOrders() {
     return await OrderModel.find({ isDeleted: false })

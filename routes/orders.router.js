@@ -62,18 +62,20 @@ const orderRouter = (orderControllers, authMiddleware) => {
   );
 
   router.patch(
-    "/cashier/:orderId",
-    authMiddleware.restaurantCashier(orderControllers.authRepository),
+    "/delivery/:orderId",
+    authMiddleware.deliveryMan(orderControllers.authRepository, orderControllers.deliveryManRepository),
     async (req, res, next) => {
       const { orderId } = req.params;
       const { statusId } = req.body;
       const { userId } = req.body;
+      const { resId } = req.body;
       try {
         const updatedOrder = await orderControllers.updateOrderStatus(
           req.auth,
           orderId,
           statusId,
-          userId
+          userId,
+          resId
         );
 
         res.status(200).send(updatedOrder);
