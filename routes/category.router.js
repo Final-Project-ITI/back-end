@@ -6,33 +6,25 @@ const categoryRouter = (
   authMiddleware,
   multerMiddleware
 ) => {
-  router.get(
-    "/",
-    authMiddleware.anyUser(categoryController.authRepository),
-    async (req, res, next) => {
-      try {
-        const categories = await categoryController.getCategories();
-        res.status(200).send(categories);
-      } catch (error) {
-        next(error);
-      }
+  router.get("/", async (req, res, next) => {
+    try {
+      const categories = await categoryController.getCategories();
+      res.status(200).send(categories);
+    } catch (error) {
+      next(error);
     }
-  );
+  });
 
-  router.get(
-    "/:categoryId",
-    authMiddleware.anyUser(categoryController.authRepository),
-    async (req, res, next) => {
-      try {
-        const category = await categoryController.getCategoryById(
-          req.params.categoryId
-        );
-        res.status(200).send(category);
-      } catch (error) {
-        next(error);
-      }
+  router.get("/:categoryId", async (req, res, next) => {
+    try {
+      const category = await categoryController.getCategoryById(
+        req.params.categoryId
+      );
+      res.status(200).send(category);
+    } catch (error) {
+      next(error);
     }
-  );
+  });
 
   router.post(
     "/",
