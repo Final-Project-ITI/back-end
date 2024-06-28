@@ -107,7 +107,6 @@ class OrderController {
 
     if (statusId === "66467522d96fa5f4ee9cacdc") {
       const deliveryMan = await this.deliveryManRepository.getDeliveryMan({ userId: deliveryManId })
-      console.log(deliveryMan);
       await this.deliveryRepository.updateDelivery({ _id: deliveryMan.currentlyDeliver[0]._id }, { deliverdAt: Date.now() });
       await this.deliveryManRepository.updateDeliveryMan({ _id: deliveryMan._id }, { currentlyDeliver: [] });
     }

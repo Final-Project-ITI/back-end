@@ -17,7 +17,7 @@ class ProductRepository {
       _id: productId,
       restaurantId: new ObjectId(restaurantId),
       isDeleted: false
-    }).populate("restaurantId");
+    }).populate("restaurantId").populate("ingredientsIds");
   }
 
   async getProductsById(productId) {
