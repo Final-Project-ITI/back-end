@@ -7,11 +7,13 @@ class NotificationController {
     notificationRepository;
     notificationTypeRepository
     authRepository;
+    deliveryManRep;
 
-    constructor(_notificationRepository, _notificationTypeRepository, _authRepository) {
+    constructor(_notificationRepository, _notificationTypeRepository, _authRepository, _deliveryManRep) {
         this.notificationRepository = _notificationRepository;
         this.notificationTypeRepository = _notificationTypeRepository;
         this.authRepository = _authRepository;
+        this.deliveryManRep = _deliveryManRep;
     }
 
     async getAllUserNotification(userId) {
@@ -22,8 +24,14 @@ class NotificationController {
         return await this.notificationRepository.getAllUserNotificationById(_id, userId);
     }
 
-    async getAllDeliveryNotification() {
-        return await this.notificationRepository.getAllDeliveryNotification();
+    async getAllDeliveryNotification(deliveryUserId) {
+        const deliveryMan = await this.deliveryManRep.getDeliveryMan({ userId: deliveryUserId });
+
+        if (deliveryMan.status === "online" && !deliveryMan.currentlyDeliver.length) {
+            return await this.notificationRepository.getAllDeliveryNotification();
+        }
+
+        return [];
     }
 
     async deleteNotification(_id, userId) {

@@ -24,10 +24,10 @@ class CategoryController {
     return await this.categoryRepository.getCategoryById(categoryId);
   }
 
-  async createCategory(title, description, icon) {
+  async createCategory(name, description, icon) {
     const categories = await this.categoryRepository.getCategories();
     const isCategoryExist = categories.find(
-      (category) => title === category.title
+      (category) => name === category.name
     );
 
     if (isCategoryExist) {
@@ -44,7 +44,7 @@ class CategoryController {
     );
 
     const newCategory = await this.categoryRepository.createCategory({
-      title,
+      name,
       description,
       icon: await getDownloadURL(iconSnapshot.ref),
     });

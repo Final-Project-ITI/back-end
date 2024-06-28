@@ -71,7 +71,7 @@ const orderRouter = (orderControllers, authMiddleware) => {
       const { resId } = req.body;
       try {
         const updatedOrder = await orderControllers.updateOrderStatus(
-          req.auth,
+          req.auth._id,
           orderId,
           statusId,
           userId,

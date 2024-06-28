@@ -22,19 +22,11 @@ class ProductController {
   async getAllProducts(restaurantId) {
     const products = await this.productRepository.getAllProducts(restaurantId);
 
-    if (!products.length) {
-      throw new Errors.NotFoundError("restaurant not found");
-    }
-
     return products;
   }
 
   async getRestaurantsProductsById(restaurantId, productId) {
     const product = await this.productRepository.getRestaurantsProductsById(restaurantId, productId);
-
-    if (!product) {
-      throw new Errors.NotFoundError("product not found");
-    }
 
     return product;
   }

@@ -47,7 +47,11 @@ class OrderRepository {
   }
 
   async updateOrderStatus(orderId, statusId) {
-    return await OrderModel.updateOne({ _id: orderId }, { statusId });
+    if (statusId === "66467522d96fa5f4ee9cacdc") {
+      return await OrderModel.updateOne({ _id: orderId }, { statusId, paymentStatusId: "667ae98424daa8cfea1cb7fc" });
+    } else {
+      return await OrderModel.updateOne({ _id: orderId }, { statusId });
+    }
   }
 
   async getAllUserOrders(userId) {

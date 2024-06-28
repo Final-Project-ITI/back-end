@@ -41,7 +41,7 @@ const categoryRouter = (
     async (req, res, next) => {
       try {
         const newCategory = await categoryController.createCategory(
-          req.body.title,
+          req.body.name,
           req.body.description,
           req.file
         );

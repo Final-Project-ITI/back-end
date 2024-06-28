@@ -72,7 +72,7 @@ class OrderController {
     return await this.orderRepository.getOrderById(orderId);
   }
 
-  async updateOrderStatus(deliveryMan, orderId, statusId, userId, resId) {
+  async updateOrderStatus(deliveryManId, orderId, statusId, userId, resId) {
     /* Check if the status exist */
 
     const status = await this.orderRepository.getStatus(statusId);
@@ -92,8 +92,6 @@ class OrderController {
 
     const restaurant = await this.restaurantRepository.getRestaurantById(resId);
 
-    console.log(restaurant, resId)
-
     const notification = {
       name: status.status,
       orderId,
@@ -105,6 +103,13 @@ class OrderController {
 
     if (!orderIds.includes(orderId)) {
       throw new Errors.UnAuthError("unauthorized user: you can't access others orders");
+    }
+
+    if (statusId === "66467522d96fa5f4ee9cacdc") {
+      const deliveryMan = await this.deliveryManRepository.getDeliveryMan({ userId: deliveryManId })
+      console.log(deliveryMan);
+      await this.deliveryRepository.updateDelivery({ _id: deliveryMan.currentlyDeliver[0]._id }, { deliverdAt: Date.now() });
+      await this.deliveryManRepository.updateDeliveryMan({ _id: deliveryMan._id }, { currentlyDeliver: [] });
     }
 
     await this.orderRepository.updateOrderStatus(orderId, statusId);

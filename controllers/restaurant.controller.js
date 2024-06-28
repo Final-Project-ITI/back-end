@@ -25,19 +25,11 @@ class RestaurantController {
       _id,
     });
 
-    if (!restaurant) {
-      throw new Errors.NotFoundError("restaurant not found");
-    }
-
     return restaurant;
   }
 
   async getAllRestaurants() {
     const restaurants = await this.restaurantRepository.getAllRestaurants();
-
-    if (!restaurants) {
-      throw new Errors.NotFoundError("restaurants not found");
-    }
 
     return restaurants;
   }

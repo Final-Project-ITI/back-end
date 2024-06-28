@@ -20,7 +20,7 @@ const notificationRouter = (notificationController, authMiddleware) => {
         authMiddleware.anyUser(notificationController.authRepository),
         async (req, res, next) => {
             try {
-                const notifications = await notificationController.getAllDeliveryNotification();
+                const notifications = await notificationController.getAllDeliveryNotification(req.auth._id);
 
                 res.status(200).send(notifications);
             } catch (error) {

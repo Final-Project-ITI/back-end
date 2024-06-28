@@ -50,14 +50,13 @@ class DeliveryController {
             throw new Errors.ApiError("already accepted", 400);
         }
 
-        console.log(delivery)
-
         await this.deliveryManRepository.updateDeliveryMan(
             { _id: deliveryManId },
             { currentlyDeliver: delivery._id }
         );
 
-        await this.notificationRepository.deleteNotification(orderId)
+        await this.notificationRepository.deleteNotification(orderId);
+        await this.orderRepository.updateOrder({ _id: orderId }, { statusId: "664674d2d96fa5f4ee9cacd9" });
 
         return await this.deliveryRepository.updateDelivery(
             { _id: delivery._id },

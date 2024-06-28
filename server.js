@@ -138,7 +138,7 @@ const deliveryManRepository = new DeliveryManRepository();
 const authController = new AuthController(authRepository);
 const userController = new UserController(userRepository, authRepository);
 const notificationTypeController = new NotificationTypeController(notificationTypeRepository, authRepository);
-const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository);
+const notificationController = new NotificationController(notificationRepository, notificationTypeRepository, authRepository, deliveryManRepository);
 const restaurantController = new RestaurantController(restaurantRepository, authRepository);
 const cartController = new CartController(cartRepository, itemRepository, productRepository, authRepository);
 const orderController = new OrderController(
@@ -312,6 +312,8 @@ io.on("connection", (socket) => {
 
   /* Join Rooms */
   socket.on("join-room", (room) => {
+    console.log(room)
+
     socket.join(room);
   });
 });
