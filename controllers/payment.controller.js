@@ -1,4 +1,4 @@
-const { BadRequestError } = require("../error/error");
+const { ApiError } = require("../error/error");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 
@@ -89,7 +89,7 @@ class PaymentController {
       return session;
     } catch (error) {
       console.error("Error in payWithStripe:", error.message);
-      throw new BadRequestError(error.message);
+      throw new ApiError(error.message);
     }
   }
 }

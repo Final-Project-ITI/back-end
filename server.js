@@ -305,6 +305,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("change-order-status", (room, notificationId) => {
+    console.log(notificationId)
     if (room) {
       socket.to(room).emit("notify-user", notificationId);
     }
