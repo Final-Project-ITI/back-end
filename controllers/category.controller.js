@@ -20,8 +20,8 @@ class CategoryController {
     return await this.categoryRepository.getCategories();
   }
 
-  async getCategoryById(categoryId) {
-    return await this.categoryRepository.getCategoryById(categoryId);
+  async getCategoryRestaurantsById(categoryId) {
+    return await this.categoryRepository.getCategoryRestaurnatsById(categoryId);
   }
 
   async createCategory(title, description, icon) {

@@ -17,7 +17,7 @@ const categoryRouter = (
 
   router.get("/:categoryId", async (req, res, next) => {
     try {
-      const category = await categoryController.getCategoryById(
+      const category = await categoryController.getCategoryRestaurantsById(
         req.params.categoryId
       );
       res.status(200).send(category);
