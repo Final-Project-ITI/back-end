@@ -311,7 +311,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("change-delivery", (room) => {
-    console.log("hh");
     socket.to("admin").emit("notify-admin", "n");
   });
 
