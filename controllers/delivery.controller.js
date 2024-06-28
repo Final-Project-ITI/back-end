@@ -92,18 +92,20 @@ class DeliveryController {
 
 
 
-    async getDeliverManDeliveries(val) {
+    async getDeliverManDeliveries(deliveryManId) {
         try {
-            let deliveryManId;
+            // let deliveryManId;
 
-            if (val.userId) {
-                deliveryManId = (await this.deliveryManRepository.getDeliveryMan(val))._id;
-            } else {
-                deliveryManId = val.deliveryManId;
-            }
+            // if (val.userId) {
+            //     deliveryManId = (await this.deliveryManRepository.getDeliveryMan(val))._id;
+            // } else {
+            //     deliveryManId = val.deliveryManId;
+            // }
 
             const deliveries = await this.deliveryRepository.getDeliveries({ deliveryManId });
             const items = await this.itemRepository.getAllItemsWithRes();
+
+            console.log(deliveryManId);
 
             const updatedDeliveries = deliveries.map((delivery) => {
                 const ditems = items.filter(
@@ -141,7 +143,7 @@ class DeliveryController {
 
         const updatedDeliveries = deliveries.map((delivery) => {
             const ditems = items.filter(
-                (item) => item.orderId.toString() === delivery.orderId._id.toString()
+                (item) => item.orderId?.toString() === delivery.orderId._id.toString()
             );
             const total = ditems.reduce(
                 (acc, item) => acc + item.quantity * item.productId.price,
@@ -157,6 +159,7 @@ class DeliveryController {
                 total,
             };
         });
+        console.log(updatedDeliveries)
 
         return updatedDeliveries;
     }

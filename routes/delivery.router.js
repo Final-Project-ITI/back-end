@@ -76,6 +76,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
       try {
         const delivery = await deliveryController.getDeliveryManCurrentDeliveries(req.params.deliveryManId);
 
+        console.log(delivery)
         res.status(200).send(delivery);
       } catch (error) {
         next(error);
