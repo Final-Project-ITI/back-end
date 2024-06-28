@@ -8,7 +8,6 @@ const categoryRouter = (
 ) => {
   router.get(
     "/",
-    authMiddleware.anyUser(categoryController.authRepository),
     async (req, res, next) => {
       try {
         const categories = await categoryController.getCategories();
@@ -21,7 +20,6 @@ const categoryRouter = (
 
   router.get(
     "/:categoryId",
-    authMiddleware.anyUser(categoryController.authRepository),
     async (req, res, next) => {
       try {
         const category = await categoryController.getCategoryById(

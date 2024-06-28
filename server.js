@@ -310,14 +310,14 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("change-delivery", (room, notificationId) => {
-    if (room) {
-      socket.to(room).emit("notify-admin", notificationId);
-    }
+  socket.on("change-delivery", (room) => {
+    console.log("hh");
+    socket.to("admin").emit("notify-admin", "n");
   });
 
   /* Join Rooms */
   socket.on("join-room", (room) => {
+    console.log(room);
     socket.join(room);
   });
 });

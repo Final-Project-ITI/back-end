@@ -60,7 +60,7 @@ const deliveryRouter = (deliveryController, authMiddleware) => {
     authMiddleware.deliveryMan(deliveryController.authRepository, deliveryController.deliveryManRepository),
     async (req, res, next) => {
       try {
-        const delivery = await deliveryController.getDeliverManDeliveries({ userId: req.auth._id });
+        const delivery = await deliveryController.getDeliverManDeliveriesApp(req.auth._id);
 
         res.status(200).send(delivery);
       } catch (error) {

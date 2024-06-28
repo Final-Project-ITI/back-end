@@ -134,6 +134,42 @@ class DeliveryController {
         }
     }
 
+    async getDeliverManDeliveriesApp(userId) {
+        try {
+            const deliveryManId = (await this.deliveryManRepository.getDeliveryMan({ userId }))._id;
+
+            const deliveries = await this.deliveryRepository.getDeliveries({ deliveryManId });
+            const items = await this.itemRepository.getAllItemsWithRes();
+
+            console.log(deliveryManId);
+
+            const updatedDeliveries = deliveries.map((delivery) => {
+                const ditems = items.filter(
+                    (item) => {
+                        return item.orderId?._id.toString() === delivery.orderId._id.toString()
+                    }
+                );
+                const total = ditems.reduce(
+                    (acc, item) => acc + item.quantity * item.productId.price,
+                    0
+                );
+                return {
+                    _id: delivery._id,
+                    orderId: delivery.orderId,
+                    items: ditems,
+                    restaurant: ditems[0].productId.restaurantId,
+                    assignedAt: delivery.assignedAt,
+                    deliverdAt: delivery.deliverdAt,
+                    total,
+                };
+            });
+
+            return updatedDeliveries;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async getDeliveryManCurrentDeliveries(deliveryManId) {
         const deliveryMan = await this.deliveryManRepository.getDeliveryMan({
             _id: deliveryManId,
