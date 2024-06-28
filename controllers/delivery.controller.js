@@ -110,7 +110,7 @@ class DeliveryController {
             const updatedDeliveries = deliveries.map((delivery) => {
                 const ditems = items.filter(
                     (item) => {
-                        return item.orderId?._id.toString() === delivery.orderId._id.toString()
+                        return item.orderId?._id.toString() === delivery.orderId?._id.toString()
                     }
                 );
                 const total = ditems.reduce(
@@ -141,14 +141,16 @@ class DeliveryController {
             const deliveries = await this.deliveryRepository.getDeliveries({ deliveryManId });
             const items = await this.itemRepository.getAllItemsWithRes();
 
-            console.log(deliveryManId);
-
             const updatedDeliveries = deliveries.map((delivery) => {
                 const ditems = items.filter(
                     (item) => {
-                        return item.orderId?._id.toString() === delivery.orderId._id.toString()
+                        console.log(item)
+                        return item.orderId?._id.toString() === delivery.orderId?._id.toString()
+
                     }
                 );
+
+                console.log("hello")
                 const total = ditems.reduce(
                     (acc, item) => acc + item.quantity * item.productId.price,
                     0
