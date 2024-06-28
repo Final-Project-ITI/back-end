@@ -26,9 +26,11 @@ class ProductController {
   }
 
   async getRestaurantsProductsById(restaurantId, productId) {
+    try{
     const product = await this.productRepository.getRestaurantsProductsById(restaurantId, productId);
 
-    return product;
+    return product;}
+    catch(err){console.log(err)}
   }
 
   async createProduct(body, user, icon) {
