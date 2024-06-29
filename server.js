@@ -301,6 +301,7 @@ io.on("connection", (socket) => {
 
   /* Events */
   socket.on("new-order-req", (room) => {
+    console.log(room, "new order")
     if (room) {
       socket.to(room).emit("new-order-res");
     }

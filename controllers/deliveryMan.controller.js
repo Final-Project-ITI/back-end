@@ -35,7 +35,6 @@ class DeliveryManController {
             throw new Errors.ApiError("already existed", 400)
         }
 
-
         const phone = await this.phoneRepository.getPhoneNumber({ phoneNumber });
         if (!phone) {
             throw new Errors.ApiError("phone not found", 400);
