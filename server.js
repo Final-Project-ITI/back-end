@@ -16,6 +16,7 @@ const io = require("socket.io")(server, {
       "http://localhost:5174",
       "https://foodii.vercel.app",
       "https://admin.socket.io",
+      "https://foodi-dashboard-84n8kbdcq-waleed-almenawys-projects.vercel.app/login"
     ],
     methods: ["GET", "POST"],
     credentials: true, // Allow credentials
@@ -43,6 +44,7 @@ app.use(
       "http://localhost:5174",
       "https://admin.socket.io",
       "https://foodii.vercel.app",
+      "https://foodi-dashboard-84n8kbdcq-waleed-almenawys-projects.vercel.app/login"
     ], // React app's port and admin UI
     credentials: true, // Allow credentials
   })
