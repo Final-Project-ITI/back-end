@@ -28,11 +28,11 @@ class DeliveryRepository {
         path: 'paymentStatusId',
         model: 'PaymentStatus'
       }]
-    })
+    }).sort({ assignedAt: -1 });
     return deliveries
   }
   async getAllDeliveries() {
-    return await DeliveryModel.find().populate("orderId");
+    return await DeliveryModel.find().populate("orderId").sort({ assignedAt: -1 });
   }
   async updateDelivery(id, val) {
     return await DeliveryModel.updateOne(id, val);
