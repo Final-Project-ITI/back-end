@@ -17,6 +17,7 @@ class NotificationController {
     }
 
     async getAllUserNotification(userId) {
+        console.log(userId)
         return await this.notificationRepository.getAllUserNotification(userId);
     }
 
